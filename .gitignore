@@ -1,0 +1,36 @@
+﻿# Unreal Engine Folders
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+Script/
+
+# Rider & IDE Specific
+.idea/
+.vs/
+*.sln
+*.vcxproj
+*.filters
+*.user
+*.suo
+*.opendb
+*.sdf
+
+# Compiled binaries
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.obj
+*.pdb
+
+# Logs & Autosave
+*.log
+Backup/
+AutoScreenshot/
+
+# macOS
+.DS_Store
