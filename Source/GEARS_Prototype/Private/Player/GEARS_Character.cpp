@@ -4,29 +4,41 @@
 #include "GEARS_Character.h"
 
 
-// Sets default values
 AGEARS_Character::AGEARS_Character()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-}
-
-// Called when the game starts or when spawned
-void AGEARS_Character::BeginPlay()
-{
-	Super::BeginPlay();
+	PrimaryActorTick.bCanEverTick = false;
 	
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+	
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(RootComponent);
+	SpringArm->TargetArmLength = 2000.f;
+	SpringArm->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
+	
+	SpringArm->bInheritPitch = false;
+	SpringArm->bInheritRoll = false;
+	SpringArm->bInheritYaw = false; 
+	SpringArm->bDoCollisionTest = false;
+	
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	Camera->bUsePawnControlRotation = false;
 }
 
-// Called every frame
 void AGEARS_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
 void AGEARS_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void AGEARS_Character::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
