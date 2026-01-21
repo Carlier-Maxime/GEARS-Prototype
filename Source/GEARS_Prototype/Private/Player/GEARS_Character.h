@@ -8,6 +8,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GEARS_Character.generated.h"
 
+class UInputAction;
+
 UCLASS()
 class GEARS_PROTOTYPE_API AGEARS_Character : public ACharacter
 {
@@ -26,4 +28,9 @@ private:
 	USpringArmComponent *SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess = "true"))
 	UCameraComponent *Camera;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action", meta=(AllowPrivateAccess = true))
+	TSoftObjectPtr<UInputAction> MoveAction;
+	
+	void Move(const struct FInputActionValue& Value);
 };
