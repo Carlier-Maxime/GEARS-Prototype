@@ -23,7 +23,8 @@ public class GEARS_Prototype : ModuleRules
 			"GameplayAbilities",
 			"GameplayTasks",
 			"DeveloperSettings",
-			"AIModule"
+			"AIModule",
+			"Niagara"
 		});
 	}
 }
