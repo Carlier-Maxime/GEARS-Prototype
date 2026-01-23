@@ -2,9 +2,12 @@
 
 
 #include "GEARS_PlayerController.h"
+
+#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GEARS_Macro.h"
 #include "InputMappingContext.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 void AGEARS_PlayerController::BeginPlay()
 {
@@ -20,4 +23,20 @@ void AGEARS_PlayerController::BeginPlay()
 	const auto Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	check(Subsystem);
 	Subsystem->AddMappingContext(DefaultIMC.LoadSynchronous(), InputPriority);
+}
+
+void AGEARS_PlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	const auto Input = Cast<UEnhancedInputComponent>(InputComponent);
+	ensureSoftPtrOrRet(ClickAction,);
+	Input->BindAction(ClickAction.LoadSynchronous(), ETriggerEvent::Started, this, &AGEARS_PlayerController::MoveToCursor);
+}
+
+void AGEARS_PlayerController::MoveToCursor()
+{
+	FHitResult Hit;
+	if (!GetPawn()) return;
+	if (!GetHitResultUnderCursor(ECC_Visibility, true, Hit)) return;
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, Hit.Location);
 }

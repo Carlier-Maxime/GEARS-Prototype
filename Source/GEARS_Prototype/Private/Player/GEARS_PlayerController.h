@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GEARS_PlayerController.generated.h"
 
+class UInputAction;
 class UInputMappingContext;
 /**
  * 
@@ -16,7 +17,13 @@ class GEARS_PROTOTYPE_API AGEARS_PlayerController : public APlayerController
 	GENERATED_BODY()
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void SetupInputComponent() override;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TSoftObjectPtr<UInputMappingContext> DefaultIMC;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
+	TSoftObjectPtr<UInputAction> ClickAction;
+	
+private:
+	void MoveToCursor();
 };
