@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "GEARS_Macro.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Settings/CameraSettings.h"
 
 
 AGEARS_Character::AGEARS_Character()
@@ -17,8 +18,8 @@ AGEARS_Character::AGEARS_Character()
 	
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 2000.f;
-	SpringArm->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
+	SpringArm->TargetArmLength = GetDefault<UCameraSettings>()->GetDefaultZoomDistance();
+	SpringArm->SetRelativeRotation(FRotator(GetDefault<UCameraSettings>()->DefaultPitchAngle, 0.f, 0.f));
 	
 	SpringArm->bInheritPitch = false;
 	SpringArm->bInheritRoll = false;
