@@ -10,6 +10,8 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/AssetManager.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Settings/CameraSettings.h"
 
 void AGEARS_PlayerController::BeginPlay()
 {
@@ -34,8 +36,14 @@ void AGEARS_PlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	const auto Input = Cast<UEnhancedInputComponent>(InputComponent);
-	ensureSoftPtrOrRet(ClickAction,);
-	Input->BindAction(ClickAction.LoadSynchronous(), ETriggerEvent::Started, this, &AGEARS_PlayerController::MoveToCursor);
+	if (ensureSoftPtr(ClickAction)) Input->BindAction(ClickAction.LoadSynchronous(), ETriggerEvent::Started, this, &ThisClass::MoveToCursor);
+	if (ensureSoftPtr(ZoomAction)) Input->BindAction(ZoomAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ThisClass::Zoom);
+}
+
+void AGEARS_PlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+	SpringArm = aPawn->FindComponentByClass<USpringArmComponent>();
 }
 
 void AGEARS_PlayerController::MoveToCursor()
@@ -51,4 +59,14 @@ void AGEARS_PlayerController::MoveToCursor()
 		Hit.ImpactPoint, 
 		Hit.ImpactNormal.Rotation()
 	);
+}
+
+void AGEARS_PlayerController::Zoom(const FInputActionValue& Value)
+{
+	if (!SpringArm) return;
+	const auto Settings = GetDefault<UCameraSettings>();
+	auto Target = Value.Get<float>() * Settings->GetZoomSpeed();
+	if (Settings->bInvertZoomAxis) Target *= -1;
+	Target += SpringArm->TargetArmLength;
+	SpringArm->TargetArmLength = FMath::Clamp(Target, Settings->GetMinZoomDistance(), Settings->GetMaxZoomDistance());
 }

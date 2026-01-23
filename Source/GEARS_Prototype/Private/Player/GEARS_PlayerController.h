@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "GEARS_PlayerController.generated.h"
 
+struct FInputActionValue;
+class USpringArmComponent;
 class UNiagaraSystem;
 class UInputAction;
 class UInputMappingContext;
@@ -19,15 +21,23 @@ class GEARS_PROTOTYPE_API AGEARS_PlayerController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	virtual void OnPossess(APawn* aPawn) override;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TSoftObjectPtr<UInputMappingContext> DefaultIMC;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	TSoftObjectPtr<UInputAction> ClickAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
+	TSoftObjectPtr<UInputAction> ZoomAction;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="FX")
 	TSoftObjectPtr<UNiagaraSystem> ClickFX;
 	
 private:
+	UPROPERTY()
+	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
+	
 	void MoveToCursor();
+	void Zoom(const FInputActionValue& Value);
 };
