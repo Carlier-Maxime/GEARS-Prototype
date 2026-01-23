@@ -20,6 +20,11 @@ float UCameraSettings::GetDefaultZoomDistance() const
 	return GetZoomDistance(DefaultZoomDistanceFactor);
 }
 
+float UCameraSettings::GetZoomSpeed() const
+{
+	return GetZoomDistance(ZoomSpeedFactor);
+}
+
 float UCameraSettings::GetZoomDistance(const float Factor)
 {
 	return Factor * GetDefault<UGridSettings>()->GetCellSize();

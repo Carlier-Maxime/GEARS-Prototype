@@ -41,8 +41,8 @@ public:
 	float DefaultZoomDistanceFactor = 50;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta = (
 		UIMin = 0.1, UIMax = 10.0, 
-		ClampMin = 0.01))
-	float ZoomSpeed = 1;
+		ClampMin = 0.01, ToolTip="Multiplier based on the grid cell size"))
+	float ZoomSpeedFactor = 1;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom")
 	bool bInvertZoomAxis = false;
 	
@@ -52,6 +52,8 @@ public:
 	float GetMaxZoomDistance() const;
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetDefaultZoomDistance() const;
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	float GetZoomSpeed() const;
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	static float GetZoomDistance(float Factor);
 };
