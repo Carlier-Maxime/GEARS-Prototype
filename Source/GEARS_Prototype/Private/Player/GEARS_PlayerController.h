@@ -30,6 +30,10 @@ protected:
 	TSoftObjectPtr<UInputAction> ClickAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	TSoftObjectPtr<UInputAction> ZoomAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
+	TSoftObjectPtr<UInputAction> LookAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
+	TSoftObjectPtr<UInputAction> OrbitModifier;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="FX")
 	TSoftObjectPtr<UNiagaraSystem> ClickFX;
@@ -40,4 +44,7 @@ private:
 	
 	void MoveToCursor();
 	void Zoom(const FInputActionValue& Value);
+	void HiddenCursor();
+	void ShowCursor();
+	void Look(const FInputActionValue& Value);
 };
