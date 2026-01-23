@@ -4,7 +4,6 @@
 
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Materials/MaterialParameterCollection.h"
-#include "UObject/SavePackage.h"
 
 #if WITH_EDITOR
 
