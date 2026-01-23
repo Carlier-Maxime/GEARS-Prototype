@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GEARS_PlayerController.generated.h"
 
+class UNiagaraSystem;
 class UInputAction;
 class UInputMappingContext;
 /**
@@ -23,6 +24,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	TSoftObjectPtr<UInputAction> ClickAction;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="FX")
+	TSoftObjectPtr<UNiagaraSystem> ClickFX;
 	
 private:
 	void MoveToCursor();

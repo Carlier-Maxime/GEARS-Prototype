@@ -8,6 +8,8 @@
 #include "GEARS_Macro.h"
 #include "InputMappingContext.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "NiagaraFunctionLibrary.h"
+#include "Engine/AssetManager.h"
 
 void AGEARS_PlayerController::BeginPlay()
 {
@@ -19,10 +21,13 @@ void AGEARS_PlayerController::BeginPlay()
 	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
 	
-	ensureSoftPtrOrRet(DefaultIMC,);
-	const auto Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-	Subsystem->AddMappingContext(DefaultIMC.LoadSynchronous(), InputPriority);
+	if (ensureSoftPtr(DefaultIMC))
+	{
+		const auto Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+		check(Subsystem);
+		Subsystem->AddMappingContext(DefaultIMC.LoadSynchronous(), InputPriority);
+	}
+	if (ensureSoftPtr(ClickFX)) UAssetManager::GetStreamableManager().RequestAsyncLoad(ClickFX.ToSoftObjectPath());
 }
 
 void AGEARS_PlayerController::SetupInputComponent()
@@ -39,4 +44,11 @@ void AGEARS_PlayerController::MoveToCursor()
 	if (!GetPawn()) return;
 	if (!GetHitResultUnderCursor(ECC_Visibility, true, Hit)) return;
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, Hit.Location);
+	ensureSoftPtrOrRet(ClickFX,);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(), 
+		ClickFX.LoadSynchronous(), 
+		Hit.ImpactPoint, 
+		Hit.ImpactNormal.Rotation()
+	);
 }
