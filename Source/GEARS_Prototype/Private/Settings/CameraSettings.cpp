@@ -3,7 +3,7 @@
 
 #include "CameraSettings.h"
 
-#include "Grid/GridSettings.h"
+#include "GridSettings.h"
 
 float UCameraSettings::GetMinZoomDistance() const
 {
