@@ -10,6 +10,12 @@ void AGEARS_PlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	bShowMouseCursor = true;
+	FInputModeGameAndUI InputMode;
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputMode.SetHideCursorDuringCapture(false);
+	SetInputMode(InputMode);
+	
 	ensureSoftPtrOrRet(DefaultIMC,);
 	const auto Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	check(Subsystem);
