@@ -11,18 +11,18 @@ public class GEARS_Prototype : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core",
+			"GameplayTags"
+		});
+
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
 			"CoreUObject",
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
 			"GameplayAbilities",
 			"GameplayTasks",
-			"GameplayTags",
-			"DeveloperSettings"
-		});
-
-		PrivateDependencyModuleNames.AddRange(new string[]
-		{
+			"DeveloperSettings",
 			"AIModule"
 		});
 
