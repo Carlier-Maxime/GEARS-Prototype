@@ -3,16 +3,18 @@
 
 #include "CameraSettings.h"
 
+#include "GEARS_Macro.h"
 #include "GridSettings.h"
+#include "Curves/CurveFloat.h"
 
 float UCameraSettings::GetMinZoomDistance() const
 {
-	return GetZoomDistance(MinZoomDistanceFactor);
+	return GetZoomDistance(GetTimeRange(ZoomFactorCurve).Get<0>());
 }
 
 float UCameraSettings::GetMaxZoomDistance() const
 {
-	return GetZoomDistance(MaxZoomDistanceFactor);
+	return GetZoomDistance(GetTimeRange(ZoomFactorCurve).Get<1>());
 }
 
 float UCameraSettings::GetDefaultZoomDistance() const
@@ -20,12 +22,41 @@ float UCameraSettings::GetDefaultZoomDistance() const
 	return GetZoomDistance(DefaultZoomDistanceFactor);
 }
 
-float UCameraSettings::GetZoomSpeed() const
+float UCameraSettings::GetZoomSpeed(const float Distance) const
 {
-	return GetZoomDistance(ZoomSpeedFactor);
+	ensureSoftPtrOrRet(ZoomFactorCurve, -1);
+	return GetZoomDistance(
+		ZoomFactorCurve.LoadSynchronous()->GetFloatValue(
+			Distance / GetDefault<UGridSettings>()->GetCellSize()
+		)
+	);
 }
 
 float UCameraSettings::GetZoomDistance(const float Factor)
 {
 	return Factor * GetDefault<UGridSettings>()->GetCellSize();
+}
+
+float UCameraSettings::GetMinPitch() const
+{
+	return GetTimeRange(PitchCurve).Get<0>();
+}
+
+float UCameraSettings::GetMaxPitch() const
+{
+	return GetTimeRange(PitchCurve).Get<1>();
+}
+
+float UCameraSettings::GetPitchSpeed(const float Pitch) const
+{
+	ensureSoftPtrOrRet(PitchCurve, -1);
+	return PitchCurve.LoadSynchronous()->GetFloatValue(Pitch);
+}
+
+TTuple<float, float> UCameraSettings::GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const
+{
+	ensureSoftPtrOrRet(Curve, MakeTuple(-1, -1));
+	float Min, Max;
+	Curve.LoadSynchronous()->GetTimeRange(Min, Max);
+	return {Min, Max};
 }

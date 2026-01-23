@@ -15,34 +15,19 @@ class GEARS_PROTOTYPE_API UCameraSettings : public UDeveloperSettings
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta=(
-		ClampMax = -0.01, ClampMin = -90))
-	float MinPitchAngle = -70;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta=(
-		ClampMax = -0.01, ClampMin = -90))
-	float MaxPitchAngle = -30;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta=(
-		ClampMax = -0.01, ClampMin = -90))
-	float DefaultPitchAngle = -50;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta = (
-		UIMin = 0.1, UIMax = 10.0, 
-		ClampMin = 0.01))
-	float RotationSpeed = 1;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	TSoftObjectPtr<UCurveFloat> PitchCurve;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	float DefaultPitchAngle = -60;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
 	bool bInvertRotationAxis = false;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta=(
-		ClampMin = 0.1, ClampMax = 100, ToolTip="Multiplier based on the grid cell size."))
-	float MinZoomDistanceFactor = 10;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta=(
-		ClampMin = 10, ClampMax = 1000, ToolTip="Multiplier based on the grid cell size."))
-	float MaxZoomDistanceFactor = 100;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta=(
-		ClampMin = 0.1, ClampMax = 1000, ToolTip="Multiplier based on the grid cell size."))
-	float DefaultZoomDistanceFactor = 50;
+	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta = (
-		UIMin = 0.1, UIMax = 10.0, 
-		ClampMin = 0.01, ToolTip="Multiplier based on the grid cell size"))
-	float ZoomSpeedFactor = 1;
+		ToolTip="Multiplier based on the grid cell size"))
+	TSoftObjectPtr<UCurveFloat> ZoomFactorCurve;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta=(
+		ToolTip="Multiplier based on the grid cell size."))
+	float DefaultZoomDistanceFactor = 25;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom")
 	bool bInvertZoomAxis = false;
 	
@@ -53,7 +38,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetDefaultZoomDistance() const;
 	UFUNCTION(BlueprintCallable, Category = "Camera")
-	float GetZoomSpeed() const;
+	float GetZoomSpeed(float Distance) const;
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	static float GetZoomDistance(float Factor);
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	float GetMinPitch() const;
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	float GetMaxPitch() const;
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	float GetPitchSpeed(float Pitch) const;
+private:
+	TTuple<float, float> GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const;
 };

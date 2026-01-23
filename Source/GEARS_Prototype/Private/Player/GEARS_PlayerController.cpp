@@ -67,7 +67,7 @@ void AGEARS_PlayerController::Zoom(const FInputActionValue& Value)
 {
 	if (!SpringArm) return;
 	const auto Settings = GetDefault<UCameraSettings>();
-	auto Target = Value.Get<float>() * Settings->GetZoomSpeed();
+	auto Target = Value.Get<float>() * Settings->GetZoomSpeed(SpringArm->TargetArmLength);
 	if (Settings->bInvertZoomAxis) Target *= -1;
 	Target += SpringArm->TargetArmLength;
 	SpringArm->TargetArmLength = FMath::Clamp(Target, Settings->GetMinZoomDistance(), Settings->GetMaxZoomDistance());
@@ -94,10 +94,11 @@ void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 {
 	const auto Direction = Value.Get<FVector2D>();
 	const UCameraSettings* Settings = GetDefault<UCameraSettings>();
-	float Target = Direction.Y * Settings->RotationSpeed;
+	const auto Pitch = SpringArm->GetRelativeRotation().Pitch;
+	float Target = Direction.Y * Settings->GetPitchSpeed(Pitch);
 	if (Settings->bInvertRotationAxis) Target *= -1;
-	Target += SpringArm->GetRelativeRotation().Pitch;
-	Target = FMath::Clamp(Target, Settings->MinPitchAngle, Settings->MaxPitchAngle);
+	Target += Pitch;
+	Target = FMath::Clamp(Target, Settings->GetMinPitch(), Settings->GetMaxPitch());
 	FRotator NewRotation = SpringArm->GetRelativeRotation();
 	NewRotation.Pitch = Target;
 	SpringArm->SetRelativeRotation(NewRotation);
