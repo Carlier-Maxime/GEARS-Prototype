@@ -57,6 +57,7 @@ void AGEARS_Character::BeginPlay()
 
 void AGEARS_Character::Move(const FInputActionValue& Value)
 {
+	if (const auto PC = GetController()) PC->StopMovement();
 	const auto Direction = Value.Get<FVector2D>();
 	AddMovementInput(FVector::ForwardVector, Direction.X);
 	AddMovementInput(FVector::RightVector, Direction.Y);
