@@ -16,13 +16,13 @@ class GEARS_PROTOTYPE_API UCameraSettings : public UDeveloperSettings
 	
 public:
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta=(
-		ClampMin = -0.01, ClampMax = -90))
-	float MinPitchAngle = -30;
+		ClampMax = -0.01, ClampMin = -90))
+	float MinPitchAngle = -70;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta=(
-		ClampMin = -0.01, ClampMax = -90))
-	float MaxPitchAngle = -70;
+		ClampMax = -0.01, ClampMin = -90))
+	float MaxPitchAngle = -30;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta=(
-		ClampMin = -0.01, ClampMax = -90))
+		ClampMax = -0.01, ClampMin = -90))
 	float DefaultPitchAngle = -50;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation", meta = (
 		UIMin = 0.1, UIMax = 10.0, 
