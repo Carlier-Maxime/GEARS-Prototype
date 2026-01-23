@@ -59,3 +59,8 @@ void UGridSettings::UpdateMPC()
 }
 
 #endif
+
+float UGridSettings::GetCellSize() const
+{
+	return *MPCSharedScalar.Find(TAG_Grid_CellSize);
+}

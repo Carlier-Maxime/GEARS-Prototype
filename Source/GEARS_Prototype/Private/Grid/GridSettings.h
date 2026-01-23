@@ -26,6 +26,9 @@ public:
 		{TAG_Grid_BorderThickness, 0.02}
 	};
 	
+	UFUNCTION(BlueprintCallable, Category = "Grid")
+	float GetCellSize() const;
+	
 #if WITH_EDITOR
 	virtual void PostInitProperties() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
