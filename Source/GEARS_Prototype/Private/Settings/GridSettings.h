@@ -20,10 +20,10 @@ public:
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	TSoftObjectPtr<UMaterialParameterCollection> MPC;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Grid")
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta = (ReadOnlyKeys))
 	TMap<FGameplayTag, float> MPCSharedScalar = {
-		{TAG_Grid_CellSize, 100},
-		{TAG_Grid_BorderThickness, 0.02}
+		{TAG_Grid_Cell_Size, 100},
+		{TAG_Grid_Border_Thickness, 0.02}
 	};
 	
 	UFUNCTION(BlueprintCallable, Category = "Grid")

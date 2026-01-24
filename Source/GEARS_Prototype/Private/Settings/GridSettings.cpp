@@ -32,8 +32,7 @@ void UGridSettings::UpdateMPC()
 
 	for (auto& Param : Mpc->ScalarParameters)
 	{
-		const FName TagName(*FString(TEXT("Grid.")) + Param.ParameterName.ToString());
-		const auto Tag = Tags.Find(FGameplayTag::RequestGameplayTag(TagName));
+		const auto Tag = Tags.Find(FGameplayTag::RequestGameplayTag(Param.ParameterName, false));
 		if (!Tag) continue;
 		const auto Value = MPCSharedScalar[*Tag];
 		Tags.Remove(*Tag);
@@ -44,9 +43,8 @@ void UGridSettings::UpdateMPC()
 
 	for (const auto Tag : Tags)
 	{
-		const auto Leaf = Tag.GetTagLeafName();
 		FCollectionScalarParameter Param;
-		Param.ParameterName = Leaf;
+		Param.ParameterName = Tag.GetTagName();
 		Param.DefaultValue = MPCSharedScalar[Tag];
 		Mpc->ScalarParameters.Add(Param);
 		Updated = true;
@@ -62,5 +60,7 @@ void UGridSettings::UpdateMPC()
 
 float UGridSettings::GetCellSize() const
 {
-	return *MPCSharedScalar.Find(TAG_Grid_CellSize);
+	const auto Size = MPCSharedScalar.Find(TAG_Grid_Cell_Size);
+	if (!Size) return 100;
+	return *Size;
 }
