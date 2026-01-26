@@ -24,7 +24,8 @@ public class GEARS_Prototype : ModuleRules
 			"GameplayTasks",
 			"DeveloperSettings",
 			"AIModule",
-			"Niagara"
+			"Niagara",
+			"UMG"
 		});
 	}
 }
