@@ -31,6 +31,12 @@ public:
 		{TAG_Grid_Transition_Big_CellCountThreshold, 100}
 	};
 	
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta = (ReadOnlyKeys))
+	TMap<FGameplayTag, FLinearColor> MPCSharedLinearColor = {
+		{TAG_Grid_Cell_Color, {1, 1, 1}},
+		{TAG_Grid_Border_Color, {0.1, 0.1, 0.1}}
+	};
+	
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	float GetCellSize() const;
 	
@@ -40,6 +46,8 @@ public:
 	
 private:
 	void UpdateMPC();
+	template <typename FCollectionParameterType, typename FValueType>
+	static bool UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, const TMap<FGameplayTag, FValueType>& SharedParams);
 #endif
 };
 
