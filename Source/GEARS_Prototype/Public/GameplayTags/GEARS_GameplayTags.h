@@ -1,7 +1,13 @@
 ﻿#pragma once
 
-#include "GameplayTagContainer.h"
 #include "NativeGameplayTags.h"
 
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Cell_Size)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Cell_Small_Factor)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Cell_Big_Factor)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Cell_Color)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Border_Thickness)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Border_Color)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Length_Factor)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Small_CellCountThreshold)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Big_CellCountThreshold)
