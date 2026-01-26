@@ -20,7 +20,13 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
 	float DefaultPitchAngle = -60;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
-	bool bInvertRotationAxis = false;
+	bool bInvertPitchAxis = false;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	TSoftObjectPtr<UCurveFloat> YawCurve;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	float DefaultYawAngle = 0;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	bool bInvertYawAxis = false;
 	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta = (
 		ToolTip="Multiplier based on the grid cell size"))
@@ -47,6 +53,8 @@ public:
 	float GetMaxPitch() const;
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetPitchSpeed(float Pitch) const;
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	float GetYawSpeed(float Yaw) const;
 private:
 	TTuple<float, float> GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const;
 };

@@ -53,6 +53,12 @@ float UCameraSettings::GetPitchSpeed(const float Pitch) const
 	return PitchCurve.LoadSynchronous()->GetFloatValue(Pitch);
 }
 
+float UCameraSettings::GetYawSpeed(float Yaw) const
+{
+	ensureSoftPtrOrRet(YawCurve, -1);
+	return YawCurve.LoadSynchronous()->GetFloatValue(Yaw);
+}
+
 TTuple<float, float> UCameraSettings::GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const
 {
 	ensureSoftPtrOrRet(Curve, MakeTuple(-1, -1));
