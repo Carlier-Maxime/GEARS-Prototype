@@ -60,6 +60,12 @@ void AGEARS_Character::Move(const FInputActionValue& Value)
 {
 	if (const auto PC = GetController()) PC->StopMovement();
 	const auto Direction = Value.Get<FVector2D>();
-	AddMovementInput(FVector::ForwardVector, Direction.X);
-	AddMovementInput(FVector::RightVector, Direction.Y);
+	
+	const FRotator Rotation = SpringArm->GetRelativeRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	
+	AddMovementInput(ForwardDirection, Direction.X);
+	AddMovementInput(RightDirection, Direction.Y);
 }
