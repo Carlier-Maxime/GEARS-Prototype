@@ -3,8 +3,10 @@
 
 #include "StyleData.h"
 
+#if WITH_EDITOR
 void UStyleData::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeChainProperty(PropertyChangedEvent);
 	OnStyleChanged.Broadcast();
 }
+#endif
