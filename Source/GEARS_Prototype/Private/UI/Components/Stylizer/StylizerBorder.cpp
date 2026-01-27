@@ -15,7 +15,7 @@ void UStylizerBorder::ApplyStyle()
 	Border->SetBrushColor(Style->BrushColor);
 }
 
-const UDataAsset* UStylizerBorder::GetStyleAsset() const
+UStyleData* UStylizerBorder::GetStyleAsset() const
 {
 	return Style;
 }

@@ -6,6 +6,7 @@
 #include "Extensions/UIComponent.h"
 #include "StylizerBase.generated.h"
 
+class UStyleData;
 /**
  * 
  */
@@ -20,7 +21,7 @@ public:
 
 protected:
 	virtual void OnPreConstruct(bool bIsDesignTime) override;
-	virtual const UDataAsset* GetStyleAsset() const PURE_VIRTUAL(UStylizerBase::GetStyleAsset, return nullptr;);
+	virtual UStyleData* GetStyleAsset() const PURE_VIRTUAL(UStylizerBase::GetStyleAsset, return nullptr;);
 	template <typename T>
 	T* GetWidget() {
 		if (!GetOwner().IsValid()) return nullptr;
@@ -28,5 +29,6 @@ protected:
 		if (!ensureMsgf(Widget, TEXT("Widget is not of desired type (Maybe is not a good stylizer type)"))) return nullptr;
 		return Widget;
 	}
+	UFUNCTION()
 	virtual void ApplyStyle();
 };

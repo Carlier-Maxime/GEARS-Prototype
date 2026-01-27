@@ -3,9 +3,15 @@
 
 #include "StylizerBase.h"
 
+#include "UI/Styles/StyleData.h"
+
 void UStylizerBase::OnPreConstruct(bool bIsDesignTime)
 {
 	Super::OnPreConstruct(bIsDesignTime);
+	if (const auto Asset = GetStyleAsset())
+	{
+		Asset->OnStyleChanged.AddUniqueDynamic(this, &ThisClass::ApplyStyle);
+	}
 	ApplyStyle();
 }
 
@@ -13,6 +19,10 @@ void UStylizerBase::OnPreConstruct(bool bIsDesignTime)
 void UStylizerBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if (const auto Asset = GetStyleAsset())
+	{
+		Asset->OnStyleChanged.AddUniqueDynamic(this, &ThisClass::ApplyStyle);
+	}
 	ApplyStyle();
 }
 #endif

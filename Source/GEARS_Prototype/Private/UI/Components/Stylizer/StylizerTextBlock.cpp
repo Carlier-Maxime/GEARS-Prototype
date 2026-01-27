@@ -23,7 +23,7 @@ void UStylizerTextBlock::ApplyStyle()
 	TextBlock->SetLineHeightPercentage(Style->LineHeightPercentage);
 }
 
-const UDataAsset* UStylizerTextBlock::GetStyleAsset() const
+UStyleData* UStylizerTextBlock::GetStyleAsset() const
 {
 	return Style;
 }

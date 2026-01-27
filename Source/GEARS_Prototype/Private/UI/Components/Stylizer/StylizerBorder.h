@@ -16,7 +16,7 @@ class GEARS_PROTOTYPE_API UStylizerBorder : public UStylizerBase
 	GENERATED_BODY()
 protected:
 	virtual void ApplyStyle() override;
-	virtual const UDataAsset* GetStyleAsset() const override;
+	virtual UStyleData* GetStyleAsset() const override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Stylizer", meta=(AllowPrivateAccess = true))

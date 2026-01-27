@@ -3,15 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
-#include "Framework/Styling/TextBlockWidgetStyle.h"
+#include "StyleData.h"
 #include "TextBlockStyleData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GEARS_PROTOTYPE_API UTextBlockStyleData : public UPrimaryDataAsset
+class GEARS_PROTOTYPE_API UTextBlockStyleData : public UStyleData
 {
 	GENERATED_BODY()
 	

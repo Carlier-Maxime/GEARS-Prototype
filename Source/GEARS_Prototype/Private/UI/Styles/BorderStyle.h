@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
+#include "StyleData.h"
 #include "Slate/SlateBrushAsset.h"
 #include "BorderStyle.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class GEARS_PROTOTYPE_API UBorderStyle : public UPrimaryDataAsset
+class GEARS_PROTOTYPE_API UBorderStyle : public UStyleData
 {
 	GENERATED_BODY()
 public:
