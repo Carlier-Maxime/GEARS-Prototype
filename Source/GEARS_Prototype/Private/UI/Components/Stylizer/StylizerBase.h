@@ -15,13 +15,15 @@ class GEARS_PROTOTYPE_API UStylizerBase : public UUIComponent
 {
 	GENERATED_BODY()
 public:
+	UStylizerBase();
+	virtual void BeginDestroy() override;
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
 protected:
 	virtual void OnPreConstruct(bool bIsDesignTime) override;
-	virtual UStyleData* GetStyleAsset() const PURE_VIRTUAL(UStylizerBase::GetStyleAsset, return nullptr;);
+	virtual UStyleData* GetStyleAsset() const {return nullptr;}
 	template <typename T>
 	T* GetWidget() {
 		if (!GetOwner().IsValid()) return nullptr;

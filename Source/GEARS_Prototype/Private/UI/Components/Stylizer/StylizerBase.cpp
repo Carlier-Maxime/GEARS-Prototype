@@ -5,12 +5,30 @@
 
 #include "UI/Styles/StyleData.h"
 
+UStylizerBase::UStylizerBase()
+{
+	SetFlags(RF_Transient);
+	ClearFlags(RF_Transactional);
+}
+
+void UStylizerBase::BeginDestroy()
+{
+	if (const auto Asset = GetStyleAsset())
+	{
+		Asset->OnStyleChanged.RemoveAll(this);
+	}
+	Super::BeginDestroy();
+}
+
 void UStylizerBase::OnPreConstruct(bool bIsDesignTime)
 {
 	Super::OnPreConstruct(bIsDesignTime);
 	if (const auto Asset = GetStyleAsset())
 	{
-		Asset->OnStyleChanged.AddUniqueDynamic(this, &ThisClass::ApplyStyle);
+		Asset->OnStyleChanged.AddWeakLambda(this, [this]()
+		{
+			if (IsValid(this)) ApplyStyle();
+		});
 	}
 	ApplyStyle();
 }
@@ -21,7 +39,10 @@ void UStylizerBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	if (const auto Asset = GetStyleAsset())
 	{
-		Asset->OnStyleChanged.AddUniqueDynamic(this, &ThisClass::ApplyStyle);
+		Asset->OnStyleChanged.AddWeakLambda(this, [this]()
+		{
+			if (IsValid(this)) ApplyStyle();
+		});
 	}
 	ApplyStyle();
 }
