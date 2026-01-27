@@ -25,7 +25,9 @@ public class GEARS_Prototype : ModuleRules
 			"DeveloperSettings",
 			"AIModule",
 			"Niagara",
-			"UMG"
+			"UMG",
+			"Slate",
+			"SlateCore"
 		});
 	}
 }
