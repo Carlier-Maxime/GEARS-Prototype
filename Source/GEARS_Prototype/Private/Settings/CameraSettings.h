@@ -22,6 +22,8 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
 	bool bInvertPitchAxis = false;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	bool bLockPitch = false;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
 	TSoftObjectPtr<UCurveFloat> YawCurve;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
 	float DefaultYawAngle = 0;

@@ -94,15 +94,22 @@ void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 {
 	const auto Direction = Value.Get<FVector2D>();
 	const UCameraSettings* Settings = GetDefault<UCameraSettings>();
+	
 	const auto Pitch = SpringArm->GetRelativeRotation().Pitch;
-	float TargetPitch = Direction.Y * Settings->GetPitchSpeed(Pitch);
-	if (Settings->bInvertPitchAxis) TargetPitch *= -1;
-	TargetPitch += Pitch;
-	TargetPitch = FMath::Clamp(TargetPitch, Settings->GetMinPitch(), Settings->GetMaxPitch());
+	float TargetPitch;
+	if (!Settings->bLockPitch)
+	{
+		TargetPitch = Direction.Y * Settings->GetPitchSpeed(Pitch);
+		if (Settings->bInvertPitchAxis) TargetPitch *= -1;
+		TargetPitch += Pitch;
+		TargetPitch = FMath::Clamp(TargetPitch, Settings->GetMinPitch(), Settings->GetMaxPitch());
+	} else TargetPitch = Pitch;
+	
 	const auto Yaw = SpringArm->GetRelativeRotation().Yaw;
 	float TargetYaw = Direction.X * Settings->GetYawSpeed(Yaw);
 	if (Settings->bInvertYawAxis) TargetYaw *= -1;
 	TargetYaw += Yaw;
+	
 	const FRotator NewRotation(TargetPitch, TargetYaw, 0.f);
 	SpringArm->SetRelativeRotation(NewRotation);
 }

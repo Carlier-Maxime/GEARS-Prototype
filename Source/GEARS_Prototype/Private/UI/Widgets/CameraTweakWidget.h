@@ -24,6 +24,9 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 private:
+	UFUNCTION()
+	void OnLockPitchChanged(bool bIsChecked);
+	
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<UCheckBox> LockPitchCheckBox;
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))

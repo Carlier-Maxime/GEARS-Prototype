@@ -5,6 +5,8 @@
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/CheckBox.h"
+#include "Settings/CameraSettings.h"
 
 void UCameraTweakWidget::NativeOnInitialized()
 {
@@ -13,4 +15,12 @@ void UCameraTweakWidget::NativeOnInitialized()
 	if (!ensure(Pawn)) return;
 	SpringArm = Pawn->FindComponentByClass<USpringArmComponent>();
 	Camera = Pawn->FindComponentByClass<UCameraComponent>();
+	
+	LockPitchCheckBox->OnCheckStateChanged.AddDynamic(this, &ThisClass::OnLockPitchChanged);
+}
+
+void UCameraTweakWidget::OnLockPitchChanged(bool bIsChecked)
+{
+	const auto Settings = GetMutableDefault<UCameraSettings>();
+	Settings->bLockPitch = bIsChecked;
 }
