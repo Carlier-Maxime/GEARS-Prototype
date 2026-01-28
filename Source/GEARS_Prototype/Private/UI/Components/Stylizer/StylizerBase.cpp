@@ -5,12 +5,6 @@
 
 #include "UI/Styles/StyleData.h"
 
-UStylizerBase::UStylizerBase()
-{
-	SetFlags(RF_Transient);
-	ClearFlags(RF_Transactional);
-}
-
 void UStylizerBase::BeginDestroy()
 {
 	if (const auto Asset = GetStyleAsset())

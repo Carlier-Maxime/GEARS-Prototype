@@ -15,7 +15,6 @@ class GEARS_PROTOTYPE_API UStylizerBase : public UUIComponent
 {
 	GENERATED_BODY()
 public:
-	UStylizerBase();
 	virtual void BeginDestroy() override;
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
