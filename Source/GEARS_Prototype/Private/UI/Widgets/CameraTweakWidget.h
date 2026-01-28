@@ -6,6 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "CameraTweakWidget.generated.h"
 
+class UTextBlock;
+class USlider;
+class UButton;
+class UCheckBox;
 class UCameraComponent;
 class USpringArmComponent;
 /**
@@ -20,6 +24,17 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 private:
+	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
+	TObjectPtr<UCheckBox> LockPitchCheckBox;
+	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
+	TObjectPtr<UCheckBox> SnapAngleCheckBox;
+	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
+	TObjectPtr<UButton> ResetViewButton;
+	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
+	TObjectPtr<USlider> FOVSlider;
+	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
+	TObjectPtr<UTextBlock> FOVTextBlock;
+	
 	UPROPERTY(Transient)
 	TObjectPtr<USpringArmComponent> SpringArm;
 	UPROPERTY(Transient)
