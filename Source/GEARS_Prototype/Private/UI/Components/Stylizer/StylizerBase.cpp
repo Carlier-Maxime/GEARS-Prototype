@@ -50,5 +50,8 @@ void UStylizerBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 
 void UStylizerBase::ApplyStyle()
 {
-	ensureMsgf(GetStyleAsset(), TEXT("Style is undefined !"));
+	if (!GetStyleAsset() && GetWorld() && GetWorld()->IsGameWorld())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s] ApplyStyle: No Style Asset assigned!"), *GetName());
+	}
 }

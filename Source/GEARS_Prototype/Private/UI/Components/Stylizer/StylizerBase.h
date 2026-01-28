@@ -28,7 +28,10 @@ protected:
 	T* GetWidget() {
 		if (!GetOwner().IsValid()) return nullptr;
 		const auto Widget = Cast<T>(GetOwner().Get());
-		if (!ensureMsgf(Widget, TEXT("Widget is not of desired type (Maybe is not a good stylizer type)"))) return nullptr;
+		if (!Widget) {
+			UE_LOG(LogTemp, Error, TEXT("Stylizer [%s]: Wrong Widget Type !"), *GetName());
+			return nullptr;
+		}
 		return Widget;
 	}
 	UFUNCTION()
