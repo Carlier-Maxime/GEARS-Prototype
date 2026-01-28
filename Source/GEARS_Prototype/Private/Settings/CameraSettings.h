@@ -37,23 +37,14 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom")
 	bool bInvertZoomAxis = false;
 	
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetMinZoomDistance() const;
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetMaxZoomDistance() const;
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetDefaultZoomDistance() const;
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetZoomSpeed(float Distance) const;
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	static float GetZoomDistance(float Factor);
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetMinPitch() const;
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetMaxPitch() const;
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetPitchSpeed(float Pitch) const;
-	UFUNCTION(BlueprintCallable, Category = "Camera")
 	float GetYawSpeed(float Yaw) const;
 private:
 	TTuple<float, float> GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const;
