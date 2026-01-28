@@ -14,7 +14,8 @@ void UStylizerTextBlock::ApplyStyle()
 	TextBlock->SetColorAndOpacity(Style->ColorAndOpacity);
 	TextBlock->SetShadowOffset(Style->ShadowOffset);
 	TextBlock->SetShadowColorAndOpacity(Style->ShadowColorAndOpacity);
-	TextBlock->SetStrikeBrush(Style->StrikeBrush);
+	if (const auto Asset = Style->StrikeBrush)
+		TextBlock->SetStrikeBrush(Asset->Brush);
 	TextBlock->SetTextTransformPolicy(Style->TransformPolicy);
 	TextBlock->SetTextOverflowPolicy(Style->OverflowPolicy);
 	TextBlock->SetJustification(Style->Justification);

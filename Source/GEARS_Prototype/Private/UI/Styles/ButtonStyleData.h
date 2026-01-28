@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "StyleData.h"
+#include "Slate/SlateBrushAsset.h"
 #include "ButtonStyleData.generated.h"
 
 /**
@@ -16,9 +17,23 @@ class GEARS_PROTOTYPE_API UButtonStyleData : public UStyleData
 	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Style")
-	FButtonStyle Slate;
+	TObjectPtr<USlateBrushAsset> MainBrush = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category="Style")
-	FLinearColor ColorAndOpacity;
-	UPROPERTY(EditDefaultsOnly, Category="Style")
-	FLinearColor BackgroundColor;
+	FLinearColor ForegroundColor = FLinearColor::White;
+	UPROPERTY(EditDefaultsOnly, Category = "Style")
+	FMargin Padding = FMargin(4.f);
+	
+	UPROPERTY(EditDefaultsOnly, Category = "States", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float HoverLightIntensity = 0.15f;
+	UPROPERTY(EditDefaultsOnly, Category = "States", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float PressedDarkIntensity = 0.25f;
+	UPROPERTY(EditDefaultsOnly, Category = "States", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float DisabledAlphaIntensity = 0.5f;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	TObjectPtr<USoundBase> PressedSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	TObjectPtr<USoundBase> ClickedSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	TObjectPtr<USoundBase> HoveredSound;
 };

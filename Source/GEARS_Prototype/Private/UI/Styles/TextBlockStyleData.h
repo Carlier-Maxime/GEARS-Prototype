@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "StyleData.h"
+#include "Slate/SlateBrushAsset.h"
 #include "TextBlockStyleData.generated.h"
 
 /**
@@ -28,7 +29,7 @@ public:
     FLinearColor ShadowColorAndOpacity = FLinearColor::Black;
 	
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Style")
-    FSlateBrush StrikeBrush;
+    TObjectPtr<USlateBrushAsset> StrikeBrush;
 	
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Style")
     ETextTransformPolicy TransformPolicy = ETextTransformPolicy::None;
@@ -53,10 +54,4 @@ public:
 	
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Style")
     FLinearColor HighlightColor = FLinearColor::Transparent;
-	
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Style")
-    FSlateBrush UnderlineBrush;
-	
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Style")
-    FSlateBrush HighlightBrush;
 };

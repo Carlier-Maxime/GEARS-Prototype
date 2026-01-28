@@ -49,3 +49,30 @@ void UStylizerBase::ApplyStyle()
 		UE_LOG(LogTemp, Warning, TEXT("[%s] ApplyStyle: No Style Asset assigned!"), *GetName());
 	}
 }
+
+void UStylizerBase::LerpBrush(FSlateBrush& Brush, const FLinearColor& ColorB, const float Exponent, const bool bKeepOriginalAlpha)
+{
+	const auto Color = Brush.TintColor.GetSpecifiedColor();
+	const auto OutlineColor = Brush.OutlineSettings.Color.GetSpecifiedColor();
+	auto NewColor = FMath::Lerp(Color, ColorB, Exponent);
+	auto NewOutlineColor = FMath::Lerp(OutlineColor, ColorB, Exponent);
+	if (bKeepOriginalAlpha)
+	{
+		NewColor.A = Color.A;
+		NewOutlineColor.A = OutlineColor.A;
+	}
+	Brush.TintColor = NewColor;
+	Brush.OutlineSettings.Color = NewOutlineColor;
+}
+
+void UStylizerBase::SetBrushAlpha(FSlateBrush& Brush, const float AlphaIntensity)
+{
+	const auto Color = Brush.TintColor.GetSpecifiedColor();
+	const auto OutlineColor = Brush.OutlineSettings.Color.GetSpecifiedColor();
+	auto NewColor = Color;
+	NewColor.A *= AlphaIntensity;
+	auto NewOutlineColor = OutlineColor;
+	NewOutlineColor.A *= AlphaIntensity;
+	Brush.TintColor = NewColor;
+	Brush.OutlineSettings.Color = NewOutlineColor;
+}

@@ -35,4 +35,6 @@ protected:
 	}
 	UFUNCTION()
 	virtual void ApplyStyle();
+	static void LerpBrush(FSlateBrush& Brush, const FLinearColor& ColorB, float Exponent, bool bKeepOriginalAlpha = true);
+	static void SetBrushAlpha(FSlateBrush& Brush, float AlphaIntensity);
 };

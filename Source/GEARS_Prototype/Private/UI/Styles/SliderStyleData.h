@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "StyleData.h"
+#include "Slate/SlateBrushAsset.h"
 #include "SliderStyleData.generated.h"
 
 /**
@@ -16,5 +17,16 @@ class GEARS_PROTOTYPE_API USliderStyleData : public UStyleData
 	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Style")
-	FSliderStyle Slate;
+	TObjectPtr<USlateBrushAsset> BarBrush;
+	UPROPERTY(EditDefaultsOnly, Category="Style")
+	TObjectPtr<USlateBrushAsset> ThumbBrush;
+	UPROPERTY(EditDefaultsOnly, Category="Style")
+	float BarThickness = 2.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="States", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float HoverLightIntensity = 0.15f;
+	UPROPERTY(EditDefaultsOnly, Category="States", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float PressedDarkIntensity = 0.25f;
+	UPROPERTY(EditDefaultsOnly, Category="States", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float DisabledAlphaIntensity = 0.5f;
 };
