@@ -136,7 +136,7 @@ void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 	
 	const auto Pitch = SpringArm->GetRelativeRotation().Pitch;
 	float TargetPitch;
-	if (!Settings->bLockPitch)
+	if (!Settings->IsLockPitch())
 	{
 		TargetPitch = Direction.Y * Settings->GetPitchSpeed(Pitch);
 		if (Settings->bInvertPitchAxis) TargetPitch *= -1;

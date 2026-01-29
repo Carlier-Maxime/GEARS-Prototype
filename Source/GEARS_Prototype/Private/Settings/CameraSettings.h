@@ -20,8 +20,7 @@ public:
 	float DefaultPitchAngle = -60;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
 	bool bInvertPitchAxis = false;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
-	bool bLockPitch = false;
+	FOnBoolChanged OnLockPitchChanged;
 	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	float DefaultYawAngle = 0;
@@ -49,6 +48,8 @@ public:
 	float GetMinPitch() const;
 	float GetMaxPitch() const;
 	float GetPitchSpeed(float Pitch) const;
+	bool IsLockPitch() const;
+	void SetLockPitch(bool bActive);
 	
 	float GetYawSpeed(float Yaw) const;
 	bool IsSnapYaw90() const;
@@ -58,6 +59,9 @@ private:
 	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
 	TSoftObjectPtr<UCurveFloat> PitchCurve;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
+	bool bLockPitch = false;
+	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	TSoftObjectPtr<UCurveFloat> YawCurve;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")

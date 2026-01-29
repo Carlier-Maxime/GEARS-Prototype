@@ -23,7 +23,7 @@ void UCameraTweakWidget::NativeOnInitialized()
 void UCameraTweakWidget::OnLockPitchChanged(bool bIsChecked)
 {
 	const auto Settings = GetMutableDefault<UCameraSettings>();
-	Settings->bLockPitch = bIsChecked;
+	Settings->SetLockPitch(bIsChecked);
 }
 
 void UCameraTweakWidget::OnSnapAngleChanged(bool bIsChecked)

@@ -53,6 +53,17 @@ float UCameraSettings::GetPitchSpeed(const float Pitch) const
 	return PitchCurve.LoadSynchronous()->GetFloatValue(Pitch);
 }
 
+bool UCameraSettings::IsLockPitch() const
+{
+	return bLockPitch;
+}
+
+void UCameraSettings::SetLockPitch(const bool bActive)
+{
+	bLockPitch = bActive;
+	OnLockPitchChanged.Broadcast(bActive);
+}
+
 float UCameraSettings::GetYawSpeed(float Yaw) const
 {
 	ensureSoftPtrOrRet(YawCurve, -1);
