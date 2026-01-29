@@ -35,6 +35,8 @@ private:
 	void OnSnapAngleUpdated(bool bValue);
 	UFUNCTION()
 	void OnFOVChanged(float Value);
+	UFUNCTION()
+	void ResetView();
 	
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<UCheckBox> LockPitchCheckBox;

@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GEARS_Character.h"
 #include "Definitions/GEARS_Macro.h"
 #include "InputMappingContext.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
@@ -152,4 +153,11 @@ void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 	
 	const FRotator NewRotation(TargetPitch, TargetYaw, 0.f);
 	SpringArm->SetRelativeRotation(NewRotation);
+}
+
+void AGEARS_PlayerController::RequestViewReset()
+{
+	const auto MyChar = Cast<AGEARS_Character>(GetCharacter());
+	if (!MyChar) return;
+	MyChar->ResetView();
 }

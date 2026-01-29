@@ -12,27 +12,13 @@ AGEARS_Character::AGEARS_Character()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
-	
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = GetDefault<UCameraSettings>()->GetDefaultZoomDistance();
-	SpringArm->SetRelativeRotation(FRotator(GetDefault<UCameraSettings>()->DefaultPitchAngle, 0.f, 0.f));
-	
-	SpringArm->bInheritPitch = false;
-	SpringArm->bInheritRoll = false;
-	SpringArm->bInheritYaw = false; 
-	SpringArm->bDoCollisionTest = false;
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
-	Camera->bUsePawnControlRotation = false;
-	Camera->FieldOfView = GetDefault<UCameraSettings>()->GetDefaultFOV();
 	
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
+	ResetView();
 }
 
 void AGEARS_Character::Tick(float DeltaTime)
@@ -69,4 +55,25 @@ void AGEARS_Character::Move(const FInputActionValue& Value)
 	
 	AddMovementInput(ForwardDirection, Direction.X);
 	AddMovementInput(RightDirection, Direction.Y);
+}
+
+void AGEARS_Character::ResetView()
+{
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+	
+	SpringArm->TargetArmLength = GetDefault<UCameraSettings>()->GetDefaultZoomDistance();
+	SpringArm->SetRelativeRotation(FRotator(GetDefault<UCameraSettings>()->DefaultPitchAngle, 0.f, 0.f));
+	
+	SpringArm->bInheritPitch = false;
+	SpringArm->bInheritRoll = false;
+	SpringArm->bInheritYaw = false; 
+	SpringArm->bDoCollisionTest = false;
+	
+	Camera->bUsePawnControlRotation = false;
+	Camera->FieldOfView = GetDefault<UCameraSettings>()->GetDefaultFOV();
+	
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 }

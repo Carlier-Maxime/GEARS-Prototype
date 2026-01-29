@@ -19,6 +19,8 @@ public:
 	AGEARS_Character();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	
+	void ResetView();
 
 protected:
 	virtual void BeginPlay() override;

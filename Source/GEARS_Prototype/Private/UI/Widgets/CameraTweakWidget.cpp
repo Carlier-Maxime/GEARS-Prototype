@@ -4,10 +4,12 @@
 #include "CameraTweakWidget.h"
 
 #include "Camera/CameraComponent.h"
+#include "Components/Button.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CheckBox.h"
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
+#include "Player/GEARS_PlayerController.h"
 #include "Settings/CameraSettings.h"
 
 void UCameraTweakWidget::NativeOnInitialized()
@@ -32,6 +34,8 @@ void UCameraTweakWidget::NativeOnInitialized()
 	FOVSlider->SetMaxValue(Settings->GetMaxFOV());
 	FOVSlider->SetValue(Camera->FieldOfView);
 	OnFOVChanged(Camera->FieldOfView);
+	
+	ResetViewButton->OnClicked.AddDynamic(this, &ThisClass::ResetView);
 }
 
 void UCameraTweakWidget::NativeDestruct()
@@ -79,4 +83,12 @@ void UCameraTweakWidget::OnFOVChanged(float Value)
 	Camera->FieldOfView = Value;
 	FOVTextBlock->SetText(FText::AsNumber(Value, &FOVFormatOptions));
 	FOVTextBlock->SetToolTipText(FText::AsNumber(Value));
+}
+
+void UCameraTweakWidget::ResetView()
+{
+	const auto PC = Cast<AGEARS_PlayerController>(GetOwningPlayer());
+	if (!PC) return;
+	PC->RequestViewReset();
+	OnFOVChanged(Camera->FieldOfView);
 }

@@ -21,6 +21,8 @@ class GEARS_PROTOTYPE_API AGEARS_PlayerController : public APlayerController
 public:
 	void SnapYaw90();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	void RequestViewReset();
 
 protected:
 	virtual void BeginPlay() override;
