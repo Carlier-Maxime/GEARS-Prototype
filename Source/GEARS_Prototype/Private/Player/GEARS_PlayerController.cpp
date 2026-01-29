@@ -77,7 +77,7 @@ void AGEARS_PlayerController::HiddenCursor()
 {
 	bShowMouseCursor = false;
 	FInputModeGameOnly InputMode;
-	InputMode.SetConsumeCaptureMouseDown(false);
+	InputMode.SetConsumeCaptureMouseDown(true);
 	SetInputMode(InputMode);
 }
 
@@ -85,8 +85,8 @@ void AGEARS_PlayerController::ShowCursor()
 {
 	bShowMouseCursor = true;
 	FInputModeGameAndUI InputMode;
-	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockOnCapture); 
+	InputMode.SetHideCursorDuringCapture(true);
 	SetInputMode(InputMode);
 }
 
