@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
+#include "Definitions/GEARS_Delegates.h"
 #include "CameraSettings.generated.h"
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnSnapStateChanged, bool)
 
 /**
  * 
@@ -30,7 +29,7 @@ public:
 	bool bInvertYawAxis = false;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	float SnapYawDuration = 0.5f;
-	FOnSnapStateChanged OnSnapYawStateChanged;
+	FOnBoolChanged OnSnapYawStateChanged;
 	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta = (
 		ToolTip="Multiplier based on the grid cell size"))
