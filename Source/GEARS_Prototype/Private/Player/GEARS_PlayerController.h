@@ -20,6 +20,8 @@ class GEARS_PROTOTYPE_API AGEARS_PlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	void SnapYaw90();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -44,6 +46,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
 	FTSTicker::FDelegateHandle SnapYawDelegate;
+	FDelegateHandle CamSnapChangedHandle;
 	
 	void MoveToCursor();
 	void Zoom(const FInputActionValue& Value);

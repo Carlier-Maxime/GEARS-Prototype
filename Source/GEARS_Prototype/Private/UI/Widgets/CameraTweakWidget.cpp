@@ -6,7 +6,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CheckBox.h"
-#include "Player/GEARS_PlayerController.h"
 #include "Settings/CameraSettings.h"
 
 void UCameraTweakWidget::NativeOnInitialized()
@@ -30,8 +29,5 @@ void UCameraTweakWidget::OnLockPitchChanged(bool bIsChecked)
 void UCameraTweakWidget::OnSnapAngleChanged(bool bIsChecked)
 {
 	const auto Settings = GetMutableDefault<UCameraSettings>();
-	Settings->bSnapYaw90 = bIsChecked;
-	const auto PC = Cast<AGEARS_PlayerController>(GetOwningPlayer());
-	if (!PC) return;
-	PC->SnapYaw90();
+	Settings->SetSnapYaw90(bIsChecked);
 }

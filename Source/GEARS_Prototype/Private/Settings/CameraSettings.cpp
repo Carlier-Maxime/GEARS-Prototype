@@ -59,6 +59,17 @@ float UCameraSettings::GetYawSpeed(float Yaw) const
 	return YawCurve.LoadSynchronous()->GetFloatValue(Yaw);
 }
 
+bool UCameraSettings::IsSnapYaw90() const
+{
+	return bSnapYaw90;
+}
+
+void UCameraSettings::SetSnapYaw90(const bool bActive)
+{
+	bSnapYaw90 = bActive;
+	OnSnapYawStateChanged.Broadcast(bActive);
+}
+
 TTuple<float, float> UCameraSettings::GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const
 {
 	ensureSoftPtrOrRet(Curve, MakeTuple(-1, -1));

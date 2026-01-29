@@ -6,6 +6,8 @@
 #include "Engine/DeveloperSettings.h"
 #include "CameraSettings.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSnapStateChanged, bool)
+
 /**
  * 
  */
@@ -27,9 +29,8 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	bool bInvertYawAxis = false;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
-	bool bSnapYaw90 = false;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	float SnapYawDuration = 0.5f;
+	FOnSnapStateChanged OnSnapYawStateChanged;
 	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta = (
 		ToolTip="Multiplier based on the grid cell size"))
@@ -45,10 +46,14 @@ public:
 	float GetDefaultZoomDistance() const;
 	float GetZoomSpeed(float Distance) const;
 	static float GetZoomDistance(float Factor);
+	
 	float GetMinPitch() const;
 	float GetMaxPitch() const;
 	float GetPitchSpeed(float Pitch) const;
+	
 	float GetYawSpeed(float Yaw) const;
+	bool IsSnapYaw90() const;
+	void SetSnapYaw90(bool bActive);
 private:
 	TTuple<float, float> GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const;
 	
@@ -56,4 +61,6 @@ private:
 	TSoftObjectPtr<UCurveFloat> PitchCurve;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	TSoftObjectPtr<UCurveFloat> YawCurve;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
+	bool bSnapYaw90 = false;
 };

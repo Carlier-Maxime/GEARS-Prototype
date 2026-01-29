@@ -25,6 +25,15 @@ void AGEARS_PlayerController::BeginPlay()
 		Subsystem->AddMappingContext(DefaultIMC.LoadSynchronous(), InputPriority);
 	}
 	if (ensureSoftPtr(ClickFX)) UAssetManager::GetStreamableManager().RequestAsyncLoad(ClickFX.ToSoftObjectPath());
+	const auto CamSettings = GetMutableDefault<UCameraSettings>();
+	CamSnapChangedHandle = CamSettings->OnSnapYawStateChanged.AddLambda([this](bool) { SnapYaw90(); });
+}
+
+void AGEARS_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	const auto CamSettings = GetMutableDefault<UCameraSettings>();
+	CamSettings->OnSnapYawStateChanged.Remove(CamSnapChangedHandle);
+	Super::EndPlay(EndPlayReason);
 }
 
 void AGEARS_PlayerController::SetupInputComponent()
@@ -95,7 +104,7 @@ void AGEARS_PlayerController::SnapYaw90()
 	auto& Ticker = FTSTicker::GetCoreTicker();
 	Ticker.RemoveTicker(SnapYawDelegate);
 	const auto Settings = GetDefault<UCameraSettings>();
-	if (!Settings->bSnapYaw90) return;
+	if (!Settings->IsSnapYaw90()) return;
 	
 	const auto StartRot = SpringArm->GetRelativeRotation();
 	auto EndRot = StartRot;
@@ -135,7 +144,7 @@ void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 		TargetPitch = FMath::Clamp(TargetPitch, Settings->GetMinPitch(), Settings->GetMaxPitch());
 	} else TargetPitch = Pitch;
 	
-	if (Settings->bSnapYaw90) FTSTicker::GetCoreTicker().RemoveTicker(SnapYawDelegate);
+	if (Settings->IsSnapYaw90()) FTSTicker::GetCoreTicker().RemoveTicker(SnapYawDelegate);
 	const auto Yaw = SpringArm->GetRelativeRotation().Yaw;
 	float TargetYaw = Direction.X * Settings->GetYawSpeed(Yaw);
 	if (Settings->bInvertYawAxis) TargetYaw *= -1;
