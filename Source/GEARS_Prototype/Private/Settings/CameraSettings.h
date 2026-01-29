@@ -16,16 +16,12 @@ class GEARS_PROTOTYPE_API UCameraSettings : public UDeveloperSettings
 	
 public:
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
-	TSoftObjectPtr<UCurveFloat> PitchCurve;
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
 	float DefaultPitchAngle = -60;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
 	bool bInvertPitchAxis = false;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
 	bool bLockPitch = false;
 	
-	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
-	TSoftObjectPtr<UCurveFloat> YawCurve;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	float DefaultYawAngle = 0;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
@@ -55,4 +51,9 @@ public:
 	float GetYawSpeed(float Yaw) const;
 private:
 	TTuple<float, float> GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const;
+	
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Pitch")
+	TSoftObjectPtr<UCurveFloat> PitchCurve;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
+	TSoftObjectPtr<UCurveFloat> YawCurve;
 };
