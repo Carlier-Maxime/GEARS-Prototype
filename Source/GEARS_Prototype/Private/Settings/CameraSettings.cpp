@@ -81,6 +81,27 @@ void UCameraSettings::SetSnapYaw90(const bool bActive)
 	OnSnapYawStateChanged.Broadcast(bActive);
 }
 
+float UCameraSettings::GetMinFOV() const
+{
+	return GetTimeRange(FOVCurve).Get<0>();
+}
+
+float UCameraSettings::GetMaxFOV() const
+{
+	return GetTimeRange(FOVCurve).Get<1>();
+}
+
+float UCameraSettings::GetFOVSpeed(float FOV) const
+{
+	ensureSoftPtrOrRet(FOVCurve, -1);
+	return FOVCurve.LoadSynchronous()->GetFloatValue(FOV);
+}
+
+float UCameraSettings::GetDefaultFOV() const
+{
+	return DefaultFOV;
+}
+
 TTuple<float, float> UCameraSettings::GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const
 {
 	ensureSoftPtrOrRet(Curve, MakeTuple(-1, -1));

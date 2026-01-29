@@ -39,6 +39,14 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom")
 	bool bInvertZoomAxis = false;
 	
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "FOV")
+	float DefaultFOV = 70;
+	
+	float GetMinFOV() const;
+	float GetMaxFOV() const;
+	float GetFOVSpeed(float FOV) const;
+	float GetDefaultFOV() const;
+	
 	float GetMinZoomDistance() const;
 	float GetMaxZoomDistance() const;
 	float GetDefaultZoomDistance() const;
@@ -66,4 +74,7 @@ private:
 	TSoftObjectPtr<UCurveFloat> YawCurve;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation|Yaw")
 	bool bSnapYaw90 = false;
+	
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "FOV")
+	TSoftObjectPtr<UCurveFloat> FOVCurve;
 };
