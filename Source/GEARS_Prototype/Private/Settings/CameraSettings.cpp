@@ -3,7 +3,7 @@
 
 #include "CameraSettings.h"
 
-#include "GEARS_Macro.h"
+#include "Definitions/GEARS_Macro.h"
 #include "GridSettings.h"
 #include "Curves/CurveFloat.h"
 

@@ -3,7 +3,7 @@
 
 #include "GEARS_Character.h"
 #include "EnhancedInputComponent.h"
-#include "GEARS_Macro.h"
+#include "Definitions/GEARS_Macro.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Settings/CameraSettings.h"
 

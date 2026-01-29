@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "StyleData.h"
 #include "Slate/SlateBrushAsset.h"
-#include "GEARS_Macro.h"
 #include "CheckboxStyleData.generated.h"
 
 /**

@@ -5,7 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "GEARS_Macro.h"
+#include "Definitions/GEARS_Macro.h"
 #include "InputMappingContext.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraFunctionLibrary.h"

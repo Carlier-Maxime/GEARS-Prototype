@@ -3,7 +3,7 @@
 
 #include "GEARS_HUD.h"
 
-#include "GEARS_Macro.h"
+#include "Definitions/GEARS_Macro.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/Widgets/HUDWidget.h"
 
