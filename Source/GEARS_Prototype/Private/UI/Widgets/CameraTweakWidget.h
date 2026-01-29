@@ -22,12 +22,17 @@ class GEARS_PROTOTYPE_API UCameraTweakWidget : public UUserWidget
 
 protected:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeDestruct() override;
 
 private:
 	UFUNCTION()
 	void OnLockPitchChanged(bool bIsChecked);
 	UFUNCTION()
 	void OnSnapAngleChanged(bool bIsChecked);
+	UFUNCTION()
+	void OnLockPitchUpdated(bool bValue);
+	UFUNCTION()
+	void OnSnapAngleUpdated(bool bValue);
 	
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<UCheckBox> LockPitchCheckBox;

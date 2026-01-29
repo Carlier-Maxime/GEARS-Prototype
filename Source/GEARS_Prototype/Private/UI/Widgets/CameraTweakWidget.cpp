@@ -18,6 +18,20 @@ void UCameraTweakWidget::NativeOnInitialized()
 	
 	LockPitchCheckBox->OnCheckStateChanged.AddDynamic(this, &ThisClass::OnLockPitchChanged);
 	SnapAngleCheckBox->OnCheckStateChanged.AddDynamic(this, &ThisClass::OnSnapAngleChanged);
+	
+	const auto Settings = GetMutableDefault<UCameraSettings>();
+	Settings->OnLockPitchChanged.AddUObject(this, &ThisClass::OnLockPitchUpdated);
+	Settings->OnSnapYawStateChanged.AddUObject(this, &ThisClass::OnSnapAngleUpdated);
+	OnLockPitchUpdated(Settings->IsLockPitch());
+	OnSnapAngleUpdated(Settings->IsSnapYaw90());
+}
+
+void UCameraTweakWidget::NativeDestruct()
+{
+	const auto Settings = GetMutableDefault<UCameraSettings>();
+	Settings->OnLockPitchChanged.RemoveAll(this);
+	Settings->OnSnapYawStateChanged.RemoveAll(this);
+	Super::NativeDestruct();
 }
 
 void UCameraTweakWidget::OnLockPitchChanged(bool bIsChecked)
@@ -30,4 +44,16 @@ void UCameraTweakWidget::OnSnapAngleChanged(bool bIsChecked)
 {
 	const auto Settings = GetMutableDefault<UCameraSettings>();
 	Settings->SetSnapYaw90(bIsChecked);
+}
+
+void UCameraTweakWidget::OnLockPitchUpdated(bool bValue)
+{
+	if (LockPitchCheckBox->IsChecked() == bValue) return;
+	LockPitchCheckBox->SetIsChecked(bValue);
+}
+
+void UCameraTweakWidget::OnSnapAngleUpdated(bool bValue)
+{
+	if (SnapAngleCheckBox->IsChecked() == bValue) return;
+	SnapAngleCheckBox->SetIsChecked(bValue);
 }
