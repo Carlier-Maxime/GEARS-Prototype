@@ -18,6 +18,8 @@ UCLASS()
 class GEARS_PROTOTYPE_API AGEARS_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	void SnapYaw90();
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -41,10 +43,12 @@ protected:
 private:
 	UPROPERTY()
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
+	FTSTicker::FDelegateHandle SnapYawDelegate;
 	
 	void MoveToCursor();
 	void Zoom(const FInputActionValue& Value);
 	void HiddenCursor();
 	void ShowCursor();
+	void DisableOrbitModif();
 	void Look(const FInputActionValue& Value);
 };

@@ -26,6 +26,8 @@ protected:
 private:
 	UFUNCTION()
 	void OnLockPitchChanged(bool bIsChecked);
+	UFUNCTION()
+	void OnSnapAngleChanged(bool bIsChecked);
 	
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<UCheckBox> LockPitchCheckBox;

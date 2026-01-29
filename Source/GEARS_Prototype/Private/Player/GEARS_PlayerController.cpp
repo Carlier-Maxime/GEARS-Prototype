@@ -36,8 +36,8 @@ void AGEARS_PlayerController::SetupInputComponent()
 	if (ensureSoftPtr(OrbitModifier))
 	{
 		Input->BindAction(OrbitModifier.LoadSynchronous(), ETriggerEvent::Started, this, &ThisClass::HiddenCursor);
-		Input->BindAction(OrbitModifier.LoadSynchronous(), ETriggerEvent::Canceled, this, &ThisClass::ShowCursor);
-		Input->BindAction(OrbitModifier.LoadSynchronous(), ETriggerEvent::Completed, this, &ThisClass::ShowCursor);
+		Input->BindAction(OrbitModifier.LoadSynchronous(), ETriggerEvent::Canceled, this, &ThisClass::DisableOrbitModif);
+		Input->BindAction(OrbitModifier.LoadSynchronous(), ETriggerEvent::Completed, this, &ThisClass::DisableOrbitModif);
 	}
 	if (ensureSoftPtr(LookAction)) Input->BindAction(LookAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ThisClass::Look);
 }
@@ -90,6 +90,36 @@ void AGEARS_PlayerController::ShowCursor()
 	SetInputMode(InputMode);
 }
 
+void AGEARS_PlayerController::SnapYaw90()
+{
+	auto& Ticker = FTSTicker::GetCoreTicker();
+	Ticker.RemoveTicker(SnapYawDelegate);
+	const auto Settings = GetDefault<UCameraSettings>();
+	if (!Settings->bSnapYaw90) return;
+	
+	const auto StartRot = SpringArm->GetRelativeRotation();
+	auto EndRot = StartRot;
+	EndRot.Yaw = FMath::RoundToInt(StartRot.Yaw / 90.f) * 90.f;
+	
+	const auto StartTime = GetWorld()->GetTimeSeconds();
+	const auto Duration = Settings->SnapYawDuration;
+	TWeakObjectPtr WeakThis(this);
+	SnapYawDelegate = Ticker.AddTicker(FTickerDelegate::CreateLambda([WeakThis, StartTime, StartRot, EndRot, Duration](float){
+		if (!WeakThis.IsValid()) return false;
+		const auto This = WeakThis.Get();
+		const auto ElapsedTime = This->GetWorld()->GetTimeSeconds() - StartTime;
+		const auto Alpha = FMath::Clamp(ElapsedTime / Duration, 0.f, 1.f);
+		This->SpringArm->SetRelativeRotation(FMath::InterpEaseOut(StartRot, EndRot, Alpha, 2));
+		return Alpha < 1.f;
+	}));
+}
+
+void AGEARS_PlayerController::DisableOrbitModif()
+{
+	ShowCursor();
+	SnapYaw90();
+}
+
 void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 {
 	const auto Direction = Value.Get<FVector2D>();
@@ -105,6 +135,7 @@ void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 		TargetPitch = FMath::Clamp(TargetPitch, Settings->GetMinPitch(), Settings->GetMaxPitch());
 	} else TargetPitch = Pitch;
 	
+	if (Settings->bSnapYaw90) FTSTicker::GetCoreTicker().RemoveTicker(SnapYawDelegate);
 	const auto Yaw = SpringArm->GetRelativeRotation().Yaw;
 	float TargetYaw = Direction.X * Settings->GetYawSpeed(Yaw);
 	if (Settings->bInvertYawAxis) TargetYaw *= -1;

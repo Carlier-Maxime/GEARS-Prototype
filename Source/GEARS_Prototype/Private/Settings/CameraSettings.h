@@ -29,6 +29,10 @@ public:
 	float DefaultYawAngle = 0;
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
 	bool bInvertYawAxis = false;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	bool bSnapYaw90 = false;
+	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Rotation")
+	float SnapYawDuration = 0.5f;
 	
 	UPROPERTY(Config, EditDefaultsOnly, config, Category = "Zoom", meta = (
 		ToolTip="Multiplier based on the grid cell size"))
