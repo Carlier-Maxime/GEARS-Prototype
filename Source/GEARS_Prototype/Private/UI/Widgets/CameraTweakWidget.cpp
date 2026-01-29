@@ -6,6 +6,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CheckBox.h"
+#include "Components/Slider.h"
+#include "Components/TextBlock.h"
 #include "Settings/CameraSettings.h"
 
 void UCameraTweakWidget::NativeOnInitialized()
@@ -24,6 +26,12 @@ void UCameraTweakWidget::NativeOnInitialized()
 	Settings->OnSnapYawStateChanged.AddUObject(this, &ThisClass::OnSnapAngleUpdated);
 	OnLockPitchUpdated(Settings->IsLockPitch());
 	OnSnapAngleUpdated(Settings->IsSnapYaw90());
+	
+	FOVSlider->OnValueChanged.AddDynamic(this, &ThisClass::OnFOVChanged);
+	FOVSlider->SetMinValue(Settings->GetMinFOV());
+	FOVSlider->SetMaxValue(Settings->GetMaxFOV());
+	FOVSlider->SetValue(Camera->FieldOfView);
+	OnFOVChanged(Camera->FieldOfView);
 }
 
 void UCameraTweakWidget::NativeDestruct()
@@ -56,4 +64,19 @@ void UCameraTweakWidget::OnSnapAngleUpdated(bool bValue)
 {
 	if (SnapAngleCheckBox->IsChecked() == bValue) return;
 	SnapAngleCheckBox->SetIsChecked(bValue);
+}
+
+void UCameraTweakWidget::OnFOVChanged(float Value)
+{
+	static const auto FOVFormatOptions = []{
+		FNumberFormattingOptions Options;
+		Options.MinimumIntegralDigits = 2;
+		Options.MaximumFractionalDigits = 0;
+		Options.RoundingMode = HalfToEven;
+		return Options;
+	}();
+	
+	Camera->FieldOfView = Value;
+	FOVTextBlock->SetText(FText::AsNumber(Value, &FOVFormatOptions));
+	FOVTextBlock->SetToolTipText(FText::AsNumber(Value));
 }
