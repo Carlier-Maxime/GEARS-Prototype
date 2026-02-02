@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
+#include "Definitions/GEARS_Delegates.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "GridSettings.generated.h"
 
@@ -37,6 +38,8 @@ public:
 		{TAG_Grid_Cell_Color, {1, 1, 1}},
 		{TAG_Grid_Border_Color, {0.1, 0.1, 0.1}}
 	};
+	
+	FOnVoidChanged OnUpdated;
 	
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	float GetCellSize() const;

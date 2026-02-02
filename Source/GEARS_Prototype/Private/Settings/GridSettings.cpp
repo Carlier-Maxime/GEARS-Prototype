@@ -47,6 +47,7 @@ void UGridSettings::Update()
 			UE_LOG(LogTemp, Display, TEXT("Updated MPC Grid : %s"), *Mpc->GetPathName());
 		}
 	}
+	OnUpdated.Broadcast();
 }
 
 template <typename FCollectionParameterType, typename FValueType>
