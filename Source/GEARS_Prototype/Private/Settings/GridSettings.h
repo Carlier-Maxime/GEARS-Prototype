@@ -42,6 +42,7 @@ public:
 	
 #if WITH_EDITOR
 	virtual void PostInitProperties() override;
+	virtual void PostReloadConfig(FProperty* PropertyThatWasLoaded) override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	
 private:
@@ -49,5 +50,10 @@ private:
 	template <typename FCollectionParameterType, typename FValueType>
 	static bool UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, const TMap<FGameplayTag, FValueType>& SharedParams);
 #endif
+
+private:
+	void RefreshFastAccessVariables();
+	
+	float CachedCellSize;
 };
 

@@ -5,13 +5,19 @@
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Materials/MaterialParameterCollection.h"
 
-#if WITH_EDITOR
-
 void UGridSettings::PostInitProperties()
 {
 	Super::PostInitProperties();
 	UpdateMPC();
 }
+
+void UGridSettings::PostReloadConfig(FProperty* PropertyThatWasLoaded)
+{
+	Super::PostReloadConfig(PropertyThatWasLoaded);
+	UpdateMPC();
+}
+
+#if WITH_EDITOR
 
 void UGridSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
@@ -26,10 +32,18 @@ void UGridSettings::UpdateMPC()
 	if (!Mpc) return;
 	bool Updated = UpdateMPCParam(Mpc->ScalarParameters, MPCSharedScalar);
 	if (UpdateMPCParam(Mpc->VectorParameters, MPCSharedLinearColor)) Updated = true;
-	if (!Updated) return;
-	Mpc->PostEditChange();
-	if (!Mpc->MarkPackageDirty()) return;
-	UE_LOG(LogTemp, Display, TEXT("Updated MPC Grid : %s"), *Mpc->GetPathName());
+	if (Updated)
+	{
+		Mpc->PostEditChange();
+		if (!Mpc->MarkPackageDirty())
+		{
+			UE_LOG(LogTemp, Error, TEXT("MPC (%s) cannot be marked dirty !"), *Mpc->GetPathName());
+		} else
+		{
+			UE_LOG(LogTemp, Display, TEXT("Updated MPC Grid : %s"), *Mpc->GetPathName());
+		}
+	}
+	RefreshFastAccessVariables();
 }
 
 template <typename FCollectionParameterType, typename FValueType>
@@ -67,7 +81,12 @@ bool UGridSettings::UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, 
 
 float UGridSettings::GetCellSize() const
 {
+	return CachedCellSize;
+}
+
+void UGridSettings::RefreshFastAccessVariables()
+{
 	const auto Size = MPCSharedScalar.Find(TAG_Grid_Cell_Size);
-	if (!Size) return 100;
-	return *Size;
+	checkf(Size, TEXT("CellSize Missing in GridSettings !"));
+	CachedCellSize = *Size;
 }
