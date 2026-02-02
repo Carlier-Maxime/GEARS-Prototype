@@ -2,4 +2,5 @@
 
 #include "CoreMinimal.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnVoidChanged)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBoolChanged, bool)
