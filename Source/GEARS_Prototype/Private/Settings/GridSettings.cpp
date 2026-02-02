@@ -52,32 +52,27 @@ void UGridSettings::Update()
 template <typename FCollectionParameterType, typename FValueType>
 bool UGridSettings::UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, const TMap<FGameplayTag, FValueType>& SharedParams)
 {
-	TSet<FGameplayTag> Tags;
-	Tags.Reserve(SharedParams.Num());
-	SharedParams.GetKeys(Tags);
-	bool Updated = false;
-
-	for (auto& Param : MPCParams)
+	bool bUpdated = false;
+	for (const auto& [Tag, DesiredValue] : SharedParams)
 	{
-		const auto Tag = Tags.Find(FGameplayTag::RequestGameplayTag(Param.ParameterName, false));
-		if (!Tag) continue;
-		const auto Value = SharedParams[*Tag];
-		Tags.Remove(*Tag);
-		if (Param.DefaultValue == Value) continue;
-		Param.DefaultValue = Value;
-		Updated = true;
-	}
+		const FName DesiredName = Tag.GetTagName();
+		auto Param = MPCParams.FindByPredicate([&](const FCollectionParameterType& Item) {
+			return Item.ParameterName == DesiredName;
+		});
+		if (!Param)
+		{
+			Param = &MPCParams.AddDefaulted_GetRef();
+			Param->ParameterName = DesiredName;
+			bUpdated = true;
+		}
 
-	for (const auto Tag : Tags)
-	{
-		FCollectionParameterType Param;
-		Param.ParameterName = Tag.GetTagName();
-		Param.DefaultValue = SharedParams[Tag];
-		MPCParams.Add(Param);
-		Updated = true;
+		if (Param->DefaultValue != DesiredValue)
+		{
+			Param->DefaultValue = DesiredValue;
+			bUpdated = true;
+		}
 	}
-	
-	return Updated;
+	return bUpdated;
 }
 
 #endif
