@@ -8,13 +8,13 @@
 void UGridSettings::PostInitProperties()
 {
 	Super::PostInitProperties();
-	UpdateMPC();
+	Update();
 }
 
 void UGridSettings::PostReloadConfig(FProperty* PropertyThatWasLoaded)
 {
 	Super::PostReloadConfig(PropertyThatWasLoaded);
-	UpdateMPC();
+	Update();
 }
 
 #if WITH_EDITOR
@@ -22,11 +22,15 @@ void UGridSettings::PostReloadConfig(FProperty* PropertyThatWasLoaded)
 void UGridSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	UpdateMPC();
+	Update();
 }
 
-void UGridSettings::UpdateMPC()
+void UGridSettings::Update()
 {
+	float& OldSize = MPCSharedScalar.FindOrAdd(TAG_Grid_Cell_Size);
+	OldSize = static_cast<float>(FMath::RoundUpToPowerOfTwo(FMath::Max(1, FMath::RoundToInt(OldSize))));
+	RefreshFastAccessVariables();
+	MPCSharedScalar.FindOrAdd(TAG_Grid_Cell_InvSize) = InvCellSize;
 	if (MPC.IsNull()) return;
 	const auto Mpc = MPC.LoadSynchronous();
 	if (!Mpc) return;
@@ -43,7 +47,6 @@ void UGridSettings::UpdateMPC()
 			UE_LOG(LogTemp, Display, TEXT("Updated MPC Grid : %s"), *Mpc->GetPathName());
 		}
 	}
-	RefreshFastAccessVariables();
 }
 
 template <typename FCollectionParameterType, typename FValueType>
@@ -84,9 +87,15 @@ float UGridSettings::GetCellSize() const
 	return CachedCellSize;
 }
 
+float UGridSettings::GetInvCellSize() const
+{
+	return InvCellSize;
+}
+
 void UGridSettings::RefreshFastAccessVariables()
 {
 	const auto Size = MPCSharedScalar.Find(TAG_Grid_Cell_Size);
 	checkf(Size, TEXT("CellSize Missing in GridSettings !"));
 	CachedCellSize = *Size;
+	InvCellSize = 1.f / CachedCellSize;
 }

@@ -22,7 +22,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, config, Category = "Grid", meta = (ReadOnlyKeys))
 	TMap<FGameplayTag, float> MPCSharedScalar = {
-		{TAG_Grid_Cell_Size, 100},
+		{TAG_Grid_Cell_Size, 128},
+		{TAG_Grid_Cell_InvSize, 0},
 		{TAG_Grid_Cell_Small_Factor, 0.1},
 		{TAG_Grid_Cell_Big_Factor, 10},
 		{TAG_Grid_Border_Thickness, 0.02},
@@ -39,6 +40,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	float GetCellSize() const;
+	UFUNCTION(BlueprintCallable, Category = "Grid")
+	float GetInvCellSize() const;
 	
 #if WITH_EDITOR
 	virtual void PostInitProperties() override;
@@ -46,7 +49,7 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	
 private:
-	void UpdateMPC();
+	void Update();
 	template <typename FCollectionParameterType, typename FValueType>
 	static bool UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, const TMap<FGameplayTag, FValueType>& SharedParams);
 #endif
@@ -55,5 +58,6 @@ private:
 	void RefreshFastAccessVariables();
 	
 	float CachedCellSize;
+	float InvCellSize;
 };
 
