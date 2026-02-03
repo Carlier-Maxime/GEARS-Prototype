@@ -13,4 +13,9 @@ UCLASS()
 class GEARS_PROTOTYPE_API AGEARS_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+public:
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
+private:
+	int32 Seed;
 };
