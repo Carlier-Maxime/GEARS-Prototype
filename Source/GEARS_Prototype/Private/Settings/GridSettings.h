@@ -9,6 +9,7 @@
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "GridSettings.generated.h"
 
+class UResourceType;
 /**
  * 
  */
@@ -61,5 +62,8 @@ private:
 	
 	float CachedCellSize;
 	float InvCellSize;
+	
+	UPROPERTY(EditAnywhere, config, Category = "Resources", meta = (AllowPrivateAccess = true))
+	TArray<TSoftObjectPtr<UResourceType>> ResourceRegister;
 };
 
