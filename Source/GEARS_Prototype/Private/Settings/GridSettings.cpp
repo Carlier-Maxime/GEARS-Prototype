@@ -4,6 +4,7 @@
 
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 
 void UGridSettings::PostInitProperties()
 {
@@ -25,6 +26,8 @@ void UGridSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 	Update();
 }
 
+#endif
+
 void UGridSettings::Update()
 {
 	float& OldSize = MPCSharedScalar.FindOrAdd(TAG_Grid_Cell_Size);
@@ -38,6 +41,7 @@ void UGridSettings::Update()
 	if (UpdateMPCParam(Mpc->VectorParameters, MPCSharedLinearColor)) Updated = true;
 	if (Updated)
 	{
+		#if WITH_EDITOR
 		Mpc->PostEditChange();
 		if (!Mpc->MarkPackageDirty())
 		{
@@ -46,6 +50,13 @@ void UGridSettings::Update()
 		{
 			UE_LOG(LogTemp, Display, TEXT("Updated MPC Grid : %s"), *Mpc->GetPathName());
 		}
+		#else
+		if (GetWorld())
+		{
+			auto MPCInst = GetWorld()->GetParameterCollectionInstance(Mpc);
+			if (MPCInst) MPCInst->UpdateRenderState(true);
+		}
+		#endif
 	}
 	OnUpdated.Broadcast();
 }
@@ -75,8 +86,6 @@ bool UGridSettings::UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, 
 	}
 	return bUpdated;
 }
-
-#endif
 
 float UGridSettings::GetCellSize() const
 {

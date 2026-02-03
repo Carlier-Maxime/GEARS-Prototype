@@ -46,18 +46,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	float GetInvCellSize() const;
 	
-#if WITH_EDITOR
 	virtual void PostInitProperties() override;
 	virtual void PostReloadConfig(FProperty* PropertyThatWasLoaded) override;
+
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 	
 private:
 	void Update();
 	template <typename FCollectionParameterType, typename FValueType>
 	static bool UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, const TMap<FGameplayTag, FValueType>& SharedParams);
-#endif
-
-private:
 	void RefreshFastAccessVariables();
 	
 	float CachedCellSize;
