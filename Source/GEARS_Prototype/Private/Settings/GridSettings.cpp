@@ -67,6 +67,7 @@ void UGridSettings::RefreshFastAccessVariables() const
 	GridParams::InvCellSize = 1.f / CellSize;
 	GridParams::ChunkSize = ChunkSize;
 	GridParams::ChunkSizeSquared = ChunkSize * ChunkSize;
+	GridParams::ResourceRegistry = ResourceRegister;
 }
 
 void UGridSettings::SyncSharedParams()
@@ -111,9 +112,4 @@ bool UGridSettings::UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, 
 		}
 	}
 	return bUpdated;
-}
-
-const TArray<TSoftObjectPtr<UResourceType>>& UGridSettings::GetResourceRegister() const
-{
-	return ResourceRegister;
 }
