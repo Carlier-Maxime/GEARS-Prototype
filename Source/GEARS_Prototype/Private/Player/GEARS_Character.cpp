@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "Definitions/GEARS_Macro.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
 
 
@@ -63,7 +64,7 @@ void AGEARS_Character::ResetView()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 	
-	SpringArm->TargetArmLength = GetDefault<UCameraSettings>()->GetDefaultZoomDistance();
+	SpringArm->TargetArmLength = CameraParams::Get().GetDefaultZoomDistance();
 	SpringArm->SetRelativeRotation(FRotator(GetDefault<UCameraSettings>()->DefaultPitchAngle, 0.f, 0.f));
 	
 	SpringArm->bInheritPitch = false;
@@ -72,7 +73,7 @@ void AGEARS_Character::ResetView()
 	SpringArm->bDoCollisionTest = false;
 	
 	Camera->bUsePawnControlRotation = false;
-	Camera->FieldOfView = GetDefault<UCameraSettings>()->GetDefaultFOV();
+	Camera->FieldOfView = CameraParams::Get().GetDefaultFOV();
 	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);

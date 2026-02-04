@@ -10,7 +10,7 @@
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
 #include "Player/GEARS_PlayerController.h"
-#include "Settings/CameraSettings.h"
+#include "Settings/CameraParams.h"
 
 void UCameraTweakWidget::NativeOnInitialized()
 {
@@ -23,15 +23,14 @@ void UCameraTweakWidget::NativeOnInitialized()
 	LockPitchCheckBox->OnCheckStateChanged.AddDynamic(this, &ThisClass::OnLockPitchChanged);
 	SnapAngleCheckBox->OnCheckStateChanged.AddDynamic(this, &ThisClass::OnSnapAngleChanged);
 	
-	const auto Settings = GetMutableDefault<UCameraSettings>();
-	Settings->OnLockPitchChanged.AddUObject(this, &ThisClass::OnLockPitchUpdated);
-	Settings->OnSnapYawStateChanged.AddUObject(this, &ThisClass::OnSnapAngleUpdated);
-	OnLockPitchUpdated(Settings->IsLockPitch());
-	OnSnapAngleUpdated(Settings->IsSnapYaw90());
+	CameraParams::Get().OnLockPitchChanged.AddUObject(this, &ThisClass::OnLockPitchUpdated);
+	CameraParams::Get().OnSnapYawStateChanged.AddUObject(this, &ThisClass::OnSnapAngleUpdated);
+	OnLockPitchUpdated(CameraParams::Get().IsLockPitch());
+	OnSnapAngleUpdated(CameraParams::Get().IsSnapYaw90());
 	
 	FOVSlider->OnValueChanged.AddDynamic(this, &ThisClass::OnFOVChanged);
-	FOVSlider->SetMinValue(Settings->GetMinFOV());
-	FOVSlider->SetMaxValue(Settings->GetMaxFOV());
+	FOVSlider->SetMinValue(CameraParams::Get().GetMinFOV());
+	FOVSlider->SetMaxValue(CameraParams::Get().GetMaxFOV());
 	FOVSlider->SetValue(Camera->FieldOfView);
 	OnFOVChanged(Camera->FieldOfView);
 	
@@ -40,22 +39,19 @@ void UCameraTweakWidget::NativeOnInitialized()
 
 void UCameraTweakWidget::NativeDestruct()
 {
-	const auto Settings = GetMutableDefault<UCameraSettings>();
-	Settings->OnLockPitchChanged.RemoveAll(this);
-	Settings->OnSnapYawStateChanged.RemoveAll(this);
+	CameraParams::Get().OnLockPitchChanged.RemoveAll(this);
+	CameraParams::Get().OnSnapYawStateChanged.RemoveAll(this);
 	Super::NativeDestruct();
 }
 
 void UCameraTweakWidget::OnLockPitchChanged(bool bIsChecked)
 {
-	const auto Settings = GetMutableDefault<UCameraSettings>();
-	Settings->SetLockPitch(bIsChecked);
+	CameraParams::Get().SetLockPitch(bIsChecked);
 }
 
 void UCameraTweakWidget::OnSnapAngleChanged(bool bIsChecked)
 {
-	const auto Settings = GetMutableDefault<UCameraSettings>();
-	Settings->SetSnapYaw90(bIsChecked);
+	CameraParams::Get().SetSnapYaw90(bIsChecked);
 }
 
 void UCameraTweakWidget::OnLockPitchUpdated(bool bValue)

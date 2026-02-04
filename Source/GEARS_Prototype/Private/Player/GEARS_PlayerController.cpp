@@ -12,6 +12,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
 
 void AGEARS_PlayerController::BeginPlay()
@@ -26,14 +27,12 @@ void AGEARS_PlayerController::BeginPlay()
 		Subsystem->AddMappingContext(DefaultIMC.LoadSynchronous(), InputPriority);
 	}
 	if (ensureSoftPtr(ClickFX)) UAssetManager::GetStreamableManager().RequestAsyncLoad(ClickFX.ToSoftObjectPath());
-	const auto CamSettings = GetMutableDefault<UCameraSettings>();
-	CamSnapChangedHandle = CamSettings->OnSnapYawStateChanged.AddLambda([this](bool) { SnapYaw90(); });
+	CamSnapChangedHandle = CameraParams::Get().OnSnapYawStateChanged.AddLambda([this](bool) { SnapYaw90(); });
 }
 
 void AGEARS_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	const auto CamSettings = GetMutableDefault<UCameraSettings>();
-	CamSettings->OnSnapYawStateChanged.Remove(CamSnapChangedHandle);
+	CameraParams::Get().OnSnapYawStateChanged.Remove(CamSnapChangedHandle);
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -76,11 +75,10 @@ void AGEARS_PlayerController::MoveToCursor()
 void AGEARS_PlayerController::Zoom(const FInputActionValue& Value)
 {
 	if (!SpringArm) return;
-	const auto Settings = GetDefault<UCameraSettings>();
-	auto Target = Value.Get<float>() * Settings->GetZoomSpeed(SpringArm->TargetArmLength);
-	if (Settings->bInvertZoomAxis) Target *= -1;
+	auto Target = Value.Get<float>() * CameraParams::Get().GetZoomSpeed(SpringArm->TargetArmLength);
+	if (CameraParams::Get().IsInvertZoomAxis()) Target *= -1;
 	Target += SpringArm->TargetArmLength;
-	SpringArm->TargetArmLength = FMath::Clamp(Target, Settings->GetMinZoomDistance(), Settings->GetMaxZoomDistance());
+	SpringArm->TargetArmLength = FMath::Clamp(Target, CameraParams::Get().GetMinZoomDistance(), CameraParams::Get().GetMaxZoomDistance());
 }
 
 void AGEARS_PlayerController::HiddenCursor()
@@ -105,7 +103,7 @@ void AGEARS_PlayerController::SnapYaw90()
 	auto& Ticker = FTSTicker::GetCoreTicker();
 	Ticker.RemoveTicker(SnapYawDelegate);
 	const auto Settings = GetDefault<UCameraSettings>();
-	if (!Settings->IsSnapYaw90()) return;
+	if (!CameraParams::Get().IsSnapYaw90()) return;
 	
 	const auto StartRot = SpringArm->GetRelativeRotation();
 	auto EndRot = StartRot;
@@ -137,17 +135,17 @@ void AGEARS_PlayerController::Look(const FInputActionValue& Value)
 	
 	const auto Pitch = SpringArm->GetRelativeRotation().Pitch;
 	float TargetPitch;
-	if (!Settings->IsLockPitch())
+	if (!CameraParams::Get().IsLockPitch())
 	{
-		TargetPitch = Direction.Y * Settings->GetPitchSpeed(Pitch);
+		TargetPitch = Direction.Y * CameraParams::Get().GetPitchSpeed(Pitch);
 		if (Settings->bInvertPitchAxis) TargetPitch *= -1;
 		TargetPitch += Pitch;
-		TargetPitch = FMath::Clamp(TargetPitch, Settings->GetMinPitch(), Settings->GetMaxPitch());
+		TargetPitch = FMath::Clamp(TargetPitch, CameraParams::Get().GetMinPitch(), CameraParams::Get().GetMaxPitch());
 	} else TargetPitch = Pitch;
 	
-	if (Settings->IsSnapYaw90()) FTSTicker::GetCoreTicker().RemoveTicker(SnapYawDelegate);
+	if (CameraParams::Get().IsSnapYaw90()) FTSTicker::GetCoreTicker().RemoveTicker(SnapYawDelegate);
 	const auto Yaw = SpringArm->GetRelativeRotation().Yaw;
-	float TargetYaw = Direction.X * Settings->GetYawSpeed(Yaw);
+	float TargetYaw = Direction.X * CameraParams::Get().GetYawSpeed(Yaw);
 	if (Settings->bInvertYawAxis) TargetYaw *= -1;
 	TargetYaw += Yaw;
 	
