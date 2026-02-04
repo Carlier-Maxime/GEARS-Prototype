@@ -2,6 +2,7 @@
 
 #include "GridSettings.h"
 
+#include "GridParams.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
@@ -30,10 +31,10 @@ void UGridSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 
 void UGridSettings::Update()
 {
-	float& OldSize = MPCSharedScalar.FindOrAdd(TAG_Grid_Cell_Size);
-	OldSize = static_cast<float>(FMath::RoundUpToPowerOfTwo(FMath::Max(1, FMath::RoundToInt(OldSize))));
+	CellSize = static_cast<float>(FMath::RoundUpToPowerOfTwo(FMath::Max(1, FMath::RoundToInt(CellSize))));
+	ChunkSize = FMath::RoundUpToPowerOfTwo(ChunkSize);
 	RefreshFastAccessVariables();
-	MPCSharedScalar.FindOrAdd(TAG_Grid_Cell_InvSize) = InvCellSize;
+	SyncSharedParams();
 	if (MPC.IsNull()) return;
 	const auto Mpc = MPC.LoadSynchronous();
 	if (!Mpc) return;
@@ -59,6 +60,32 @@ void UGridSettings::Update()
 		#endif
 	}
 	OnUpdated.Broadcast();
+}
+
+void UGridSettings::RefreshFastAccessVariables() const
+{
+	GridParams::CellSize = CellSize;
+	GridParams::InvCellSize = 1.f / CellSize;
+	GridParams::ChunkSize = ChunkSize;
+	GridParams::ChunkSizeSquared = ChunkSize * ChunkSize;
+}
+
+void UGridSettings::SyncSharedParams()
+{
+	MPCSharedScalar.Add(TAG_Grid_Chunk_Size, ChunkSize);
+	
+	MPCSharedScalar.Add(TAG_Grid_Cell_Size, CellSize);
+	MPCSharedScalar.Add(TAG_Grid_Cell_InvSize, GridParams::InvCellSize);
+	MPCSharedScalar.Add(TAG_Grid_Cell_Big_Factor, CellBigFactor);
+	MPCSharedScalar.Add(TAG_Grid_Cell_Small_Factor, CellSmallFactor);
+	MPCSharedLinearColor.Add(TAG_Grid_Cell_Color, CellColor);
+	
+	MPCSharedScalar.Add(TAG_Grid_Border_Thickness, BorderThickness);
+	MPCSharedLinearColor.Add(TAG_Grid_Border_Color, BorderColor);
+	
+	MPCSharedScalar.Add(TAG_Grid_Transition_Length_Factor, TransitionLengthFactor);
+	MPCSharedScalar.Add(TAG_Grid_Transition_Small_CellCountThreshold, TransitionSmallCellCountThreshold);
+	MPCSharedScalar.Add(TAG_Grid_Transition_Big_CellCountThreshold, TransitionBigCellCountThreshold);
 }
 
 template <typename FCollectionParameterType, typename FValueType>
@@ -87,25 +114,7 @@ bool UGridSettings::UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, 
 	return bUpdated;
 }
 
-float UGridSettings::GetCellSize() const
-{
-	return CachedCellSize;
-}
-
-float UGridSettings::GetInvCellSize() const
-{
-	return InvCellSize;
-}
-
 const TArray<TSoftObjectPtr<UResourceType>>& UGridSettings::GetResourceRegister() const
 {
 	return ResourceRegister;
-}
-
-void UGridSettings::RefreshFastAccessVariables()
-{
-	const auto Size = MPCSharedScalar.Find(TAG_Grid_Cell_Size);
-	checkf(Size, TEXT("CellSize Missing in GridSettings !"));
-	CachedCellSize = *Size;
-	InvCellSize = 1.f / CachedCellSize;
 }

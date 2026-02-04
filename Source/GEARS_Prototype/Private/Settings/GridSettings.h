@@ -6,7 +6,6 @@
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
 #include "Definitions/GEARS_Delegates.h"
-#include "GameplayTags/GEARS_GameplayTags.h"
 #include "GridSettings.generated.h"
 
 class UResourceType;
@@ -21,31 +20,31 @@ class UGridSettings : public UDeveloperSettings
 public:
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	TSoftObjectPtr<UMaterialParameterCollection> MPC;
+	UPROPERTY(EditAnywhere, config, Category = "Grid")
+	uint32 ChunkSize = 16;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Grid", meta = (ReadOnlyKeys))
-	TMap<FGameplayTag, float> MPCSharedScalar = {
-		{TAG_Grid_Cell_Size, 128},
-		{TAG_Grid_Cell_InvSize, 0},
-		{TAG_Grid_Cell_Small_Factor, 0.1},
-		{TAG_Grid_Cell_Big_Factor, 10},
-		{TAG_Grid_Border_Thickness, 0.02},
-		{TAG_Grid_Transition_Length_Factor, 10},
-		{TAG_Grid_Transition_Small_CellCountThreshold, 5},
-		{TAG_Grid_Transition_Big_CellCountThreshold, 100}
-	};
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
+	float CellSize = 128;
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
+	float CellSmallFactor = 0.1f;
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
+	float CellBigFactor = 10.f;
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
+	FLinearColor CellColor = FLinearColor::White;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Grid", meta = (ReadOnlyKeys))
-	TMap<FGameplayTag, FLinearColor> MPCSharedLinearColor = {
-		{TAG_Grid_Cell_Color, {1, 1, 1}},
-		{TAG_Grid_Border_Color, {0.1, 0.1, 0.1}}
-	};
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Border")
+	float BorderThickness = 0.02f;
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Border")
+	FLinearColor BorderColor = FLinearColor::Black;
+	
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition")
+	float TransitionLengthFactor = 10.f;
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition")
+	float TransitionSmallCellCountThreshold = 5;
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition")
+	float TransitionBigCellCountThreshold = 100;
 	
 	FOnVoidChanged OnUpdated;
-	
-	UFUNCTION(BlueprintCallable, Category = "Grid")
-	float GetCellSize() const;
-	UFUNCTION(BlueprintCallable, Category = "Grid")
-	float GetInvCellSize() const;
 	
 	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegister() const;
 	
@@ -58,12 +57,13 @@ public:
 	
 private:
 	void Update();
+	void RefreshFastAccessVariables() const;
+	void SyncSharedParams();
 	template <typename FCollectionParameterType, typename FValueType>
 	static bool UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, const TMap<FGameplayTag, FValueType>& SharedParams);
-	void RefreshFastAccessVariables();
 	
-	float CachedCellSize;
-	float InvCellSize;
+	TMap<FGameplayTag, float> MPCSharedScalar;
+	TMap<FGameplayTag, FLinearColor> MPCSharedLinearColor;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Resources", meta = (AllowPrivateAccess = true))
 	TArray<TSoftObjectPtr<UResourceType>> ResourceRegister;

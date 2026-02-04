@@ -3,8 +3,8 @@
 
 #include "CameraSettings.h"
 
+#include "GridParams.h"
 #include "Definitions/GEARS_Macro.h"
-#include "GridSettings.h"
 #include "Curves/CurveFloat.h"
 
 float UCameraSettings::GetMinZoomDistance() const
@@ -27,14 +27,14 @@ float UCameraSettings::GetZoomSpeed(const float Distance) const
 	ensureSoftPtrOrRet(ZoomFactorCurve, -1);
 	return GetZoomDistance(
 		ZoomFactorCurve.LoadSynchronous()->GetFloatValue(
-			Distance / GetDefault<UGridSettings>()->GetCellSize()
+			Distance / GridParams::GetCellSize()
 		)
 	);
 }
 
 float UCameraSettings::GetZoomDistance(const float Factor)
 {
-	return Factor * GetDefault<UGridSettings>()->GetCellSize();
+	return Factor * GridParams::GetCellSize();
 }
 
 float UCameraSettings::GetMinPitch() const

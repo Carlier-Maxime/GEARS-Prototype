@@ -17,13 +17,6 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	FIntPoint WorldToGrid(const FVector& WorldPosition);
-	FVector GridToWorld(const FIntPoint& GridPosition);
-	
-protected:
-	void UpdateCache();
-	
-	private:
-	float CachedCellSize;
-	float CachedInvCellSize;
+	static FIntPoint WorldToGrid(const FVector& WorldPosition);
+	static FVector GridToWorld(const FIntPoint& GridPosition);
 };

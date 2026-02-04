@@ -3,43 +3,31 @@
 
 #include "GridSubsystem.h"
 
-#include "Settings/GridSettings.h"
+#include "Settings/GridParams.h"
 
 void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	UpdateCache();
-	const auto Settings = GetMutableDefault<UGridSettings>();
-	Settings->OnUpdated.AddUObject(this, &ThisClass::UpdateCache);
 }
 
 void UGridSubsystem::Deinitialize()
 {
-	const auto Settings = GetMutableDefault<UGridSettings>();
-	Settings->OnUpdated.RemoveAll(this);
 	Super::Deinitialize();
-}
-
-void UGridSubsystem::UpdateCache()
-{
-	const auto Settings = GetDefault<UGridSettings>();
-	CachedCellSize = Settings->GetCellSize();
-	CachedInvCellSize = Settings->GetInvCellSize();
 }
 
 FIntPoint UGridSubsystem::WorldToGrid(const FVector& WorldPosition)
 {
 	return FIntPoint(
-		FMath::FloorToInt(WorldPosition.X * CachedInvCellSize),
-		FMath::FloorToInt(WorldPosition.Y * CachedInvCellSize)
+		FMath::FloorToInt(WorldPosition.X * GridParams::GetInvCellSize()),
+		FMath::FloorToInt(WorldPosition.Y * GridParams::GetInvCellSize())
 	);
 }
 
 FVector UGridSubsystem::GridToWorld(const FIntPoint& GridPosition)
 {
 	return FVector(
-		(GridPosition.X + 0.5f) * CachedCellSize,
-		(GridPosition.Y + 0.5f) * CachedCellSize,
+		(GridPosition.X + 0.5f) * GridParams::GetCellSize(),
+		(GridPosition.Y + 0.5f) * GridParams::GetCellSize(),
 		0.1f
 	);
 }
