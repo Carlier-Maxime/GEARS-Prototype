@@ -1,8 +1,14 @@
 ﻿#pragma once
 
 #define ensureSoftPtr(SoftPtrVar) \
-ensureMsgf(!(SoftPtrVar).IsNull(), TEXT("Missing [%s] in %s !"), \
-TEXT(#SoftPtrVar), *GetName())
+([&]() mutable -> bool { \
+	const bool bIsValid = !(SoftPtrVar).IsNull(); \
+	if (!bIsValid) { \
+		FString Context = FString::Printf(TEXT("%S"), __FUNCTION__); \
+		ensureMsgf(false, TEXT("Missing [%s] in %s!"), TEXT(#SoftPtrVar), *Context); \
+	} \
+	return bIsValid; \
+}())
 
 #define ensureSoftPtrOrRet(SoftPtrVar, Ret) \
-if (!ensureSoftPtr(SoftPtrVar)) return Ret;	
+if (!ensureSoftPtr(SoftPtrVar)) return Ret;
