@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
-#include "Definitions/GEARS_Delegates.h"
 #include "GridSettings.generated.h"
 
 class UResourceType;
@@ -43,10 +42,6 @@ public:
 	float TransitionSmallCellCountThreshold = 5;
 	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition")
 	float TransitionBigCellCountThreshold = 100;
-	
-	FOnVoidChanged OnUpdated;
-	
-	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegister() const;
 	
 	virtual void PostInitProperties() override;
 	virtual void PostReloadConfig(FProperty* PropertyThatWasLoaded) override;

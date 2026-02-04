@@ -59,7 +59,6 @@ void UGridSettings::Update()
 		}
 		#endif
 	}
-	OnUpdated.Broadcast();
 }
 
 void UGridSettings::RefreshFastAccessVariables() const
