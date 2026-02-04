@@ -1,6 +1,8 @@
 ﻿#include "GameplayTags/GEARS_GameplayTags.h"
 
 #pragma region grid
+UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Chunk_Size, "Grid.Chunk.Size")
+
 UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Cell_Size, "Grid.Cell.Size")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Cell_InvSize, "Grid.Cell.invSize")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Cell_Small_Factor, "Grid.Cell.Small.Factor")

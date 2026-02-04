@@ -3,6 +3,8 @@
 #include "NativeGameplayTags.h"
 
 #pragma region grid
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Chunk_Size)
+
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Cell_Size)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Cell_InvSize)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Cell_Small_Factor)
