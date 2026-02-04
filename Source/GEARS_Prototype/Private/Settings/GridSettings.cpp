@@ -97,6 +97,11 @@ float UGridSettings::GetInvCellSize() const
 	return InvCellSize;
 }
 
+const TArray<TSoftObjectPtr<UResourceType>>& UGridSettings::GetResourceRegister() const
+{
+	return ResourceRegister;
+}
+
 void UGridSettings::RefreshFastAccessVariables()
 {
 	const auto Size = MPCSharedScalar.Find(TAG_Grid_Cell_Size);

@@ -47,6 +47,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Grid")
 	float GetInvCellSize() const;
 	
+	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegister() const;
+	
 	virtual void PostInitProperties() override;
 	virtual void PostReloadConfig(FProperty* PropertyThatWasLoaded) override;
 
