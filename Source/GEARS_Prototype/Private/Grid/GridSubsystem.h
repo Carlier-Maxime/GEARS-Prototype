@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChunkData.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GridSubsystem.generated.h"
 
@@ -17,6 +18,11 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
+	FChunkData& GetChunk(const FIntPoint& Position);
+	const FChunkData& GetChunk(const FIntPoint& Position) const;
+	
 	static FIntPoint WorldToGrid(const FVector& WorldPosition);
 	static FVector GridToWorld(const FIntPoint& GridPosition);
+	
+	TMap<FIntPoint, FChunkData> Chunks;
 };

@@ -15,6 +15,16 @@ void UGridSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
+FChunkData& UGridSubsystem::GetChunk(const FIntPoint& Position)
+{
+	return Chunks.FindOrAdd(Position);
+}
+
+const FChunkData& UGridSubsystem::GetChunk(const FIntPoint& Position) const
+{
+	return Chunks.FindChecked(Position);
+}
+
 FIntPoint UGridSubsystem::WorldToGrid(const FVector& WorldPosition)
 {
 	return FIntPoint(
