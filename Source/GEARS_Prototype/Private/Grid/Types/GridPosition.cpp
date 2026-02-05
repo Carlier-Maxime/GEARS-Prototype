@@ -38,6 +38,11 @@ FVector2D FGridPosition::ToWorld2D() const
 	);
 }
 
+FTransform FGridPosition::ToTransform() const
+{
+	return FTransform(FQuat::Identity, ToWorld());
+}
+
 FIntPoint FGridPosition::GetChunkIndex() const
 {
 	return {

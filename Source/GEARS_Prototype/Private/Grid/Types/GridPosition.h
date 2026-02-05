@@ -11,6 +11,7 @@ struct FGridPosition
 	static FGridPosition FromChunkIndex(const FIntPoint& ChunkIndex);
 	FVector ToWorld() const;
 	FVector2D ToWorld2D() const;
+	FTransform ToTransform() const;
 	FIntPoint GetChunkIndex() const;
 	FIntPoint GetLocalPos() const;
 	FIntPoint GetGridPos() const;
