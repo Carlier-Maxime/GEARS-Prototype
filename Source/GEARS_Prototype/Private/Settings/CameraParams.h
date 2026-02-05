@@ -36,6 +36,7 @@ public:
 	FOnBoolChanged OnSnapYawStateChanged;
 
 private:
+	CameraParams() = default;
 	friend class UCameraSettings;
 	
 	TTuple<float, float> GetTimeRange(const TSoftObjectPtr<UCurveFloat>& Curve) const;
