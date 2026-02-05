@@ -20,6 +20,6 @@ protected:
 	virtual void BeginPlay() override;
 	
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="HISMs", meta=(AllowPrivateAccess = true))
+	UPROPERTY()
 	TArray<TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> ResourcesComponents;
 };
