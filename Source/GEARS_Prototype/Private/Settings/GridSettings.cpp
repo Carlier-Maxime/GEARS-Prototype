@@ -63,11 +63,11 @@ void UGridSettings::Update()
 
 void UGridSettings::RefreshFastAccessVariables() const
 {
-	GridParams::CellSize = CellSize;
-	GridParams::InvCellSize = 1.f / CellSize;
-	GridParams::ChunkSize = ChunkSize;
-	GridParams::ChunkSizeSquared = ChunkSize * ChunkSize;
-	GridParams::ResourceRegistry = ResourceRegister;
+	GridParams::Get().CellSize = CellSize;
+	GridParams::Get().InvCellSize = 1.f / CellSize;
+	GridParams::Get().ChunkSize = ChunkSize;
+	GridParams::Get().ChunkSizeSquared = ChunkSize * ChunkSize;
+	GridParams::Get().ResourceRegistry = ResourceRegister;
 }
 
 void UGridSettings::SyncSharedParams()
@@ -75,7 +75,7 @@ void UGridSettings::SyncSharedParams()
 	MPCSharedScalar.Add(TAG_Grid_Chunk_Size, ChunkSize);
 	
 	MPCSharedScalar.Add(TAG_Grid_Cell_Size, CellSize);
-	MPCSharedScalar.Add(TAG_Grid_Cell_InvSize, GridParams::InvCellSize);
+	MPCSharedScalar.Add(TAG_Grid_Cell_InvSize, GridParams::Get().InvCellSize);
 	MPCSharedScalar.Add(TAG_Grid_Cell_Big_Factor, CellBigFactor);
 	MPCSharedScalar.Add(TAG_Grid_Cell_Small_Factor, CellSmallFactor);
 	MPCSharedLinearColor.Add(TAG_Grid_Cell_Color, CellColor);

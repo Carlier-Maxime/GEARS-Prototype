@@ -5,16 +5,23 @@
 class GridParams
 {
 public:
-	static float GetCellSize() { return CellSize; }
-	static float GetInvCellSize() { return InvCellSize; }
-	static uint32 GetChunkSize() { return ChunkSize; }
-	static uint32 GetChunkSizeSquared() { return ChunkSizeSquared; }
-	static const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegistry() {return ResourceRegistry;}
+	static GridParams& Get()
+	{
+		static GridParams Instance;
+		return Instance;
+	}
+	
+	float GetCellSize() { return CellSize; }
+	float GetInvCellSize() { return InvCellSize; }
+	uint32 GetChunkSize() { return ChunkSize; }
+	uint32 GetChunkSizeSquared() { return ChunkSizeSquared; }
+	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegistry() {return ResourceRegistry;}
 private:
+	GridParams() = default;
 	friend class UGridSettings;
-	inline static float CellSize;
-	inline static float InvCellSize;
-	inline static uint32 ChunkSize;
-	inline static uint32 ChunkSizeSquared;
-	inline static TArray<TSoftObjectPtr<UResourceType>> ResourceRegistry;
+	float CellSize;
+	float InvCellSize;
+	uint32 ChunkSize;
+	uint32 ChunkSizeSquared;
+	TArray<TSoftObjectPtr<UResourceType>> ResourceRegistry;
 };

@@ -23,7 +23,7 @@ float CameraParams::GetZoomSpeed(const float Distance) const
 	ensureSoftPtrOrRet(ZoomFactorCurve, -1);
 	return GetZoomDistance(
 		ZoomFactorCurve.LoadSynchronous()->GetFloatValue(
-			Distance / GridParams::GetCellSize()
+			Distance / GridParams::Get().GetCellSize()
 		)
 	);
 }
@@ -35,7 +35,7 @@ bool CameraParams::IsInvertZoomAxis() const
 
 float CameraParams::GetZoomDistance(const float Factor)
 {
-	return Factor * GridParams::GetCellSize();
+	return Factor * GridParams::Get().GetCellSize();
 }
 
 float CameraParams::GetMinPitch() const
