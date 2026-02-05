@@ -15,6 +15,8 @@ public:
 	float GetInvCellSize() { return InvCellSize; }
 	uint32 GetChunkSize() { return ChunkSize; }
 	uint32 GetChunkSizeSquared() { return ChunkSizeSquared; }
+	uint32 GetChunkShift() { return ChunkShift; }
+	uint32 GetChunkMask() { return ChunkMask; }
 	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegistry() {return ResourceRegistry;}
 private:
 	GridParams() = default;
@@ -23,5 +25,7 @@ private:
 	float InvCellSize;
 	uint32 ChunkSize;
 	uint32 ChunkSizeSquared;
+	uint32 ChunkShift;
+	uint32 ChunkMask;
 	TArray<TSoftObjectPtr<UResourceType>> ResourceRegistry;
 };

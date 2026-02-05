@@ -67,6 +67,8 @@ void UGridSettings::RefreshFastAccessVariables() const
 	GridParams::Get().InvCellSize = 1.f / CellSize;
 	GridParams::Get().ChunkSize = ChunkSize;
 	GridParams::Get().ChunkSizeSquared = ChunkSize * ChunkSize;
+	GridParams::Get().ChunkShift = FMath::FloorLog2(ChunkSize);
+	GridParams::Get().ChunkMask = ChunkSize - 1;
 	GridParams::Get().ResourceRegistry = ResourceRegister;
 }
 
