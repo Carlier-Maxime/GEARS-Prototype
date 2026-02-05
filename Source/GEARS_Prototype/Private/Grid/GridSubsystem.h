@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ChunkData.h"
-#include "GridPosition.h"
+#include "Types/ChunkData.h"
+#include "Types/GridPosition.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GridSubsystem.generated.h"
 
