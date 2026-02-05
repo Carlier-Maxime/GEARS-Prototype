@@ -4,15 +4,18 @@
 #include "GridSubsystem.h"
 #include "Types/GridPosition.h"
 #include "WorldGenerator.h"
+#include "WorldRenderer.h"
 
 void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	Renderer = GetWorld()->SpawnActor<AWorldRenderer>();
 }
 
 void UGridSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
+	Renderer->Destroy();
 	delete Generator;
 }
 

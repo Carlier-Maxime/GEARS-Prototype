@@ -8,6 +8,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "GridSubsystem.generated.h"
 
+class AWorldRenderer;
 class WorldGenerator;
 
 /**
@@ -33,4 +34,6 @@ public:
 	
 	TMap<FIntPoint, FChunkData> Chunks;
 	WorldGenerator* Generator = nullptr;
+	UPROPERTY()
+	TObjectPtr<AWorldRenderer> Renderer = nullptr;
 };
