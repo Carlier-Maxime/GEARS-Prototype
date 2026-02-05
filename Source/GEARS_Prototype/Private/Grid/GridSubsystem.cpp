@@ -3,7 +3,7 @@
 
 #include "GridSubsystem.h"
 
-#include "Settings/GridParams.h"
+#include "GridPosition.h"
 
 void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -15,29 +15,32 @@ void UGridSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-FChunkData& UGridSubsystem::GetChunk(const FIntPoint& Position)
+FChunkData& UGridSubsystem::GetChunk(const FIntPoint& ChunkPos)
 {
-	return Chunks.FindOrAdd(Position);
+	return Chunks.FindOrAdd(ChunkPos);
 }
 
-const FChunkData& UGridSubsystem::GetChunk(const FIntPoint& Position) const
+const FChunkData& UGridSubsystem::GetChunk(const FIntPoint& ChunkPos) const
 {
-	return Chunks.FindChecked(Position);
+	return Chunks.FindChecked(ChunkPos);
 }
 
-FIntPoint UGridSubsystem::WorldToGrid(const FVector& WorldPosition)
+FChunkData& UGridSubsystem::GetChunk(const FGridPosition& GridPos)
 {
-	return FIntPoint(
-		FMath::FloorToInt(WorldPosition.X * GridParams::GetInvCellSize()),
-		FMath::FloorToInt(WorldPosition.Y * GridParams::GetInvCellSize())
-	);
+	return GetChunk(GridPos.GetChunkIndex());
 }
 
-FVector UGridSubsystem::GridToWorld(const FIntPoint& GridPosition)
+const FChunkData& UGridSubsystem::GetChunk(const FGridPosition& GridPos) const
 {
-	return FVector(
-		(GridPosition.X + 0.5f) * GridParams::GetCellSize(),
-		(GridPosition.Y + 0.5f) * GridParams::GetCellSize(),
-		0.1f
-	);
+	return GetChunk(GridPos.GetChunkIndex());
+}
+
+FGridPosition UGridSubsystem::WorldToGrid(const FVector& WorldPosition)
+{
+	return FGridPosition(WorldPosition);
+}
+
+FVector UGridSubsystem::GridToWorld(const FGridPosition& GridPos)
+{
+	return GridPos.ToWorld();
 }
