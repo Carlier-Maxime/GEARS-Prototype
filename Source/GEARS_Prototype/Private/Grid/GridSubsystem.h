@@ -8,6 +8,8 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "GridSubsystem.generated.h"
 
+class WorldGenerator;
+
 /**
  * 
  */
@@ -18,6 +20,8 @@ class GEARS_PROTOTYPE_API UGridSubsystem : public UWorldSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
+	
+	void GenWorld(int32 Seed);
 
 	FChunkData& GetChunk(const FIntPoint& ChunkPos);
 	const FChunkData& GetChunk(const FIntPoint& ChunkPos) const;
@@ -28,4 +32,5 @@ public:
 	static FVector GridToWorld(const FGridPosition& GridPos);
 	
 	TMap<FIntPoint, FChunkData> Chunks;
+	WorldGenerator* Generator = nullptr;
 };

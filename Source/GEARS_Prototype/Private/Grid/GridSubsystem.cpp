@@ -2,8 +2,8 @@
 
 
 #include "GridSubsystem.h"
-
 #include "GridPosition.h"
+#include "WorldGenerator.h"
 
 void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -13,6 +13,13 @@ void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 void UGridSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
+	delete Generator;
+}
+
+void UGridSubsystem::GenWorld(const int32 Seed)
+{
+	Generator = new WorldGenerator(*this, Seed);
+	Generator->Generate(8);
 }
 
 FChunkData& UGridSubsystem::GetChunk(const FIntPoint& ChunkPos)
