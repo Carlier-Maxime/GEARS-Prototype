@@ -37,3 +37,13 @@ void AWorldRenderer::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+void AWorldRenderer::UpdateResourcesInstances(const TArray<TArray<FTransform>>& ResourcesInstances)
+{
+	ensure(ResourcesComponents.Num() == ResourcesInstances.Num());
+	for (auto i=0; i<ResourcesComponents.Num(); ++i)
+	{
+		ResourcesComponents[i]->ClearInstances();
+		ResourcesComponents[i]->AddInstances(ResourcesInstances[i], false);
+	}
+}

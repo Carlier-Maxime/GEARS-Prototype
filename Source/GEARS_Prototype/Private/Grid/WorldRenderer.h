@@ -15,6 +15,7 @@ class GEARS_PROTOTYPE_API AWorldRenderer : public AActor
 
 public:
 	AWorldRenderer();
+	void UpdateResourcesInstances(const TArray<TArray<FTransform>>& ResourcesInstances);
 
 protected:
 	virtual void BeginPlay() override;

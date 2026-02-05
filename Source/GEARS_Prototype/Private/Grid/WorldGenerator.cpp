@@ -20,16 +20,33 @@ WorldGenerator::WorldGenerator(UGridSubsystem& Grid, const int32 Seed) :
 	});
 }
 
-void WorldGenerator::Generate(const uint16 ChunkRadius)
+TArray<TArray<FTransform>> WorldGenerator::Generate(const uint16 ChunkRadius)
 {
+	auto Instances = InitResourcesInstances();
 	for (auto x=-ChunkRadius; x<=ChunkRadius; ++x)
 		for (auto y=-ChunkRadius; y<=ChunkRadius; ++y)
-			GenerateChunk({x, y});
+			GenerateChunk(Instances, {x, y});
+	return std::move(Instances);
 }
 
-void WorldGenerator::GenerateChunk(const FIntPoint& ChunkIndex)
+TArray<TArray<FTransform>> WorldGenerator::InitResourcesInstances() const
+{
+	TArray<TArray<FTransform>> ResourcesInstances;
+	ResourcesInstances.Init({}, ResourcesOffset.Num());
+	return std::move(ResourcesInstances);
+}
+
+TArray<TArray<FTransform>> WorldGenerator::GenerateChunk(const FIntPoint& ChunkIndex)
+{
+	auto Instances = InitResourcesInstances();
+	GenerateChunk(Instances, ChunkIndex);
+	return std::move(Instances);
+}
+
+void WorldGenerator::GenerateChunk(TArray<TArray<FTransform>>& OutInstances, const FIntPoint& ChunkIndex)
 {
 	auto& Chunk = Grid.GetChunk(ChunkIndex);
+	if (ChunkIndex == FIntPoint::ZeroValue) return;
 	auto Pos = FGridPosition::FromChunkIndex(ChunkIndex);
 	for (uint32 x=0; x<GridParams::Get().GetChunkSize(); ++x)
 	{
@@ -41,6 +58,7 @@ void WorldGenerator::GenerateChunk(const FIntPoint& ChunkIndex)
 			const auto Index = GenerateCellContent(Pos);
 			if (Index == -1) continue;
 			Chunk.SetResource(Pos, Index);
+			OutInstances[Index].Add(Pos.ToTransform());
 		}
 	}
 }

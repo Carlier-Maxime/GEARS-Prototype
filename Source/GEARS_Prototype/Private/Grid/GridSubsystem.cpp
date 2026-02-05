@@ -9,20 +9,20 @@
 void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	Renderer = GetWorld()->SpawnActor<AWorldRenderer>();
 }
 
 void UGridSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
-	Renderer->Destroy();
+	if (Renderer) Renderer->Destroy();
 	delete Generator;
 }
 
 void UGridSubsystem::GenWorld(const int32 Seed)
 {
 	Generator = new WorldGenerator(*this, Seed);
-	Generator->Generate(8);
+	Renderer = GetWorld()->SpawnActor<AWorldRenderer>();
+	Renderer->UpdateResourcesInstances(std::move(Generator->Generate(8)));
 }
 
 FChunkData& UGridSubsystem::GetChunk(const FIntPoint& ChunkPos)
