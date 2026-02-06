@@ -17,6 +17,7 @@ protected:
 	[[nodiscard]] FVector2D GetRandomSeedOffset() const;
 	[[nodiscard]] FVector2D GetRandomOffset(float Displacement) const;
 	
-	FRandomStream RngStream;
-	FVector2D SeedOffset;
+	const int32 Seed;
+	const FRandomStream RngStream;
+	const FVector2D SeedOffset;
 };

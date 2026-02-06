@@ -15,6 +15,9 @@ struct FSamplingContext
 	
 	UPROPERTY(EditAnywhere, Category = "Sampling", meta = (ClampMin = 0, ClampMax = 1))
 	float NoiseThreshold = 0.6f;
+	
+	UPROPERTY(EditAnywhere, Category = "Sampling", meta = (ClampMin = 0, ClampMax = 1))
+	float ThresholdSmoothing = 0;
 
 	UPROPERTY(EditAnywhere, Category = "Sampling", meta = (ClampMin = 0, ClampMax = 1))
 	float NoiseScale = 0.05f;

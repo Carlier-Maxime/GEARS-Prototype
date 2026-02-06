@@ -6,10 +6,10 @@
 constexpr float RngSeedMove = 100000.f;
 constexpr float RngResourceMove = 10000.f;
 
-BaseGenerator::BaseGenerator(int32 Seed) : BaseGenerator(Seed, true) {}
+BaseGenerator::BaseGenerator(const int32 Seed) : BaseGenerator(Seed, true) {}
 
 BaseGenerator::BaseGenerator(const int32 Seed, const bool bGenResourceOffset) :
-		RngStream(Seed), SeedOffset(GetRandomSeedOffset())
+		Seed(Seed), RngStream(Seed), SeedOffset(GetRandomSeedOffset())
 {
 	if (!bGenResourceOffset) return;
 	for (auto SoftResource : GridParams::Get().GetResourceRegistry())
@@ -55,5 +55,14 @@ bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplin
 		(Pos.X + SeedOffset.X + Ctx.Offset.X) * Ctx.NoiseScale,
 		(Pos.Y + SeedOffset.Y + Ctx.Offset.Y) * Ctx.NoiseScale
 	}) + 1.0f) * 0.5f;
-	return NoiseValue > Ctx.NoiseThreshold;
+	if (Ctx.ThresholdSmoothing == 0) return NoiseValue >= Ctx.NoiseThreshold;
+	const float SpawnChance = FMath::SmoothStep(
+		Ctx.NoiseThreshold,
+		Ctx.NoiseThreshold + Ctx.ThresholdSmoothing, 
+		NoiseValue
+	);
+	if (SpawnChance == 0) return false;
+	if (SpawnChance == 1) return true;
+	const FRandomStream LocalRng(HashCombineFast(Seed, GetTypeHash(Pos.GetGridPos())));
+	return LocalRng.FRand() < SpawnChance;
 }
