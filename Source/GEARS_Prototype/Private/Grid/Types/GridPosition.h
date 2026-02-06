@@ -9,6 +9,8 @@ struct FGridPosition
 	FGridPosition() = default;
 	explicit FGridPosition(const FVector& WorldPos);
 	static FGridPosition FromChunkIndex(const FIntPoint& ChunkIndex);
+	static FGridPosition FromGridPos(const FIntPoint& GridPos);
+	static FGridPosition FromGridPos(int32 X, int32 Y);
 	FVector ToWorld() const;
 	FVector2D ToWorld2D() const;
 	FTransform ToTransform() const;

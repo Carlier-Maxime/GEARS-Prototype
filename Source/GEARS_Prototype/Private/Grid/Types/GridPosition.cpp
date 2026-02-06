@@ -21,6 +21,16 @@ FGridPosition FGridPosition::FromChunkIndex(const FIntPoint& ChunkIndex)
 	);
 }
 
+FGridPosition FGridPosition::FromGridPos(const FIntPoint& GridPos)
+{
+	return FGridPosition(GridPos.X, GridPos.Y);
+}
+
+FGridPosition FGridPosition::FromGridPos(const int32 X, const int32 Y)
+{
+	return FGridPosition(X, Y);
+}
+
 FVector FGridPosition::ToWorld() const
 {
 	return FVector(
