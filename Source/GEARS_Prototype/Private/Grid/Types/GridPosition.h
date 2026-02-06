@@ -23,3 +23,8 @@ private:
 	explicit FGridPosition(const FIntPoint& Pos);
 	explicit FGridPosition(int32 X, int32 Y);
 };
+
+FORCEINLINE uint32 GetTypeHash(const FGridPosition& Pos)
+{
+	return HashCombineFast(GetTypeHash(Pos.X), GetTypeHash(Pos.Y));
+}
