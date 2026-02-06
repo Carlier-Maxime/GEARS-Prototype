@@ -18,6 +18,8 @@ protected:
 	[[nodiscard]] FVector2D GetRandomSeedOffset() const;
 	[[nodiscard]] FVector2D GetRandomOffset(float Displacement) const;
 	[[nodiscard]] int16 DetermineResourceType(const FGridPosition& Pos) const;
+	[[nodiscard]] FTransform CalculateVariationTransform(const FGridPosition& Pos, int16 ResourceTypeIndex) const;
+	[[nodiscard]] FRandomStream GetLocalRng(const FGridPosition& Pos) const;
 	
 	const int32 Seed;
 	const FRandomStream RngStream;

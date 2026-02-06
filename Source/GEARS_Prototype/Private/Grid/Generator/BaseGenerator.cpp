@@ -43,10 +43,7 @@ FProcSpawnData BaseGenerator::SampleResourceAtPosition(const FGridPosition& Pos)
 {
 	FProcSpawnData SpawnData;
 	SpawnData.ResourceTypeIndex = DetermineResourceType(Pos);
-	if (SpawnData.ResourceTypeIndex == -1) goto exit;
-	SpawnData.Transform = Pos.ToTransform();
-	
-	exit:
+	SpawnData.Transform = CalculateVariationTransform(Pos, SpawnData.ResourceTypeIndex);
 	return std::move(SpawnData);
 }
 
@@ -75,6 +72,37 @@ bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplin
 	);
 	if (SpawnChance == 0) return false;
 	if (SpawnChance == 1) return true;
-	const FRandomStream LocalRng(HashCombineFast(Seed, GetTypeHash(Pos.GetGridPos())));
-	return LocalRng.FRand() < SpawnChance;
+	return GetLocalRng(Pos).FRand() < SpawnChance;
+}
+
+FTransform BaseGenerator::CalculateVariationTransform(const FGridPosition& Pos, const int16 ResourceTypeIndex) const
+{
+	auto Transform = Pos.ToTransform();
+	if (ResourceTypeIndex == -1) return std::move(Transform);
+	const auto& Sampling = GridParams::Get().GetResourceRegistry()[ResourceTypeIndex].LoadSynchronous()->Sampling;
+	const auto LocalRng = GetLocalRng(Pos);
+	if (Sampling.JitterMaxOffset > 0)
+	{
+		const auto Loc = Transform.GetLocation();
+		Transform.SetLocation({
+			Loc.X + GridParams::Get().GetCellSize() * Sampling.JitterMaxOffset * LocalRng.FRandRange(-1, 1),
+			Loc.Y + GridParams::Get().GetCellSize() * Sampling.JitterMaxOffset * LocalRng.FRandRange(-1, 1),
+			Loc.Z
+		});
+	}
+	if (const auto Curve = Sampling.ScaleDistributionCurve)
+	{
+		const auto Val = Curve->GetFloatValue(LocalRng.FRand());
+		Transform.SetScale3D({Val, Val, Val});
+	}
+	if (Sampling.bRandomYaw)
+	{
+		Transform.SetRotation(FRotator(0, LocalRng.FRandRange(0, 360), 0).Quaternion());
+	}
+	return std::move(Transform);
+}
+
+FRandomStream BaseGenerator::GetLocalRng(const FGridPosition& Pos) const
+{
+	return {static_cast<int32>(HashCombineFast(Seed, GetTypeHash(Pos.GetGridPos())))};
 }
