@@ -21,9 +21,25 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Visuals")
 	TObjectPtr<UStaticMesh> WorldMesh;
 	
-	UPROPERTY(EditAnywhere, Category = "Generation")
+	UPROPERTY(EditAnywhere, Category = "Generation", meta = (ClampMin = 0, ClampMax = 1))
 	float NoiseThreshold = 0.6f;
 
-	UPROPERTY(EditAnywhere, Category = "Generation")
+	UPROPERTY(EditAnywhere, Category = "Generation", meta = (ClampMin = 0, ClampMax = 1))
 	float NoiseScale = 0.05f;
+
+	virtual void PostInitProperties() override;
+
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(VisibleAnywhere, Category = "Generation|Preview")
+	TObjectPtr<UTexture2D> NoisePreview;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Generation|Preview", meta=(ClampMin = 8))
+	int32 PreviewResolution = 256;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Generation|Preview", meta=(UIMin = 0, UIMax = 10000))
+	int32 SeedPreview = 0;
+
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	void UpdatePreview();
+#endif
 };
