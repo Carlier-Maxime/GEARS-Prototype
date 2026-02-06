@@ -3,8 +3,8 @@
 #include "Definitions/GEARS_Macro.h"
 #include "Settings/GridParams.h"
 
-constexpr float RngSeedMove = 100000.f;
-constexpr float RngResourceMove = 10000.f;
+constexpr float RngSeedMove = 1024.f;
+constexpr float RngResourceMove = 256.f;
 
 BaseGenerator::BaseGenerator(const int32 Seed) : BaseGenerator(Seed, true) {}
 
