@@ -1,16 +1,23 @@
 ﻿#include "BaseGenerator.h"
 
+#include "Definitions/GEARS_Macro.h"
 #include "Settings/GridParams.h"
 
 constexpr float RngSeedMove = 100000.f;
 constexpr float RngResourceMove = 10000.f;
 
-BaseGenerator::BaseGenerator(const int32 Seed) :
+BaseGenerator::BaseGenerator(int32 Seed) : BaseGenerator(Seed, true) {}
+
+BaseGenerator::BaseGenerator(const int32 Seed, const bool bGenResourceOffset) :
 		RngStream(Seed), SeedOffset(GetRandomSeedOffset())
 {
-	const auto Registry = GridParams::Get().GetResourceRegistry();
-	ResourcesOffset.Reserve(Registry.Num());
-	for (auto i=0; i<Registry.Num(); ++i) ResourcesOffset.Add(GetRandomResourceOffset());
+	if (!bGenResourceOffset) return;
+	for (auto SoftResource : GridParams::Get().GetResourceRegistry())
+	{
+		if (!ensureSoftPtr(SoftResource)) continue;
+		const auto Resource = SoftResource.LoadSynchronous();
+		Resource->Sampling.Offset = GetRandomResourceOffset();
+	}
 }
 
 FVector2D BaseGenerator::GetRandomResourceOffset() const
@@ -31,27 +38,22 @@ FVector2D BaseGenerator::GetRandomOffset(const float Displacement) const
 	};
 }
 
-int16 BaseGenerator::SampleResourceAtPosition(const FGridPosition& Pos)
+int16 BaseGenerator::SampleResourceAtPosition(const FGridPosition& Pos) const
 {
-	for (auto i=0; i<ResourcesOffset.Num(); ++i)
+	const auto& Registry = GridParams::Get().GetResourceRegistry();
+	for (auto i=0; i<Registry.Num(); ++i)
 	{
-		const auto Resource = GridParams::Get().GetResourceRegistry()[i].LoadSynchronous();
-		const auto ResourceOffset = ResourcesOffset[i];
-		if (ShouldSpawnResource(Pos, *Resource, ResourceOffset)) return i;
+		if (!ensureSoftPtr(Registry[i])) continue;
+		if (ShouldSpawnResource(Pos, Registry[i].LoadSynchronous()->Sampling)) return i;
 	}
 	return -1;
 }
 
-bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const UResourceType& Resource) const
-{
-	return ShouldSpawnResource(Pos, Resource, FVector2D::ZeroVector);
-}
-
-bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const UResourceType& Resource, const FVector2D& ResourceOffset) const
+bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx) const
 {
 	const auto NoiseValue = (FMath::PerlinNoise2D({
-		(Pos.X + SeedOffset.X + ResourceOffset.X) * Resource.NoiseScale,
-		(Pos.Y + SeedOffset.Y + ResourceOffset.Y) * Resource.NoiseScale
+		(Pos.X + SeedOffset.X + Ctx.Offset.X) * Ctx.NoiseScale,
+		(Pos.Y + SeedOffset.Y + Ctx.Offset.Y) * Ctx.NoiseScale
 	}) + 1.0f) * 0.5f;
-	return NoiseValue > Resource.NoiseThreshold;
+	return NoiseValue > Ctx.NoiseThreshold;
 }
