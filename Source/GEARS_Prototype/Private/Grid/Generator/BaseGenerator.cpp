@@ -1,5 +1,6 @@
 ﻿#include "BaseGenerator.h"
 
+#include "ProcSpawnData.h"
 #include "Definitions/GEARS_Macro.h"
 #include "Settings/GridParams.h"
 
@@ -38,7 +39,18 @@ FVector2D BaseGenerator::GetRandomOffset(const float Displacement) const
 	};
 }
 
-int16 BaseGenerator::SampleResourceAtPosition(const FGridPosition& Pos) const
+FProcSpawnData BaseGenerator::SampleResourceAtPosition(const FGridPosition& Pos) const
+{
+	FProcSpawnData SpawnData;
+	SpawnData.ResourceTypeIndex = DetermineResourceType(Pos);
+	if (SpawnData.ResourceTypeIndex == -1) goto exit;
+	SpawnData.Transform = Pos.ToTransform();
+	
+	exit:
+	return std::move(SpawnData);
+}
+
+int16 BaseGenerator::DetermineResourceType(const FGridPosition& Pos) const
 {
 	const auto& Registry = GridParams::Get().GetResourceRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
