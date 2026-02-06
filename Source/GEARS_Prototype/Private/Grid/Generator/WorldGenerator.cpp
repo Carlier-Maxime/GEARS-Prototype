@@ -36,11 +36,11 @@ void WorldGenerator::GenerateChunk(TArray<TArray<FTransform>>& OutInstances, con
 	auto Pos = FGridPosition::FromChunkIndex(ChunkIndex);
 	for (uint32 x=0; x<GridParams::Get().GetChunkSize(); ++x)
 	{
-		Pos.X += x;
+		++Pos.X;
 		Pos.Y = ChunkIndex.Y << GridParams::Get().GetChunkShift();
 		for (uint32 y=0; y<GridParams::Get().GetChunkSize(); ++y)
 		{
-			Pos.Y += y;
+			++Pos.Y;
 			const auto Index = SampleResourceAtPosition(Pos);
 			if (Index == -1) continue;
 			Chunk.SetResource(Pos, Index);
