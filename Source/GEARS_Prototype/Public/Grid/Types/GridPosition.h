@@ -3,7 +3,7 @@
 #include "GridPosition.generated.h"
 
 USTRUCT()
-struct FGridPosition
+struct GEARS_PROTOTYPE_API FGridPosition
 {
 	GENERATED_BODY()
 	FGridPosition() = default;

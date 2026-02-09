@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "BaseGenerator.h"
+#include "Grid/Generator/BaseGenerator.h"
 #include "../GridSubsystem.h"
 
 class WorldGenerator : public BaseGenerator

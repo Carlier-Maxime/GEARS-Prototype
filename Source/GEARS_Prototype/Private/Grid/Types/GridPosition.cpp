@@ -1,4 +1,4 @@
-﻿#include "GridPosition.h"
+﻿#include "Grid/Types/GridPosition.h"
 
 #include "Settings/GridParams.h"
 

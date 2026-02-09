@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "ProcSpawnData.h"
 #include "Grid/Types/GridPosition.h"
 
 struct FNoiseContext;
 struct FSamplingContext;
+struct FProcSpawnData;
 
-class BaseGenerator
+class GEARS_PROTOTYPE_API BaseGenerator
 {
 public:
 	BaseGenerator(int32 Seed);

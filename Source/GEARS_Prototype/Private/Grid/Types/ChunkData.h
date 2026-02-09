@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "GridPosition.h"
+#include "Grid/Types/GridPosition.h"
 
 #include "ChunkData.generated.h"
 

@@ -2,7 +2,7 @@
 
 
 #include "GridSubsystem.h"
-#include "Types/GridPosition.h"
+#include "Grid/Types/GridPosition.h"
 #include "Generator/WorldGenerator.h"
 #include "WorldRenderer.h"
 

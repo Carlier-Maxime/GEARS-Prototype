@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NoiseContext.h"
+#include "Grid/Generator/Context/NoiseContext.h"
 #include "SamplingContext.generated.h"
 
 /**
@@ -31,17 +31,4 @@ struct FSamplingContext
 
 	UPROPERTY(EditAnywhere, Category = "Sampling|Noise", meta = (ClampMin = 0, ClampMax = 1))
 	float ThresholdSmoothing = 0; 
-	
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(VisibleAnywhere, Category = "Sampling|Noise|Preview")
-	TObjectPtr<UTexture2D> NoisePreview;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Sampling|Noise|Preview", meta=(ClampMin = 8))
-	int32 PreviewResolution = 256;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Sampling|Noise|Preview", meta=(UIMin = 0, UIMax = 10000))
-	int32 SeedPreview = 0;
-	
-	void UpdatePreview();
-#endif
 };

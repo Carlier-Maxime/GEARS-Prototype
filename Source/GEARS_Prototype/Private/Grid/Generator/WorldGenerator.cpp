@@ -1,5 +1,6 @@
 ﻿#include "WorldGenerator.h"
 
+#include "ProcSpawnData.h"
 #include "Settings/GridParams.h"
 
 WorldGenerator::WorldGenerator(UGridSubsystem& Grid, const int32 Seed) :

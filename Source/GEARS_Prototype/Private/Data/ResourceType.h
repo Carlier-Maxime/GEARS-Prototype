@@ -24,10 +24,4 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, meta = (ShowOnlyInnerProperties))
 	FSamplingContext Sampling;
-
-	virtual void PostInitProperties() override;
-
-#if WITH_EDITORONLY_DATA
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
 };

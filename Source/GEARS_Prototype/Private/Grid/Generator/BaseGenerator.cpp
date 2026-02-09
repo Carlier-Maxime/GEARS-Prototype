@@ -1,7 +1,7 @@
-﻿#include "BaseGenerator.h"
+﻿#include "Grid/Generator/BaseGenerator.h"
 
 #include "ProcSpawnData.h"
-#include "Context/SamplingContext.h"
+#include "Grid/Generator/Context/SamplingContext.h"
 #include "Definitions/GEARS_Macro.h"
 #include "Settings/GridParams.h"
 
