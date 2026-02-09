@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NoiseContext.h"
 #include "SamplingContext.generated.h"
 
 /**
@@ -23,16 +24,14 @@ struct FSamplingContext
 	bool bRandomYaw = false;
 	
 	UPROPERTY(EditAnywhere, Category = "Sampling|Noise", meta = (ClampMin = 0, ClampMax = 1))
+	FNoiseContext Noise;
+	
+	UPROPERTY(EditAnywhere, Category = "Sampling|Noise", meta = (ClampMin = 0, ClampMax = 1))
 	float NoiseThreshold = 0.6f;
-	
-	UPROPERTY(EditAnywhere, Category = "Sampling|Noise", meta = (ClampMin = 0, ClampMax = 1))
-	float ThresholdSmoothing = 0;
 
 	UPROPERTY(EditAnywhere, Category = "Sampling|Noise", meta = (ClampMin = 0, ClampMax = 1))
-	float NoiseScale = 0.05f;
+	float ThresholdSmoothing = 0; 
 	
-	FVector2D Offset = FVector2D::ZeroVector;
-
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(VisibleAnywhere, Category = "Sampling|Noise|Preview")
 	TObjectPtr<UTexture2D> NoisePreview;

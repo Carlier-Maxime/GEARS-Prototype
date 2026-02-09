@@ -2,6 +2,7 @@
 #include "ProcSpawnData.h"
 #include "Grid/Types/GridPosition.h"
 
+struct FNoiseContext;
 struct FSamplingContext;
 
 class BaseGenerator
@@ -12,6 +13,7 @@ public:
 	virtual ~BaseGenerator() = default;
 	[[nodiscard]] FProcSpawnData SampleResourceAtPosition(const FGridPosition& Pos) const;
 	[[nodiscard]] bool ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx) const;
+	[[nodiscard]] float GetNoiseDensityAtPosition(const FGridPosition& Pos, const FNoiseContext& Ctx) const;
 	
 protected:
 	[[nodiscard]] FVector2D GetRandomResourceOffset() const;

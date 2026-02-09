@@ -2,7 +2,7 @@
 
 #include "SamplingContext.h"
 
-#include "BaseGenerator.h"
+#include "Grid/Generator/BaseGenerator.h"
 
 #if WITH_EDITORONLY_DATA
 void FSamplingContext::UpdatePreview()

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "Grid/Generator/SamplingContext.h"
+#include "Grid/Generator/Context/SamplingContext.h"
 #include "ResourceType.generated.h"
 
 /**

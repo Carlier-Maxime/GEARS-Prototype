@@ -1,6 +1,7 @@
 ﻿#include "BaseGenerator.h"
 
 #include "ProcSpawnData.h"
+#include "Context/SamplingContext.h"
 #include "Definitions/GEARS_Macro.h"
 #include "Settings/GridParams.h"
 
@@ -17,7 +18,7 @@ BaseGenerator::BaseGenerator(const int32 Seed, const bool bGenResourceOffset) :
 	{
 		if (!ensureSoftPtr(SoftResource)) continue;
 		const auto Resource = SoftResource.LoadSynchronous();
-		Resource->Sampling.Offset = GetRandomResourceOffset();
+		Resource->Sampling.Noise.Offset = GetRandomResourceOffset();
 	}
 }
 
@@ -60,19 +61,40 @@ int16 BaseGenerator::DetermineResourceType(const FGridPosition& Pos) const
 
 bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx) const
 {
-	const auto NoiseValue = (FMath::PerlinNoise2D({
-		(Pos.X + SeedOffset.X + Ctx.Offset.X) * Ctx.NoiseScale,
-		(Pos.Y + SeedOffset.Y + Ctx.Offset.Y) * Ctx.NoiseScale
-	}) + 1.0f) * 0.5f;
-	if (Ctx.ThresholdSmoothing == 0) return NoiseValue >= Ctx.NoiseThreshold;
+	const auto NoiseDensity = GetNoiseDensityAtPosition(Pos, Ctx.Noise);
+	if (Ctx.ThresholdSmoothing == 0) return NoiseDensity >= Ctx.NoiseThreshold;
 	const float SpawnChance = FMath::SmoothStep(
 		Ctx.NoiseThreshold,
 		Ctx.NoiseThreshold + Ctx.ThresholdSmoothing, 
-		NoiseValue
+		NoiseDensity
 	);
-	if (SpawnChance == 0) return false;
-	if (SpawnChance == 1) return true;
+	if (SpawnChance <= 0.f) return false;
+	if (SpawnChance >= 1.f) return true;
 	return GetLocalRng(Pos).FRand() < SpawnChance;
+}
+
+float BaseGenerator::GetNoiseDensityAtPosition(const FGridPosition& Pos, const FNoiseContext& Ctx) const
+{
+	float Total = 0.0f;
+	float Amplitude = 1.0f;
+	float MaxValue = 0.0f;
+	float CurrentFreq = Ctx.Frequency;
+	
+	const float SampleX = Pos.X + SeedOffset.X + Ctx.Offset.X;
+	const float SampleY = Pos.Y + SeedOffset.Y + Ctx.Offset.Y;
+
+	for (int32 i = 0; i < Ctx.Octaves; ++i)
+	{
+		const float NoiseVal = FMath::PerlinNoise2D(FVector2D(SampleX * CurrentFreq, SampleY * CurrentFreq));
+        
+		Total += NoiseVal * Amplitude;
+		MaxValue += Amplitude;
+        
+		Amplitude *= Ctx.Persistence;
+		CurrentFreq *= Ctx.Lacunarity;
+	}
+	
+	return (Total / MaxValue + 1.0f) * 0.5f;
 }
 
 FTransform BaseGenerator::CalculateVariationTransform(const FGridPosition& Pos, const int16 ResourceTypeIndex) const
