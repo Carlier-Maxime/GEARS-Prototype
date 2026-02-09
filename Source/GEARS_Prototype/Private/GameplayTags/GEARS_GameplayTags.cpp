@@ -17,6 +17,20 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Transition_Small_CellCountThreshold, "Grid.Trans
 UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Transition_Big_CellCountThreshold, "Grid.Transition.Big.CellCountThreshold")
 #pragma endregion
 
+#pragma region biome
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Forest_Autumn, "Biome.Forest.Autumn")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Forest_Deciduous, "Biome.Forest.Deciduous")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Forest_Coniferous, "Biome.Forest.Coniferous")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Forest_Dead, "Biome.Forest.Dead")
+
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Meadow_Lush, "Biome.Meadow.Lush")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Meadow_Arid, "Biome.Meadow.Arid")
+
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Desert_Rocky, "Biome.Desert.Rocky")
+
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Jungle_Edge, "Biome.Jungle.Edge")
+#pragma endregion
+
 #pragma region resource
 UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Organic_Wood, "Resource.Organic.Wood")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Organic_Biomass, "Resource.Organic.Biomass")

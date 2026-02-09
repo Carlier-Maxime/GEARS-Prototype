@@ -19,6 +19,20 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Small_CellCountThreshold)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Big_CellCountThreshold)
 #pragma endregion
 
+#pragma region biome
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Forest_Autumn)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Forest_Deciduous)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Forest_Coniferous)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Forest_Dead)
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Meadow_Lush)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Meadow_Arid)
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Desert_Rocky)
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Jungle_Edge)
+#pragma endregion 
+
 #pragma region resource
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Organic_Wood)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Organic_Biomass)
