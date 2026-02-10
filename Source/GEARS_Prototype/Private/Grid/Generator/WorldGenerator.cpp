@@ -42,7 +42,7 @@ void WorldGenerator::GenerateChunk(TArray<TArray<FTransform>>& OutInstances, con
 		for (uint32 y=0; y<GridParams::Get().GetChunkSize(); ++y)
 		{
 			++Pos.Y;
-			const auto SpawnData = SampleResourceAtPosition(Pos);
+			const auto SpawnData = SampleResource(Pos);
 			const auto Index = SpawnData.ResourceTypeIndex;
 			if (Index == -1) continue;
 			Chunk.SetResource(Pos, SpawnData.ResourceTypeIndex);

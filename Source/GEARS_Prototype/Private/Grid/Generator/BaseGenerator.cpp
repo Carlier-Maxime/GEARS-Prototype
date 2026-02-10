@@ -27,10 +27,10 @@ FVector2D BaseGenerator::GetResourceOffset(const FSoftObjectPath& Path) const
 
 FVector2D BaseGenerator::GetResourceOffset(const uint32 Hash) const
 {
-	return GetCachedOffset(Hash, RngResourceMove);
+	return GetOrComputeOffset(Hash, RngResourceMove);
 }
 
-FVector2D BaseGenerator::GetCachedOffset(const uint32 Hash, const float Displacement) const
+FVector2D BaseGenerator::GetOrComputeOffset(const uint32 Hash, const float Displacement) const
 {
 	{
 		FReadScopeLock ReadLock(CacheLock);
@@ -42,11 +42,11 @@ FVector2D BaseGenerator::GetCachedOffset(const uint32 Hash, const float Displace
 	return CachedOffsets.Add(Hash, GetRandomOffset(GetLocalRng(Hash), Displacement));
 }
 
-FProcSpawnData BaseGenerator::SampleResourceAtPosition(const FGridPosition& Pos) const
+FProcSpawnData BaseGenerator::SampleResource(const FGridPosition& Pos) const
 {
 	FProcSpawnData SpawnData;
 	SpawnData.ResourceTypeIndex = DetermineResourceType(Pos);
-	SpawnData.Transform = CalculateVariationTransform(Pos, SpawnData.ResourceTypeIndex);
+	SpawnData.Transform = GetVariationTransform(Pos, SpawnData.ResourceTypeIndex);
 	return std::move(SpawnData);
 }
 
@@ -65,7 +65,7 @@ int16 BaseGenerator::DetermineResourceType(const FGridPosition& Pos) const
 
 bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx) const
 {
-	const auto NoiseDensity = GetNoiseDensityAtPosition(Pos, Ctx.Noise);
+	const auto NoiseDensity = GetNoiseDensity(Pos, Ctx.Noise);
 	if (Ctx.ThresholdSmoothing == 0) return NoiseDensity >= Ctx.NoiseThreshold;
 	const float SpawnChance = FMath::SmoothStep(
 		Ctx.NoiseThreshold,
@@ -77,7 +77,7 @@ bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplin
 	return GetLocalRng(Pos).FRand() < SpawnChance;
 }
 
-float BaseGenerator::GetNoiseDensityAtPosition(const FGridPosition& Pos, const FNoiseContext& Ctx) const
+float BaseGenerator::GetNoiseDensity(const FGridPosition& Pos, const FNoiseContext& Ctx) const
 {
 	float Total = 0.0f;
 	float Amplitude = 1.0f;
@@ -101,7 +101,7 @@ float BaseGenerator::GetNoiseDensityAtPosition(const FGridPosition& Pos, const F
 	return (Total / MaxValue + 1.0f) * 0.5f;
 }
 
-FTransform BaseGenerator::CalculateVariationTransform(const FGridPosition& Pos, const int16 ResourceTypeIndex) const
+FTransform BaseGenerator::GetVariationTransform(const FGridPosition& Pos, const int16 ResourceTypeIndex) const
 {
 	auto Transform = Pos.ToTransform();
 	if (ResourceTypeIndex == -1) return std::move(Transform);
