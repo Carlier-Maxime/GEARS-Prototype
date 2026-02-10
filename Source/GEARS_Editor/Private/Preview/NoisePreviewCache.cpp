@@ -22,7 +22,7 @@ void FNoisePreviewCache::Update()
 	}
 
 	auto MipData = static_cast<FColor*>(Texture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE));
-	const auto Generator = BaseGenerator(Seed, false);
+	const auto Generator = BaseGenerator(Seed);
 	for (int32 y = 0; y < Resolution; y++)
 	{
 		for (int32 x = 0; x < Resolution; x++)

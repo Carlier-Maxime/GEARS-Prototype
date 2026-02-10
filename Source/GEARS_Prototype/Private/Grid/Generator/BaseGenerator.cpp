@@ -8,12 +8,9 @@
 constexpr float RngSeedMove = 1024.f;
 constexpr float RngResourceMove = 256.f;
 
-BaseGenerator::BaseGenerator(const int32 Seed) : BaseGenerator(Seed, true) {}
-
-BaseGenerator::BaseGenerator(const int32 Seed, const bool bGenResourceOffset) :
+BaseGenerator::BaseGenerator(const int32 Seed) :
 		Seed(Seed), RngStream(Seed), SeedOffset(GetRandomSeedOffset())
 {
-	if (!bGenResourceOffset) return;
 	for (auto SoftResource : GridParams::Get().GetResourceRegistry())
 	{
 		if (!ensureSoftPtr(SoftResource)) continue;

@@ -9,7 +9,6 @@ class GEARS_PROTOTYPE_API BaseGenerator
 {
 public:
 	BaseGenerator(int32 Seed);
-	BaseGenerator(int32 Seed, bool bGenResourceOffset);
 	virtual ~BaseGenerator() = default;
 	[[nodiscard]] FProcSpawnData SampleResourceAtPosition(const FGridPosition& Pos) const;
 	[[nodiscard]] bool ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx) const;
