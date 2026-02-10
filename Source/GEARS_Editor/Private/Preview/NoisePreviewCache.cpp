@@ -22,12 +22,15 @@ void FNoisePreviewCache::Update()
 	}
 
 	auto MipData = static_cast<FColor*>(Texture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE));
-	const auto Generator = BaseGenerator(Seed);
+	const FNoisePreviewGenerators Generators = {
+		BaseGenerator(Seed),
+		ResourceGenerator(Seed)
+	};
 	for (int32 y = 0; y < Resolution; y++)
 	{
 		for (int32 x = 0; x < Resolution; x++)
 		{
-			MipData[y * Resolution + x] = GenerateColorAtPos(Generator, FGridPosition::FromGridPos(x, y));
+			MipData[y * Resolution + x] = GenerateColorAtPos(Generators, FGridPosition::FromGridPos(x, y));
 		}
 	}
 
@@ -36,18 +39,18 @@ void FNoisePreviewCache::Update()
 	Texture->PostEditChange();
 }
 
-FColor FNoisePreviewCache::GenerateColorAtPos(const BaseGenerator& Generator, const FGridPosition& Pos) const
+FColor FNoisePreviewCache::GenerateColorAtPos(const FNoisePreviewGenerators& Generators, const FGridPosition& Pos) const
 {
 	if (StructName == FNoiseContext::StaticStruct()->GetFName())
 	{
 		const auto Ctx = static_cast<FNoiseContext*>(StructPtr);
-		const uint8 ColorVal = FMath::Floor(Generator.GetNoiseDensity(Pos, *Ctx, FVector2D::ZeroVector) * 255.f);
+		const uint8 ColorVal = FMath::Floor(Generators.Base.GetNoiseDensity(Pos, *Ctx, FVector2D::ZeroVector) * 255.f);
 		return {ColorVal, ColorVal, ColorVal, 255};
 	}
 	if (StructName == FSamplingContext::StaticStruct()->GetFName())
 	{
 		const auto Ctx = static_cast<FSamplingContext*>(StructPtr);
-		const uint8 ColorVal = Generator.ShouldSpawnResource(Pos, *Ctx, FVector2D::ZeroVector) ? 255 : 0;
+		const uint8 ColorVal = Generators.Resource.ShouldSpawn(Pos, *Ctx, FVector2D::ZeroVector) ? 255 : 0;
 		return {ColorVal, ColorVal, ColorVal, 255};
 	}
 	return FColor::Black;

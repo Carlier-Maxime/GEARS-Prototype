@@ -1,7 +1,14 @@
 ﻿#pragma once
+#include "Grid/Generator/BaseGenerator.h"
+#include "Grid/Generator/ResourceGenerator.h"
 
-class BaseGenerator;
 struct FGridPosition;
+
+struct FNoisePreviewGenerators
+{
+	BaseGenerator Base;
+	ResourceGenerator Resource;
+};
 
 struct FNoisePreviewCache
 {
@@ -16,5 +23,5 @@ struct FNoisePreviewCache
 	
 	void Update();
 private:
-	FColor GenerateColorAtPos(const BaseGenerator& Generator, const FGridPosition& Pos) const;
+	FColor GenerateColorAtPos(const FNoisePreviewGenerators& Generator, const FGridPosition& Pos) const;
 };

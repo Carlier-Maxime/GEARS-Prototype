@@ -1,11 +1,12 @@
 ﻿#pragma once
 
-#include "Grid/Generator/BaseGenerator.h"
 #include "../GridSubsystem.h"
+#include "Grid/Generator/ResourceGenerator.h"
 
-class WorldGenerator : public BaseGenerator
+class WorldGenerator
 {
 public:
+	virtual ~WorldGenerator() = default;
 	WorldGenerator(UGridSubsystem& Grid, int32 Seed);
 	[[nodiscard]] TArray<TArray<FTransform>> Generate(const uint16 ChunkRadius) const;
 	[[nodiscard]] TArray<TArray<FTransform>> GenerateChunk(const FIntPoint& ChunkIndex) const;
@@ -15,4 +16,5 @@ private:
 	static TArray<TArray<FTransform>> InitResourcesInstances();
 	
 	UGridSubsystem& Grid;
+	ResourceGenerator ResourceGenerator;
 };

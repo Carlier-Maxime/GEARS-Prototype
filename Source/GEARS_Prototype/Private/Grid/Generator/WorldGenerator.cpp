@@ -1,10 +1,9 @@
 ﻿#include "WorldGenerator.h"
 
-#include "ProcSpawnData.h"
 #include "Settings/GridParams.h"
 
 WorldGenerator::WorldGenerator(UGridSubsystem& Grid, const int32 Seed) :
-		BaseGenerator(Seed), Grid(Grid)
+	Grid(Grid), ResourceGenerator(Seed)
 {}
 
 TArray<TArray<FTransform>> WorldGenerator::Generate(const uint16 ChunkRadius) const
@@ -42,11 +41,10 @@ void WorldGenerator::GenerateChunk(TArray<TArray<FTransform>>& OutInstances, con
 		for (uint32 y=0; y<GridParams::Get().GetChunkSize(); ++y)
 		{
 			++Pos.Y;
-			const auto SpawnData = SampleResource(Pos);
-			const auto Index = SpawnData.ResourceTypeIndex;
-			if (Index == -1) continue;
-			Chunk.SetResource(Pos, SpawnData.ResourceTypeIndex);
-			OutInstances[Index].Add(SpawnData.Transform);
+			const auto [TypeIndex, Transform] = ResourceGenerator.Sample(Pos);
+			if (TypeIndex == -1) continue;
+			Chunk.SetResource(Pos, TypeIndex);
+			OutInstances[TypeIndex].Add(Transform);
 		}
 	}
 }
