@@ -11,8 +11,8 @@ public:
 	BaseGenerator(int32 Seed);
 	virtual ~BaseGenerator() = default;
 	[[nodiscard]] FProcSpawnData SampleResource(const FGridPosition& Pos) const;
-	[[nodiscard]] bool ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx) const;
-	[[nodiscard]] float GetNoiseDensity(const FGridPosition& Pos, const FNoiseContext& Ctx) const;
+	[[nodiscard]] bool ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx, const FVector2D& Offset) const;
+	[[nodiscard]] float GetNoiseDensity(const FGridPosition& Pos, const FNoiseContext& Ctx, const FVector2D& Offset) const;
 	
 protected:
 	[[nodiscard]] static FVector2D GetRandomOffset(const FRandomStream& RngStream, float Displacement);

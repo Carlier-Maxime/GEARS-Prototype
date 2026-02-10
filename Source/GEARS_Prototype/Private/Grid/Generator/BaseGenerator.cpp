@@ -56,16 +56,16 @@ int16 BaseGenerator::DetermineResourceType(const FGridPosition& Pos) const
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
 		if (!ensureSoftPtr(Registry[i])) continue;
-		auto& Sampling = Registry[i].LoadSynchronous()->Sampling;
-		Sampling.Noise.Offset = GetResourceOffset(Registry[i]);
-		if (ShouldSpawnResource(Pos, Sampling)) return i;
+		const auto& Sampling = Registry[i].LoadSynchronous()->Sampling;
+		if (ShouldSpawnResource(Pos, Sampling, GetResourceOffset(Registry[i]))) return i;
 	}
 	return -1;
 }
 
-bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx) const
+bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplingContext& Ctx,
+	const FVector2D& Offset) const
 {
-	const auto NoiseDensity = GetNoiseDensity(Pos, Ctx.Noise);
+	const auto NoiseDensity = GetNoiseDensity(Pos, Ctx.Noise, Offset);
 	if (Ctx.ThresholdSmoothing == 0) return NoiseDensity >= Ctx.NoiseThreshold;
 	const float SpawnChance = FMath::SmoothStep(
 		Ctx.NoiseThreshold,
@@ -77,15 +77,15 @@ bool BaseGenerator::ShouldSpawnResource(const FGridPosition& Pos, const FSamplin
 	return GetLocalRng(Pos).FRand() < SpawnChance;
 }
 
-float BaseGenerator::GetNoiseDensity(const FGridPosition& Pos, const FNoiseContext& Ctx) const
+float BaseGenerator::GetNoiseDensity(const FGridPosition& Pos, const FNoiseContext& Ctx, const FVector2D& Offset) const
 {
 	float Total = 0.0f;
 	float Amplitude = 1.0f;
 	float MaxValue = 0.0f;
 	float CurrentFreq = Ctx.Frequency;
 	
-	const float SampleX = Pos.X + SeedOffset.X + Ctx.Offset.X;
-	const float SampleY = Pos.Y + SeedOffset.Y + Ctx.Offset.Y;
+	const float SampleX = Pos.X + SeedOffset.X + Offset.X;
+	const float SampleY = Pos.Y + SeedOffset.Y + Offset.Y;
 
 	for (int32 i = 0; i < Ctx.Octaves; ++i)
 	{

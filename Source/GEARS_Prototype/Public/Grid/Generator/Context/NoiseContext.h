@@ -19,6 +19,4 @@ struct FNoiseContext
 
 	UPROPERTY(EditAnywhere, Category = "Noise")
 	float Lacunarity = 2.0f;
-	
-	FVector2D Offset = FVector2D::ZeroVector;
 };

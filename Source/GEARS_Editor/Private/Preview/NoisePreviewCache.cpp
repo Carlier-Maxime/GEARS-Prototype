@@ -41,13 +41,13 @@ FColor FNoisePreviewCache::GenerateColorAtPos(const BaseGenerator& Generator, co
 	if (StructName == FNoiseContext::StaticStruct()->GetFName())
 	{
 		const auto Ctx = static_cast<FNoiseContext*>(StructPtr);
-		const uint8 ColorVal = FMath::Floor(Generator.GetNoiseDensity(Pos, *Ctx) * 255.f);
+		const uint8 ColorVal = FMath::Floor(Generator.GetNoiseDensity(Pos, *Ctx, FVector2D::ZeroVector) * 255.f);
 		return {ColorVal, ColorVal, ColorVal, 255};
 	}
 	if (StructName == FSamplingContext::StaticStruct()->GetFName())
 	{
 		const auto Ctx = static_cast<FSamplingContext*>(StructPtr);
-		const uint8 ColorVal = Generator.ShouldSpawnResource(Pos, *Ctx) ? 255 : 0;
+		const uint8 ColorVal = Generator.ShouldSpawnResource(Pos, *Ctx, FVector2D::ZeroVector) ? 255 : 0;
 		return {ColorVal, ColorVal, ColorVal, 255};
 	}
 	return FColor::Black;
