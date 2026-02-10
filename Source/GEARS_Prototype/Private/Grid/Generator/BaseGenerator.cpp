@@ -9,32 +9,37 @@ constexpr float RngSeedMove = 1024.f;
 constexpr float RngResourceMove = 256.f;
 
 BaseGenerator::BaseGenerator(const int32 Seed) :
-		Seed(Seed), RngStream(Seed), SeedOffset(GetRandomSeedOffset())
-{
-	for (auto SoftResource : GridParams::Get().GetResourceRegistry())
-	{
-		if (!ensureSoftPtr(SoftResource)) continue;
-		const auto Resource = SoftResource.LoadSynchronous();
-		Resource->Sampling.Noise.Offset = GetRandomResourceOffset();
-	}
-}
+		Seed(Seed), SeedOffset(GetRandomOffset({Seed}, RngSeedMove))
+{}
 
-FVector2D BaseGenerator::GetRandomResourceOffset() const
-{
-	return GetRandomOffset(RngResourceMove);
-}
-
-FVector2D BaseGenerator::GetRandomSeedOffset() const
-{
-	return GetRandomOffset(RngSeedMove);
-}
-
-FVector2D BaseGenerator::GetRandomOffset(const float Displacement) const
+FVector2D BaseGenerator::GetRandomOffset(const FRandomStream& RngStream, const float Displacement)
 {
 	return {
 		RngStream.FRandRange(-Displacement, Displacement),
 		RngStream.FRandRange(-Displacement, Displacement)
 	};
+}
+
+FVector2D BaseGenerator::GetResourceOffset(const FSoftObjectPath& Path) const
+{
+	return GetResourceOffset(GetTypeHash(Path));
+}
+
+FVector2D BaseGenerator::GetResourceOffset(const uint32 Hash) const
+{
+	return GetCachedOffset(Hash, RngResourceMove);
+}
+
+FVector2D BaseGenerator::GetCachedOffset(const uint32 Hash, const float Displacement) const
+{
+	{
+		FReadScopeLock ReadLock(CacheLock);
+		if (const auto Offset = CachedOffsets.Find(Hash)) return *Offset;
+	}
+	
+	FWriteScopeLock WriteLock(CacheLock);
+	if (const auto Offset = CachedOffsets.Find(Hash)) return *Offset;
+	return CachedOffsets.Add(Hash, GetRandomOffset(GetLocalRng(Hash), Displacement));
 }
 
 FProcSpawnData BaseGenerator::SampleResourceAtPosition(const FGridPosition& Pos) const
@@ -51,7 +56,9 @@ int16 BaseGenerator::DetermineResourceType(const FGridPosition& Pos) const
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
 		if (!ensureSoftPtr(Registry[i])) continue;
-		if (ShouldSpawnResource(Pos, Registry[i].LoadSynchronous()->Sampling)) return i;
+		auto& Sampling = Registry[i].LoadSynchronous()->Sampling;
+		Sampling.Noise.Offset = GetResourceOffset(Registry[i]);
+		if (ShouldSpawnResource(Pos, Sampling)) return i;
 	}
 	return -1;
 }
@@ -123,5 +130,10 @@ FTransform BaseGenerator::CalculateVariationTransform(const FGridPosition& Pos, 
 
 FRandomStream BaseGenerator::GetLocalRng(const FGridPosition& Pos) const
 {
-	return {static_cast<int32>(HashCombineFast(Seed, GetTypeHash(Pos.GetGridPos())))};
+	return GetLocalRng(GetTypeHash(Pos));
+}
+
+FRandomStream BaseGenerator::GetLocalRng(const uint32 Hash) const
+{
+	return {static_cast<int32>(HashCombineFast(Seed, Hash))};
 }

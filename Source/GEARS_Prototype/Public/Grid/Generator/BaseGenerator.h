@@ -15,14 +15,25 @@ public:
 	[[nodiscard]] float GetNoiseDensityAtPosition(const FGridPosition& Pos, const FNoiseContext& Ctx) const;
 	
 protected:
-	[[nodiscard]] FVector2D GetRandomResourceOffset() const;
-	[[nodiscard]] FVector2D GetRandomSeedOffset() const;
-	[[nodiscard]] FVector2D GetRandomOffset(float Displacement) const;
+	[[nodiscard]] static FVector2D GetRandomOffset(const FRandomStream& RngStream, float Displacement);
+	[[nodiscard]] FVector2D GetCachedOffset(uint32 Hash, float Displacement) const;
+	[[nodiscard]] FVector2D GetResourceOffset(uint32 Hash) const;
+	[[nodiscard]] FVector2D GetResourceOffset(const FSoftObjectPath& Path) const;
+	template<typename T>
+	[[nodiscard]] FVector2D GetResourceOffset(const TSoftObjectPtr<T>& Ptr) const
+	{
+		return GetResourceOffset(Ptr.ToSoftObjectPath());
+	}
+	
 	[[nodiscard]] int16 DetermineResourceType(const FGridPosition& Pos) const;
 	[[nodiscard]] FTransform CalculateVariationTransform(const FGridPosition& Pos, int16 ResourceTypeIndex) const;
 	[[nodiscard]] FRandomStream GetLocalRng(const FGridPosition& Pos) const;
+	[[nodiscard]] FRandomStream GetLocalRng(uint32 Hash) const;
 	
+private:
 	const int32 Seed;
-	const FRandomStream RngStream;
 	const FVector2D SeedOffset;
+	
+	mutable TMap<uint32, FVector2D> CachedOffsets;
+	mutable FRWLock CacheLock;
 };
