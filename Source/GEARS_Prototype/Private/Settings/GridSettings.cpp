@@ -71,6 +71,8 @@ void UGridSettings::RefreshFastAccessVariables() const
 	GridParams::Get().ChunkMask = ChunkSize - 1;
 	GridParams::Get().ResourceRegistry = ResourceRegister;
 	GridParams::Get().BiomeRegistry = BiomeRegistry;
+	GridParams::Get().Temperature = Temperature;
+	GridParams::Get().Humidity = Humidity;
 }
 
 void UGridSettings::SyncSharedParams()

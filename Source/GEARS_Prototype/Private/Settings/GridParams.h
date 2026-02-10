@@ -13,14 +13,16 @@ public:
 		return Instance;
 	}
 	
-	float GetCellSize() { return CellSize; }
-	float GetInvCellSize() { return InvCellSize; }
-	uint32 GetChunkSize() { return ChunkSize; }
-	uint32 GetChunkSizeSquared() { return ChunkSizeSquared; }
-	uint32 GetChunkShift() { return ChunkShift; }
-	uint32 GetChunkMask() { return ChunkMask; }
-	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegistry() {return ResourceRegistry;}
-	const TArray<TSoftObjectPtr<UBiomeType>>& GetBiomeRegistry() {return BiomeRegistry;}
+	float GetCellSize() const { return CellSize; }
+	float GetInvCellSize() const { return InvCellSize; }
+	uint32 GetChunkSize() const { return ChunkSize; }
+	uint32 GetChunkSizeSquared() const { return ChunkSizeSquared; }
+	uint32 GetChunkShift() const { return ChunkShift; }
+	uint32 GetChunkMask() const { return ChunkMask; }
+	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegistry() const {return ResourceRegistry;}
+	const TArray<TSoftObjectPtr<UBiomeType>>& GetBiomeRegistry() const {return BiomeRegistry;}
+	const FNoiseContext& GetTemperature() const { return Temperature; }
+	const FNoiseContext& GetHumidity() const { return Humidity; }
 private:
 	GridParams() = default;
 	friend class UGridSettings;
@@ -32,4 +34,6 @@ private:
 	uint32 ChunkMask;
 	TArray<TSoftObjectPtr<UResourceType>> ResourceRegistry;
 	TArray<TSoftObjectPtr<UBiomeType>> BiomeRegistry;
+	FNoiseContext Temperature;
+	FNoiseContext Humidity;
 };
