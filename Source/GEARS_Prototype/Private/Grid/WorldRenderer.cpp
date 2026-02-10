@@ -15,22 +15,6 @@ AWorldRenderer::AWorldRenderer()
 	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	Root->SetMobility(EComponentMobility::Static);
 	SetRootComponent(Root);
-	
-	auto Registry = GridParams::Get().GetResourceRegistry();
-	ResourcesComponents.Reserve(Registry.Num());
-	for (auto SoftResource: Registry)
-	{
-		if (!ensureSoftPtr(SoftResource)) continue;
-		const auto Resource = SoftResource.LoadSynchronous();
-		const auto NameID = MakeUniqueObjectName(this, UHierarchicalInstancedStaticMeshComponent::StaticClass(), Resource->ResourceTag.GetTagName());
-		auto NewHISM = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(NameID);
-		NewHISM->SetupAttachment(GetRootComponent());
-		NewHISM->SetStaticMesh(Resource->WorldMesh);
-		NewHISM->SetMobility(EComponentMobility::Static);
-		NewHISM->bEnableDensityScaling = true;
-		NewHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 7));
-		ResourcesComponents.Add(NewHISM);
-	}
 }
 
 void AWorldRenderer::BeginPlay()
@@ -40,10 +24,31 @@ void AWorldRenderer::BeginPlay()
 
 void AWorldRenderer::UpdateResourcesInstances(const TArray<TArray<FTransform>>& ResourcesInstances)
 {
-	ensure(ResourcesComponents.Num() == ResourcesInstances.Num());
-	for (auto i=0; i<ResourcesComponents.Num(); ++i)
+	for (auto i=0; i<ResourcesInstances.Num(); ++i)
 	{
-		ResourcesComponents[i]->ClearInstances();
-		ResourcesComponents[i]->AddInstances(ResourcesInstances[i], false);
+		if (ResourcesInstances[i].Num() == 0)
+		{
+			if (const auto FoundHISM = ResourcesComponents.Find(i)) (*FoundHISM)->ClearInstances();
+			continue;
+		}
+		const auto HISM = FindOrAddHISM(i);
+		HISM->ClearInstances();
+		HISM->AddInstances(ResourcesInstances[i], false);
 	}
+}
+
+TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddHISM(int16 ResourceIndex)
+{
+	if (const auto HISM = ResourcesComponents.Find(ResourceIndex)) return *HISM;
+	const auto& SoftResource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
+	ensureSoftPtrOrRet(SoftResource, nullptr);
+	const auto Resource = SoftResource.LoadSynchronous();
+	const auto NewHISM = NewObject<UHierarchicalInstancedStaticMeshComponent>(this, Resource->ResourceTag.GetTagName());
+	NewHISM->SetupAttachment(GetRootComponent());
+	NewHISM->SetStaticMesh(Resource->WorldMesh.LoadSynchronous());
+	NewHISM->SetMobility(EComponentMobility::Static);
+	NewHISM->bEnableDensityScaling = true;
+	NewHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 7));
+	NewHISM->RegisterComponent();
+	return ResourcesComponents.Add(ResourceIndex, NewHISM);
 }

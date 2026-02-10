@@ -20,7 +20,7 @@ public:
 	FGameplayTag ResourceTag;
 	
 	UPROPERTY(EditAnywhere, Category = "Visuals")
-	TObjectPtr<UStaticMesh> WorldMesh;
+	TSoftObjectPtr<UStaticMesh> WorldMesh;
 	
 	UPROPERTY(EditDefaultsOnly, meta = (ShowOnlyInnerProperties))
 	FSamplingContext Sampling;

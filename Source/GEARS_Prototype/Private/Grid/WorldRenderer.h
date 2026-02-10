@@ -19,8 +19,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	TObjectPtr<UHierarchicalInstancedStaticMeshComponent> FindOrAddHISM(int16 ResourceIndex);
 	
 private:
 	UPROPERTY()
-	TArray<TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> ResourcesComponents;
+	TMap<int16, TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> ResourcesComponents;
 };
