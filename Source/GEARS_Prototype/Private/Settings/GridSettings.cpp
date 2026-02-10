@@ -70,6 +70,7 @@ void UGridSettings::RefreshFastAccessVariables() const
 	GridParams::Get().ChunkShift = FMath::FloorLog2(ChunkSize);
 	GridParams::Get().ChunkMask = ChunkSize - 1;
 	GridParams::Get().ResourceRegistry = ResourceRegister;
+	GridParams::Get().BiomeRegistry = BiomeRegistry;
 }
 
 void UGridSettings::SyncSharedParams()

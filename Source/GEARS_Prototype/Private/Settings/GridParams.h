@@ -2,6 +2,8 @@
 
 #include "Data/ResourceType.h"
 
+class UBiomeType;
+
 class GridParams
 {
 public:
@@ -18,6 +20,7 @@ public:
 	uint32 GetChunkShift() { return ChunkShift; }
 	uint32 GetChunkMask() { return ChunkMask; }
 	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegistry() {return ResourceRegistry;}
+	const TArray<TSoftObjectPtr<UBiomeType>>& GetBiomeRegistry() {return BiomeRegistry;}
 private:
 	GridParams() = default;
 	friend class UGridSettings;
@@ -28,4 +31,5 @@ private:
 	uint32 ChunkShift;
 	uint32 ChunkMask;
 	TArray<TSoftObjectPtr<UResourceType>> ResourceRegistry;
+	TArray<TSoftObjectPtr<UBiomeType>> BiomeRegistry;
 };

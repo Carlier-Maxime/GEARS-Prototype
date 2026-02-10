@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
+#include "Grid/Generator/Context/NoiseContext.h"
 #include "GridSettings.generated.h"
 
+class UBiomeType;
 class UResourceType;
 /**
  * 
@@ -62,5 +64,12 @@ private:
 	
 	UPROPERTY(EditAnywhere, config, Category = "Resources", meta = (AllowPrivateAccess = true))
 	TArray<TSoftObjectPtr<UResourceType>> ResourceRegister;
+	
+	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
+	TArray<TSoftObjectPtr<UBiomeType>> BiomeRegistry;
+	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
+	FNoiseContext Temperature;
+	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
+	FNoiseContext Humidity;
 };
 
