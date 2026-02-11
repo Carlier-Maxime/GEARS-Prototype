@@ -1,6 +1,8 @@
 ﻿#include "GEARS_Editor.h"
 
+#include "Customization/GridNoiseDetailCustomization.h"
 #include "Customization/GridNoiseStructCustomization.h"
+#include "Data/BiomeType.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/SamplingContext.h"
 
@@ -17,6 +19,11 @@ void FGEARS_EditorModule::StartupModule()
 		FSamplingContext::StaticStruct()->GetFName(),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FGridNoiseStructCustomization::MakeInstance)
 	);
+	
+	PropertyModule.RegisterCustomClassLayout(
+		UBiomeType::StaticClass()->GetFName(),
+		FOnGetDetailCustomizationInstance::CreateStatic(&FGridNoiseDetailCustomization::MakeInstance)
+	);
 
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
@@ -29,6 +36,7 @@ void FGEARS_EditorModule::ShutdownModule()
 		auto& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FNoiseContext::StaticStruct()->GetFName());
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FSamplingContext::StaticStruct()->GetFName());
+		PropertyModule.UnregisterCustomClassLayout(UBiomeType::StaticClass()->GetFName());
 	}
 }
 
