@@ -1,4 +1,7 @@
 ﻿#pragma once
+
+#include "CoreMinimal.h"
+#include "NoisePreviewSettings.h"
 #include "Grid/Generator/BaseGenerator.h"
 #include "Grid/Generator/ResourceGenerator.h"
 
@@ -16,8 +19,7 @@ struct FNoisePreviewState
 	
 	TStrongObjectPtr<UTexture2D> Texture = nullptr;
 	FSlateBrush Brush;
-	int32 Resolution = 256;
-	int32 Seed = 0;
+	FNoisePreviewSettings Settings;
 	void* StructPtr = nullptr;
 	FName StructName;
 	

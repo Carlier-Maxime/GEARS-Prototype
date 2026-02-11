@@ -5,14 +5,15 @@
 
 #include "SlateOptMacros.h"
 #include "DetailLayoutBuilder.h"
-#include "Widgets/Input/SNumericEntryBox.h"
+#include "ISinglePropertyView.h"
+#include "IStructureDataProvider.h"
 #include "Preview/NoisePreviewState.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 {
-	ThumbnailSize = InArgs._ThumbnailSize;
+	InitializeSettingsViews();
 	State.StructPtr = InArgs._StructPtr;
 	State.StructName = InArgs._StructName;
 	State.Update();
@@ -26,9 +27,11 @@ void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 	}
 	
 	TSharedRef<SGridPanel> Grid = SNew(SGridPanel);
-	AddNumericRow(Grid, 0, "Seed", &State.Seed, 0, 1000);
-	AddNumericRow(Grid, 1, "Resolution", &State.Resolution, 32, 512, 32);
-	AddNumericRow(Grid, 2, "Thumbnail Res", &ThumbnailSize, 64, 256, 32);
+	int32 Row = 0;
+	for (auto& [Name, View] : SettingsViews)
+	{
+		AddNumericRow(Grid, ++Row, Name, View.ToSharedRef());
+	}
 	
 	ChildSlot
 	[
@@ -43,8 +46,8 @@ void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 			.Image(&State.Brush)
 			.DesiredSizeOverride_Lambda([this]{
 				return FVector2D{
-					static_cast<double>(ThumbnailSize),
-					static_cast<double>(ThumbnailSize)
+					static_cast<double>(State.Settings.ThumbnailSize),
+					static_cast<double>(State.Settings.ThumbnailSize)
 				};
 			}).OnMouseButtonDown_Lambda([this](const FGeometry&, const FPointerEvent&)
 			{
@@ -65,27 +68,52 @@ void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 }
 
 void SNoisePreviewWidget::AddNumericRow(
-	const TSharedRef<SGridPanel>& Grid, const int32 Row, const FString& Label, int32* ValuePtr,
-	int32 Min, int32 Max, const int32 Step
+	const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView
 ) {
 	Grid->AddSlot(0, Row).Padding(0, 5).VAlign(VAlign_Center)
 	[
-		SNew(STextBlock).Text(FText::FromString(Label)).Font(IDetailLayoutBuilder::GetDetailFont())
+		SNew(STextBlock).Text(FText::FromName(Label)).Font(IDetailLayoutBuilder::GetDetailFont())
 	];
-	Grid->AddSlot(1, Row).Padding(5, 5)
+	Grid->AddSlot(1, Row).Padding(5, 0)
 	[
-		SNew(SNumericEntryBox<int32>)
-		.MinDesiredValueWidth(128.f)
-		.MinSliderValue(Min)
-		.MaxSliderValue(Max)
-		.Delta(Step)
-		.AllowSpin(true)
-		.Value_Lambda([ValuePtr] { return ValuePtr ? *ValuePtr : 0; })
-		.OnValueChanged_Lambda([this, ValuePtr, Min, Max](int32 Val){ 
-			*ValuePtr = FMath::Clamp(Val, Min, Max);
-			State.Update();
-		})
+		SNew(SBox).MinDesiredWidth(128.f)
+		[
+			PropertyView
+		]
 	];
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
+
+void SNoisePreviewWidget::InitializeSettingsViews()
+{
+	SettingsStructOnScope = MakeShared<FStructOnScope>(FNoisePreviewSettings::StaticStruct(), reinterpret_cast<uint8*>(&State.Settings));
+	TSharedRef<IStructureDataProvider> StructProvider = MakeShared<FStructOnScopeStructureDataProvider>(SettingsStructOnScope);
+
+	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+
+	FSinglePropertyParams Params;
+	Params.NamePlacement = EPropertyNamePlacement::Hidden;
+	
+	const UScriptStruct* StructDefinition = FNoisePreviewSettings::StaticStruct();
+	for (TFieldIterator<FProperty> It(StructDefinition); It; ++It)
+	{
+		FProperty* Prop = *It;
+		FName PropName = Prop->GetFName();
+		
+		TSharedPtr<ISinglePropertyView> PropView = PropertyModule.CreateSingleProperty(
+			StructProvider, 
+			PropName, 
+			Params
+		);
+
+		if (PropView.IsValid())
+		{
+			PropView->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda([this]
+			{
+				State.Update();
+			}));
+			SettingsViews.Add(PropName, PropView);
+		}
+	}
+}

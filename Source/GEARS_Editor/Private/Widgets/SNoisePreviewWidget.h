@@ -6,6 +6,7 @@
 #include "Preview/NoisePreviewState.h"
 #include "Widgets/SCompoundWidget.h"
 #include "PropertyHandle.h"
+#include "Preview/NoisePreviewSettings.h"
 
 /**
  * 
@@ -20,12 +21,14 @@ public:
 		SLATE_ARGUMENT(FName, StructName)
 		SLATE_ARGUMENT(TSharedPtr<IPropertyHandle>, PropertyHandle)
 	SLATE_END_ARGS()
-	
+
+	void InitializeSettingsViews();
 	void Construct(const FArguments& InArgs);
 
 private:
-	void AddNumericRow(const TSharedRef<SGridPanel>& Grid, int32 Row, const FString& Label, int32* ValuePtr, int32 Min, int32 Max, int32 Step = 1);
+	static void AddNumericRow(const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView);
 	
-	int32 ThumbnailSize = 0;
 	FNoisePreviewState State;
+	TSharedPtr<FStructOnScope> SettingsStructOnScope;
+	TMap<FName, TSharedPtr<ISinglePropertyView>> SettingsViews;
 };
