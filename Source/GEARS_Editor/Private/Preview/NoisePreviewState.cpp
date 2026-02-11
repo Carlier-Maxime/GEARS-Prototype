@@ -1,16 +1,16 @@
-﻿#include "NoisePreviewCache.h"
+﻿#include "NoisePreviewState.h"
 
 #include "Grid/Generator/BaseGenerator.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/SamplingContext.h"
 #include "Grid/Types/GridPosition.h"
 
-FNoisePreviewCache::FNoisePreviewCache()
+FNoisePreviewState::FNoisePreviewState()
 {
 	Brush.SetResourceObject(Texture.Get());
 }
 
-void FNoisePreviewCache::Update()
+void FNoisePreviewState::Update()
 {
 	if (!StructPtr) return;
 	
@@ -39,7 +39,7 @@ void FNoisePreviewCache::Update()
 	Texture->PostEditChange();
 }
 
-FColor FNoisePreviewCache::GenerateColorAtPos(const FNoisePreviewGenerators& Generators, const FGridPosition& Pos) const
+FColor FNoisePreviewState::GenerateColorAtPos(const FNoisePreviewGenerators& Generators, const FGridPosition& Pos) const
 {
 	if (StructName == FNoiseContext::StaticStruct()->GetFName())
 	{

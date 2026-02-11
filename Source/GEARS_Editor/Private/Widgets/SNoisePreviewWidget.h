@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Preview/NoisePreviewCache.h"
+#include "Preview/NoisePreviewState.h"
 #include "Widgets/SCompoundWidget.h"
 #include "PropertyHandle.h"
 
@@ -27,5 +27,5 @@ private:
 	void AddNumericRow(const TSharedRef<SGridPanel>& Grid, int32 Row, const FString& Label, int32* ValuePtr, int32 Min, int32 Max, int32 Step = 1);
 	
 	int32 ThumbnailSize = 0;
-	FNoisePreviewCache Cache;
+	FNoisePreviewState State;
 };

@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "IPropertyTypeCustomization.h"
-#include "Preview/NoisePreviewCache.h"
 
 class FGridNoiseStructCustomization : public IPropertyTypeCustomization
 {

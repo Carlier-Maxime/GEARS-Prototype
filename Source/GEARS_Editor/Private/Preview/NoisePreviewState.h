@@ -10,9 +10,9 @@ struct FNoisePreviewGenerators
 	ResourceGenerator Resource;
 };
 
-struct FNoisePreviewCache
+struct FNoisePreviewState
 {
-	FNoisePreviewCache();
+	FNoisePreviewState();
 	
 	TStrongObjectPtr<UTexture2D> Texture = nullptr;
 	FSlateBrush Brush;

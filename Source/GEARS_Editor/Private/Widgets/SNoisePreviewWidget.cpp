@@ -6,28 +6,28 @@
 #include "SlateOptMacros.h"
 #include "DetailLayoutBuilder.h"
 #include "Widgets/Input/SNumericEntryBox.h"
-#include "Preview/NoisePreviewCache.h"
+#include "Preview/NoisePreviewState.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 {
 	ThumbnailSize = InArgs._ThumbnailSize;
-	Cache.StructPtr = InArgs._StructPtr;
-	Cache.StructName = InArgs._StructName;
-	Cache.Update();
+	State.StructPtr = InArgs._StructPtr;
+	State.StructName = InArgs._StructName;
+	State.Update();
 	
 	if (const auto Handle = InArgs._PropertyHandle; Handle->IsValidHandle())
 	{
 		Handle->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda([this]
 		{
-			Cache.Update();
+			State.Update();
 		}));
 	}
 	
 	TSharedRef<SGridPanel> Grid = SNew(SGridPanel);
-	AddNumericRow(Grid, 0, "Seed", &Cache.Seed, 0, 1000);
-	AddNumericRow(Grid, 1, "Resolution", &Cache.Resolution, 32, 512, 32);
+	AddNumericRow(Grid, 0, "Seed", &State.Seed, 0, 1000);
+	AddNumericRow(Grid, 1, "Resolution", &State.Resolution, 32, 512, 32);
 	AddNumericRow(Grid, 2, "Thumbnail Res", &ThumbnailSize, 64, 256, 32);
 	
 	ChildSlot
@@ -40,7 +40,7 @@ void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 		.VAlign(VAlign_Center)
 		[
 			SNew(SImage)
-			.Image(&Cache.Brush)
+			.Image(&State.Brush)
 			.DesiredSizeOverride_Lambda([this]{
 				return FVector2D{
 					static_cast<double>(ThumbnailSize),
@@ -50,7 +50,7 @@ void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 			{
 				const auto Subsystem = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>();
 				if (!Subsystem) return FReply::Unhandled();
-				Subsystem->OpenEditorForAsset(Cache.Texture.Get());
+				Subsystem->OpenEditorForAsset(State.Texture.Get());
 				return FReply::Handled();
 			})
 		]
@@ -83,7 +83,7 @@ void SNoisePreviewWidget::AddNumericRow(
 		.Value_Lambda([ValuePtr] { return ValuePtr ? *ValuePtr : 0; })
 		.OnValueChanged_Lambda([this, ValuePtr, Min, Max](int32 Val){ 
 			*ValuePtr = FMath::Clamp(Val, Min, Max);
-			Cache.Update();
+			State.Update();
 		})
 	];
 }
