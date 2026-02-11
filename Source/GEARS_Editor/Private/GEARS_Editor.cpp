@@ -30,7 +30,6 @@ void FGEARS_EditorModule::StartupModule()
 
 void FGEARS_EditorModule::ShutdownModule()
 {
-	FGridNoiseStructCustomization::ClearCache();
 	if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
 	{
 		auto& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
