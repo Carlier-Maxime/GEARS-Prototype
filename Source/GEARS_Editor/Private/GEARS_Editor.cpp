@@ -1,10 +1,12 @@
 ﻿#include "GEARS_Editor.h"
 
 #include "Customization/BiomeTypeCustomization.h"
+#include "Customization/GridSettingsCustomization.h"
 #include "Customization/NoiseContextCustomization.h"
 #include "Customization/SamplingContextCustomization.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/SamplingContext.h"
+#include "Settings/GridSettings.h"
 
 #define LOCTEXT_NAMESPACE "FGEARS_EditorModule"
 
@@ -24,6 +26,10 @@ void FGEARS_EditorModule::StartupModule()
 		UBiomeType::StaticClass()->GetFName(),
 		FOnGetDetailCustomizationInstance::CreateStatic(&FBiomeTypeCustomization::MakeInstance)
 	);
+	PropertyModule.RegisterCustomClassLayout(
+		UGridSettings::StaticClass()->GetFName(),
+		FOnGetDetailCustomizationInstance::CreateStatic(&FGridSettingsCustomization::MakeInstance)
+	);
 
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
@@ -36,6 +42,7 @@ void FGEARS_EditorModule::ShutdownModule()
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FNoiseContext::StaticStruct()->GetFName());
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FSamplingContext::StaticStruct()->GetFName());
 		PropertyModule.UnregisterCustomClassLayout(UBiomeType::StaticClass()->GetFName());
+		PropertyModule.UnregisterCustomClassLayout(UGridSettings::StaticClass()->GetFName());
 	}
 }
 
