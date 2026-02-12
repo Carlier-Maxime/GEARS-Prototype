@@ -1,9 +1,8 @@
 ﻿#include "GEARS_Editor.h"
 
-#include "Customization/GridNoiseDetailCustomization.h"
+#include "Customization/BiomeTypeCustomization.h"
 #include "Customization/NoiseContextCustomization.h"
 #include "Customization/SamplingContextCustomization.h"
-#include "Data/BiomeType.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/SamplingContext.h"
 
@@ -23,7 +22,7 @@ void FGEARS_EditorModule::StartupModule()
 	
 	PropertyModule.RegisterCustomClassLayout(
 		UBiomeType::StaticClass()->GetFName(),
-		FOnGetDetailCustomizationInstance::CreateStatic(&FGridNoiseDetailCustomization::MakeInstance)
+		FOnGetDetailCustomizationInstance::CreateStatic(&FBiomeTypeCustomization::MakeInstance)
 	);
 
 	PropertyModule.NotifyCustomizationModuleChanged();
