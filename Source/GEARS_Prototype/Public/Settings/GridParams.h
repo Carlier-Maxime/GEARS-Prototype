@@ -4,7 +4,7 @@
 class UResourceType;
 class UBiomeType;
 
-class GridParams
+class GEARS_PROTOTYPE_API GridParams
 {
 public:
 	static GridParams& Get()
