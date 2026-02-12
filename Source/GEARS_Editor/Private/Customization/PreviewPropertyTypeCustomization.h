@@ -6,7 +6,7 @@
 #include "PreviewCustomizationBase.h"
 
 template<typename ContextType, typename GeneratorType>
-class FPreviewContextCustomizationBase : public TPreviewCustomizationBase<ContextType, GeneratorType>, public IPropertyTypeCustomization
+class TPreviewPropertyTypeCustomization : public TPreviewCustomizationBase<ContextType, GeneratorType>, public IPropertyTypeCustomization
 {
 public:
 	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils) override

@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "PreviewContextCustomizationBase.h"
+#include "PreviewPropertyTypeCustomization.h"
 #include "Grid/Generator/ResourceGenerator.h"
 #include "Grid/Generator/Context/SamplingContext.h"
 
-class FSamplingContextCustomization : public FPreviewContextCustomizationBase<FSamplingContext, ResourceGenerator>
+class FSamplingContextCustomization : public TPreviewPropertyTypeCustomization<FSamplingContext, ResourceGenerator>
 {
 public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
