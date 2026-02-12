@@ -9,7 +9,7 @@ constexpr float RngBiomeMove = 1024.f;
 BiomeGenerator::BiomeGenerator(const int32 Seed) :
 		BaseGenerator(Seed),
 		TemperatureOffset(GetRandomOffset({Seed}, RngBiomeMove)),
-		HumidityOffset(GetRandomOffset({Seed}, RngBiomeMove))
+		HumidityOffset(GetRandomOffset(GetLocalRng(GetTypeHash(TemperatureOffset)), RngBiomeMove))
 {
 }
 
