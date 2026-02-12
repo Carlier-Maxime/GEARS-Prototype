@@ -17,17 +17,7 @@ void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 	InitializeSettingsViews();
 	OnSeedChanged = InArgs._OnSeedChanged;
 	OnGenerateColor = InArgs._OnGenerateColor;
-	State.OnGenerateColor = FOnGenerateColor::CreateLambda([this](const FGridPosition& Pos) { return GetColorAtPos(Pos); });
-	OnSeedChanged.ExecuteIfBound(State.Settings.Seed);
-	State.Update();
-	
-	if (const auto Handle = InArgs._PropertyHandle; Handle->IsValidHandle())
-	{
-		Handle->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda([this]
-		{
-			State.Update();
-		}));
-	}
+	BindPropertyCallbacks(InArgs._PropertyHandle);
 	
 	TSharedRef<SGridPanel> Grid = SNew(SGridPanel);
 	int32 Row = 0;
@@ -99,7 +89,6 @@ void SNoisePreviewWidget::InitializeSettingsViews()
 	Params.NamePlacement = EPropertyNamePlacement::Hidden;
 	
 	const UScriptStruct* StructDefinition = FNoisePreviewSettings::StaticStruct();
-	const FName SeedPropertyName = GET_MEMBER_NAME_CHECKED(FNoisePreviewSettings, Seed);
 	for (TFieldIterator<FProperty> It(StructDefinition); It; ++It)
 	{
 		FProperty* Prop = *It;
@@ -111,24 +100,39 @@ void SNoisePreviewWidget::InitializeSettingsViews()
 			Params
 		);
 
-		if (PropView.IsValid())
-		{
-			PropView->SetOnPropertyValueChanged(
-				PropName == SeedPropertyName ?
-				FSimpleDelegate::CreateLambda([this, Prop]
-				{
-					int32 Val;
-					static_cast<FIntProperty*>(Prop)->GetValue_InContainer(&State.Settings, &Val);
-					OnSeedChanged.ExecuteIfBound(Val);
-					State.Update();
-				}) : 
-				FSimpleDelegate::CreateLambda([this]
-				{
-					State.Update();
-				}));
-			SettingsViews.Add(PropName, PropView);
-		}
+		if (PropView.IsValid()) SettingsViews.Add(PropName, PropView);
 	}
+}
+
+void SNoisePreviewWidget::BindPropertyCallbacks(const TSharedPtr<IPropertyHandle>& PropertyHandle)
+{
+	if (PropertyHandle->IsValidHandle())
+	{
+		PropertyHandle->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda([this]
+		{
+			State.Update();
+		}));
+	}
+	
+	State.OnGenerateColor = FOnGenerateColor::CreateLambda([this](const FGridPosition& Pos) { return GetColorAtPos(Pos); });
+	
+	SettingsViews[GET_MEMBER_NAME_CHECKED(FNoisePreviewSettings, Seed)]->SetOnPropertyValueChanged(
+		FSimpleDelegate::CreateLambda([this]
+		{
+			OnSeedChanged.ExecuteIfBound(State.Settings.Seed);
+			State.Update();
+		})
+	);
+	
+	SettingsViews[GET_MEMBER_NAME_CHECKED(FNoisePreviewSettings, Resolution)]->SetOnPropertyValueChanged(
+		FSimpleDelegate::CreateLambda([this]
+		{
+			State.Update();
+		})
+	);
+	
+	OnSeedChanged.ExecuteIfBound(State.Settings.Seed);
+	State.Update();
 }
 
 FColor SNoisePreviewWidget::GetColorAtPos(const FGridPosition& Pos) const

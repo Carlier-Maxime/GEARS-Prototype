@@ -20,13 +20,15 @@ public:
 		SLATE_EVENT(FOnInt32ChangedDelegate, OnSeedChanged)
 		SLATE_EVENT(FOnGenerateColor, OnGenerateColor)
 	SLATE_END_ARGS()
-
-	void InitializeSettingsViews();
+	
 	void Construct(const FArguments& InArgs);
 
 private:
 	static void AddNumericRow(const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView);
+	void InitializeSettingsViews();
+	void BindPropertyCallbacks(const TSharedPtr<IPropertyHandle>& PropertyHandle);
 	FColor GetColorAtPos(const FGridPosition& Pos) const;
+	
 	
 	FOnInt32ChangedDelegate OnSeedChanged;
 	FOnGenerateColor OnGenerateColor;
