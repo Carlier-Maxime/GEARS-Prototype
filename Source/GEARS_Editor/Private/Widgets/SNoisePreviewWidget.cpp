@@ -7,6 +7,7 @@
 #include "DetailLayoutBuilder.h"
 #include "ISinglePropertyView.h"
 #include "IStructureDataProvider.h"
+#include "Grid/Types/GridPosition.h"
 #include "Preview/NoisePreviewState.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
@@ -14,8 +15,10 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 {
 	InitializeSettingsViews();
-	State.StructPtr = InArgs._StructPtr;
-	State.StructName = InArgs._StructName;
+	OnSeedChanged = InArgs._OnSeedChanged;
+	OnGenerateColor = InArgs._OnGenerateColor;
+	State.OnGenerateColor = FOnGenerateColor::CreateLambda([this](const FGridPosition& Pos) { return GetColorAtPos(Pos); });
+	OnSeedChanged.ExecuteIfBound(State.Settings.Seed);
 	State.Update();
 	
 	if (const auto Handle = InArgs._PropertyHandle; Handle->IsValidHandle())
@@ -96,6 +99,7 @@ void SNoisePreviewWidget::InitializeSettingsViews()
 	Params.NamePlacement = EPropertyNamePlacement::Hidden;
 	
 	const UScriptStruct* StructDefinition = FNoisePreviewSettings::StaticStruct();
+	const FName SeedPropertyName = GET_MEMBER_NAME_CHECKED(FNoisePreviewSettings, Seed);
 	for (TFieldIterator<FProperty> It(StructDefinition); It; ++It)
 	{
 		FProperty* Prop = *It;
@@ -109,11 +113,26 @@ void SNoisePreviewWidget::InitializeSettingsViews()
 
 		if (PropView.IsValid())
 		{
-			PropView->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda([this]
-			{
-				State.Update();
-			}));
+			PropView->SetOnPropertyValueChanged(
+				PropName == SeedPropertyName ?
+				FSimpleDelegate::CreateLambda([this, Prop]
+				{
+					int32 Val;
+					static_cast<FIntProperty*>(Prop)->GetValue_InContainer(&State.Settings, &Val);
+					OnSeedChanged.ExecuteIfBound(Val);
+					State.Update();
+				}) : 
+				FSimpleDelegate::CreateLambda([this]
+				{
+					State.Update();
+				}));
 			SettingsViews.Add(PropName, PropView);
 		}
 	}
+}
+
+FColor SNoisePreviewWidget::GetColorAtPos(const FGridPosition& Pos) const
+{
+	if (OnGenerateColor.IsBound()) return OnGenerateColor.Execute(Pos);
+	return FColor::Black;
 }

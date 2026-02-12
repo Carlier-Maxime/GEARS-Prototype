@@ -2,16 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "NoisePreviewSettings.h"
-#include "Grid/Generator/BaseGenerator.h"
-#include "Grid/Generator/ResourceGenerator.h"
 
 struct FGridPosition;
 
-struct FNoisePreviewGenerators
-{
-	BaseGenerator Base;
-	ResourceGenerator Resource;
-};
+DECLARE_DELEGATE_RetVal_OneParam(FColor, FOnGenerateColor, FGridPosition)
 
 struct FNoisePreviewState
 {
@@ -20,10 +14,7 @@ struct FNoisePreviewState
 	TStrongObjectPtr<UTexture2D> Texture = nullptr;
 	FSlateBrush Brush;
 	FNoisePreviewSettings Settings;
-	void* StructPtr = nullptr;
-	FName StructName;
+	FOnGenerateColor OnGenerateColor;
 	
 	void Update();
-private:
-	FColor GenerateColorAtPos(const FNoisePreviewGenerators& Generator, const FGridPosition& Pos) const;
 };

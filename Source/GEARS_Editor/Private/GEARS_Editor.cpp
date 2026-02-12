@@ -1,7 +1,8 @@
 ﻿#include "GEARS_Editor.h"
 
 #include "Customization/GridNoiseDetailCustomization.h"
-#include "Customization/GridNoiseStructCustomization.h"
+#include "Customization/NoiseContextCustomization.h"
+#include "Customization/SamplingContextCustomization.h"
 #include "Data/BiomeType.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/SamplingContext.h"
@@ -13,11 +14,11 @@ void FGEARS_EditorModule::StartupModule()
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.RegisterCustomPropertyTypeLayout(
 		FNoiseContext::StaticStruct()->GetFName(),
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FGridNoiseStructCustomization::MakeInstance)
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FNoiseContextCustomization::MakeInstance)
 	);
 	PropertyModule.RegisterCustomPropertyTypeLayout(
 		FSamplingContext::StaticStruct()->GetFName(),
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FGridNoiseStructCustomization::MakeInstance)
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FSamplingContextCustomization::MakeInstance)
 	);
 	
 	PropertyModule.RegisterCustomClassLayout(

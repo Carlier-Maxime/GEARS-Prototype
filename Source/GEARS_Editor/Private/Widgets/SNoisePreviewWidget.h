@@ -6,7 +6,7 @@
 #include "Preview/NoisePreviewState.h"
 #include "Widgets/SCompoundWidget.h"
 #include "PropertyHandle.h"
-#include "Preview/NoisePreviewSettings.h"
+#include "Definitions/GEARS_Delegates.h"
 
 /**
  * 
@@ -15,11 +15,10 @@ class GEARS_EDITOR_API SNoisePreviewWidget : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SNoisePreviewWidget) :
-			_ThumbnailSize(128), _StructPtr(nullptr), _StructName("Unknown"), _PropertyHandle(nullptr) {}
-		SLATE_ARGUMENT(int32, ThumbnailSize)
-		SLATE_ARGUMENT(void*, StructPtr)
-		SLATE_ARGUMENT(FName, StructName)
+			_PropertyHandle(nullptr) {}
 		SLATE_ARGUMENT(TSharedPtr<IPropertyHandle>, PropertyHandle)
+		SLATE_EVENT(FOnInt32ChangedDelegate, OnSeedChanged)
+		SLATE_EVENT(FOnGenerateColor, OnGenerateColor)
 	SLATE_END_ARGS()
 
 	void InitializeSettingsViews();
@@ -27,7 +26,10 @@ public:
 
 private:
 	static void AddNumericRow(const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView);
+	FColor GetColorAtPos(const FGridPosition& Pos) const;
 	
+	FOnInt32ChangedDelegate OnSeedChanged;
+	FOnGenerateColor OnGenerateColor;
 	FNoisePreviewState State;
 	TSharedPtr<FStructOnScope> SettingsStructOnScope;
 	TMap<FName, TSharedPtr<ISinglePropertyView>> SettingsViews;
