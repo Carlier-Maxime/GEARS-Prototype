@@ -17,7 +17,7 @@ void SNoisePreviewWidget::Construct(const FArguments& InArgs)
 	InitializeSettingsViews();
 	OnSeedChanged = InArgs._OnSeedChanged;
 	OnGenerateColor = InArgs._OnGenerateColor;
-	BindPropertyCallbacks(InArgs._PropertyHandle);
+	BindPropertyCallbacks(InArgs._PropertyHandles);
 	
 	TSharedRef<SGridPanel> Grid = SNew(SGridPanel);
 	int32 Row = 0;
@@ -104,10 +104,11 @@ void SNoisePreviewWidget::InitializeSettingsViews()
 	}
 }
 
-void SNoisePreviewWidget::BindPropertyCallbacks(const TSharedPtr<IPropertyHandle>& PropertyHandle)
+void SNoisePreviewWidget::BindPropertyCallbacks(const TArray<TSharedRef<IPropertyHandle>>& PropertyHandles)
 {
-	if (PropertyHandle->IsValidHandle())
+	for (auto& PropertyHandle : PropertyHandles)
 	{
+		if (!PropertyHandle->IsValidHandle()) continue;
 		PropertyHandle->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda([this]
 		{
 			State.Update();

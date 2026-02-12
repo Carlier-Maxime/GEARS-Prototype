@@ -14,9 +14,8 @@
 class GEARS_EDITOR_API SNoisePreviewWidget : public SCompoundWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SNoisePreviewWidget) :
-			_PropertyHandle(nullptr) {}
-		SLATE_ARGUMENT(TSharedPtr<IPropertyHandle>, PropertyHandle)
+	SLATE_BEGIN_ARGS(SNoisePreviewWidget) {}
+		SLATE_ARGUMENT(TArray<TSharedRef<IPropertyHandle>>, PropertyHandles)
 		SLATE_EVENT(FOnInt32ChangedDelegate, OnSeedChanged)
 		SLATE_EVENT(FOnGenerateColor, OnGenerateColor)
 	SLATE_END_ARGS()
@@ -26,7 +25,7 @@ public:
 private:
 	static void AddNumericRow(const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView);
 	void InitializeSettingsViews();
-	void BindPropertyCallbacks(const TSharedPtr<IPropertyHandle>& PropertyHandle);
+	void BindPropertyCallbacks(const TArray<TSharedRef<IPropertyHandle>>& PropertyHandles);
 	FColor GetColorAtPos(const FGridPosition& Pos) const;
 	
 	

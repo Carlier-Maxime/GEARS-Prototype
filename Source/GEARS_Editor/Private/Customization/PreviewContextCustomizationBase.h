@@ -36,7 +36,7 @@ public:
 			.WholeRowContent()
 			[
 				SNew(SNoisePreviewWidget)
-				.PropertyHandle(PropertyHandle)
+				.PropertyHandles({PropertyHandle})
 				.OnSeedChanged_Lambda([this](int32 Seed){Generator.Emplace(Seed);})
 				.OnGenerateColor_Lambda([this, StructPtr](const FGridPosition& Pos)->FColor
 				{
