@@ -4,6 +4,7 @@
 #include "IPropertyTypeCustomization.h"
 #include "PreviewContextCustomizationBase.h"
 #include "Grid/Generator/BaseGenerator.h"
+#include "Grid/Generator/Context/NoiseContext.h"
 
 class FNoiseContextCustomization : public FPreviewContextCustomizationBase<FNoiseContext, BaseGenerator>
 {

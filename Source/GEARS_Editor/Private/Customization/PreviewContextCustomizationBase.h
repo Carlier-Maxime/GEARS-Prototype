@@ -3,11 +3,10 @@
 #include "DetailWidgetRow.h"
 #include "IDetailChildrenBuilder.h"
 #include "IDetailGroup.h"
-#include "Widgets/SNoisePreviewWidget.h"
-#include "Grid/Types/GridPosition.h"
+#include "PreviewCustomizationBase.h"
 
 template<typename ContextType, typename GeneratorType>
-class FPreviewContextCustomizationBase : public IPropertyTypeCustomization
+class FPreviewContextCustomizationBase : public TPreviewCustomizationBase<ContextType, GeneratorType>, public IPropertyTypeCustomization
 {
 public:
 	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils) override
@@ -30,24 +29,9 @@ public:
 	
 		void* StructPtr = nullptr;
 		PropertyHandle->GetValueData(StructPtr);
+		auto Ctx = static_cast<ContextType*>(StructPtr);
 	
 		IDetailGroup& PreviewGroup = ChildBuilder.AddGroup(FName("PreviewSection"), FText::FromString("Preview"));
-		PreviewGroup.AddWidgetRow()
-			.WholeRowContent()
-			[
-				SNew(SNoisePreviewWidget)
-				.PropertyHandles({PropertyHandle})
-				.OnSeedChanged_Lambda([this](int32 Seed){Generator.Emplace(Seed);})
-				.OnGenerateColor_Lambda([this, StructPtr](const FGridPosition& Pos)->FColor
-				{
-					return GenerateColor(*static_cast<ContextType*>(StructPtr), Pos);
-				})
-			];
-	
-		PreviewGroup.ToggleExpansion(true);
+		TPreviewCustomizationBase<ContextType,GeneratorType>::AddPreviewRow(PreviewGroup.AddWidgetRow(), {PropertyHandle}, Ctx);
 	}
-
-protected:
-	virtual FColor GenerateColor(const ContextType& Ctx, const FGridPosition& Pos) const = 0;
-	TOptional<GeneratorType> Generator;
 };
