@@ -11,6 +11,7 @@ struct FNoisePreviewState
 {
 	FNoisePreviewState();
 	
+	TArray<FColor> PixelBuffer;
 	TStrongObjectPtr<UTexture2D> Texture = nullptr;
 	FSlateBrush Brush;
 	FNoisePreviewSettings Settings;

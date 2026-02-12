@@ -9,24 +9,28 @@ FNoisePreviewState::FNoisePreviewState()
 
 void FNoisePreviewState::Update()
 {
-	if (!Texture || Texture->GetSizeX() != Settings.Resolution)
+	const int32 Res = Settings.Resolution;
+	
+	if (!Texture || Texture->GetSizeX() != Res)
 	{
-		Texture.Reset(UTexture2D::CreateTransient(Settings.Resolution, Settings.Resolution, PF_B8G8R8A8));
+		Texture.Reset(UTexture2D::CreateTransient(Res, Res, PF_B8G8R8A8));
 		Texture->Filter = TF_Nearest;
+		Texture->UpdateResource();
 		Brush.SetResourceObject(Texture.Get());
+		PixelBuffer.SetNumUninitialized(Res * Res);
 	}
 	
-	if (!OnGenerateColor.IsBound()) return;
-	auto MipData = static_cast<FColor*>(Texture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE));
-	for (int32 y = 0; y < Settings.Resolution; y++)
+	for (int32 y = 0; y < Res; y++)
 	{
-		for (int32 x = 0; x < Settings.Resolution; x++)
+		for (int32 x = 0; x < Res; x++)
 		{
-			MipData[y * Settings.Resolution + x] = OnGenerateColor.Execute(FGridPosition::FromGridPos(x, y));
+			PixelBuffer[y * Res + x] = OnGenerateColor.Execute(FGridPosition::FromGridPos(x, y));
 		}
 	}
-
-	Texture->GetPlatformData()->Mips[0].BulkData.Unlock();
-	Texture->UpdateResource();
-	Texture->PostEditChange();
+	
+	FUpdateTextureRegion2D* Region = new FUpdateTextureRegion2D(0, 0, 0, 0, Res, Res);
+	Texture->UpdateTextureRegions(0, 1, Region, Res * 4, 4, reinterpret_cast<uint8*>(PixelBuffer.GetData()), 
+		[](uint8* SrcData, const FUpdateTextureRegion2D* Regions) {
+			delete Regions;
+		});
 }
