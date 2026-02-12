@@ -106,13 +106,16 @@ void SNoisePreviewWidget::InitializeSettingsViews()
 
 void SNoisePreviewWidget::BindPropertyCallbacks(const TArray<TSharedRef<IPropertyHandle>>& PropertyHandles)
 {
+	const auto StateUpdateDelegate = FSimpleDelegate::CreateLambda([this]
+	{
+		State.Update();
+	});
+	
 	for (auto& PropertyHandle : PropertyHandles)
 	{
 		if (!PropertyHandle->IsValidHandle()) continue;
-		PropertyHandle->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda([this]
-		{
-			State.Update();
-		}));
+		PropertyHandle->SetOnPropertyValueChanged(StateUpdateDelegate);
+		PropertyHandle->SetOnChildPropertyValueChanged(StateUpdateDelegate);
 	}
 	
 	State.OnGenerateColor = FOnGenerateColor::CreateLambda([this](const FGridPosition& Pos) { return GetColorAtPos(Pos); });
@@ -126,10 +129,7 @@ void SNoisePreviewWidget::BindPropertyCallbacks(const TArray<TSharedRef<IPropert
 	);
 	
 	SettingsViews[GET_MEMBER_NAME_CHECKED(FNoisePreviewSettings, Resolution)]->SetOnPropertyValueChanged(
-		FSimpleDelegate::CreateLambda([this]
-		{
-			State.Update();
-		})
+		StateUpdateDelegate
 	);
 	
 	OnSeedChanged.ExecuteIfBound(State.Settings.Seed);
