@@ -13,7 +13,6 @@ public:
 		TArray<TWeakObjectPtr<>> Objects;
 		DetailBuilder.GetObjectsBeingCustomized(Objects);
 		auto MyAsset = Cast<ContextType>(Objects[0].Get());
-		const auto BgColor = MyAsset->Color.GetLuminance() > 0.02 ? FColor::Black : FColor::White;
 	
 		TArray<FName> CategoryNames;
 		DetailBuilder.GetCategoryNames(CategoryNames);
