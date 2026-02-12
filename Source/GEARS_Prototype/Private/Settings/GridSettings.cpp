@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GridSettings.h"
+#include "Settings/GridSettings.h"
 
-#include "GridParams.h"
+#include "Settings/GridParams.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"

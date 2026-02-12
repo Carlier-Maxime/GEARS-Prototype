@@ -1,6 +1,6 @@
 ﻿#include "CameraParams.h"
 
-#include "GridParams.h"
+#include "Settings/GridParams.h"
 #include "Definitions/GEARS_Macro.h"
 
 float CameraParams::GetMinZoomDistance() const

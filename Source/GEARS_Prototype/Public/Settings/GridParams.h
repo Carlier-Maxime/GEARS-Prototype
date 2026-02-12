@@ -1,7 +1,7 @@
 ﻿#pragma once
+#include "Grid/Generator/Context/NoiseContext.h"
 
-#include "Data/ResourceType.h"
-
+class UResourceType;
 class UBiomeType;
 
 class GridParams
