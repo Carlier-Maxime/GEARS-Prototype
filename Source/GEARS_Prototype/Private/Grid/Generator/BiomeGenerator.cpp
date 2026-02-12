@@ -1,7 +1,6 @@
 ﻿#include "Grid/Generator/BiomeGenerator.h"
 
 #include "Data/BiomeType.h"
-#include "Definitions/GEARS_Macro.h"
 #include "Settings/GridParams.h"
 
 constexpr float RngBiomeMove = 1024.f;
@@ -20,8 +19,7 @@ int8 BiomeGenerator::SampleBiome(const FGridPosition& Pos) const
 	const auto& Registry = GridParams::Get().GetBiomeRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
-		if (!ensureSoftPtr(Registry[i])) continue;
-		const auto Biome = Registry[i].LoadSynchronous();
+		const auto& Biome = Registry[i];
 		if (!IsEligible(Temp, Humidity, *Biome)) continue;
 		return i;
 	}

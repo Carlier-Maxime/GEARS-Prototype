@@ -19,8 +19,8 @@ public:
 	uint32 GetChunkSizeSquared() const { return ChunkSizeSquared; }
 	uint32 GetChunkShift() const { return ChunkShift; }
 	uint32 GetChunkMask() const { return ChunkMask; }
-	const TArray<TSoftObjectPtr<UResourceType>>& GetResourceRegistry() const {return ResourceRegistry;}
-	const TArray<TSoftObjectPtr<UBiomeType>>& GetBiomeRegistry() const {return BiomeRegistry;}
+	const TArray<TObjectPtr<UResourceType>>& GetResourceRegistry() const {return ResourceRegistry;}
+	const TArray<TObjectPtr<UBiomeType>>& GetBiomeRegistry() const {return BiomeRegistry;}
 	const FNoiseContext& GetTemperature() const { return Temperature; }
 	const FNoiseContext& GetHumidity() const { return Humidity; }
 private:
@@ -32,8 +32,8 @@ private:
 	uint32 ChunkSizeSquared;
 	uint32 ChunkShift;
 	uint32 ChunkMask;
-	TArray<TSoftObjectPtr<UResourceType>> ResourceRegistry;
-	TArray<TSoftObjectPtr<UBiomeType>> BiomeRegistry;
+	TArray<TObjectPtr<UResourceType>> ResourceRegistry;
+	TArray<TObjectPtr<UBiomeType>> BiomeRegistry;
 	FNoiseContext Temperature;
 	FNoiseContext Humidity;
 };

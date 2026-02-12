@@ -1,9 +1,9 @@
 ﻿#include "Grid/Generator/ResourceGenerator.h"
 
 #include "Grid/Generator/ProcSpawnData.h"
-#include "Definitions/GEARS_Macro.h"
 #include "Grid/Generator/Context/SamplingContext.h"
 #include "Settings/GridParams.h"
+#include "Data/ResourceType.h"
 
 ResourceGenerator::ResourceGenerator(const int32 Seed) : BaseGenerator(Seed)
 {
@@ -37,8 +37,7 @@ int16 ResourceGenerator::DetermineType(const FGridPosition& Pos) const
 	const auto& Registry = GridParams::Get().GetResourceRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
-		if (!ensureSoftPtr(Registry[i])) continue;
-		const auto& Sampling = Registry[i].LoadSynchronous()->Sampling;
+		const auto& Sampling = Registry[i]->Sampling;
 		if (ShouldSpawn(Pos, Sampling, GetOffset(Registry[i]))) return i;
 	}
 	return -1;
@@ -48,7 +47,7 @@ FTransform ResourceGenerator::GetVariationTransform(const FGridPosition& Pos, in
 {
 	auto Transform = Pos.ToTransform();
 	if (ResourceTypeIndex == -1) return std::move(Transform);
-	const auto& Sampling = GridParams::Get().GetResourceRegistry()[ResourceTypeIndex].LoadSynchronous()->Sampling;
+	const auto& Sampling = GridParams::Get().GetResourceRegistry()[ResourceTypeIndex]->Sampling;
 	const auto LocalRng = GetLocalRng(Pos);
 	
 	if (Sampling.JitterMaxOffset > 0)

@@ -54,6 +54,9 @@ public:
 	
 private:
 	void Update();
+	void LoadRegisters();
+	template <typename T>
+	static void LoadRegistry(const TArray<TSoftObjectPtr<T>>& RegistrySoft, TArray<TObjectPtr<T>>& Registry);
 	void RefreshFastAccessVariables() const;
 	void SyncSharedParams();
 	template <typename FCollectionParameterType, typename FValueType>
@@ -63,10 +66,15 @@ private:
 	TMap<FGameplayTag, FLinearColor> MPCSharedLinearColor;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Resources", meta = (AllowPrivateAccess = true))
-	TArray<TSoftObjectPtr<UResourceType>> ResourceRegister;
+	TArray<TSoftObjectPtr<UResourceType>> ResourceSoftRegistry;
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<UResourceType>> ResourceRegistry;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
-	TArray<TSoftObjectPtr<UBiomeType>> BiomeRegistry;
+	TArray<TSoftObjectPtr<UBiomeType>> BiomeSoftRegistry;
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<UBiomeType>> BiomeRegistry;
+	
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
 	FNoiseContext Temperature;
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))

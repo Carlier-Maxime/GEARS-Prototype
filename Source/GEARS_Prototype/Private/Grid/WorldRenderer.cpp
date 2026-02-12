@@ -4,7 +4,7 @@
 #include "WorldRenderer.h"
 
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
-#include "Definitions/GEARS_Macro.h"
+#include "Data/ResourceType.h"
 #include "Settings/GridParams.h"
 
 
@@ -40,9 +40,7 @@ void AWorldRenderer::UpdateResourcesInstances(const TArray<TArray<FTransform>>& 
 TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddHISM(int16 ResourceIndex)
 {
 	if (const auto HISM = ResourcesComponents.Find(ResourceIndex)) return *HISM;
-	const auto& SoftResource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
-	ensureSoftPtrOrRet(SoftResource, nullptr);
-	const auto Resource = SoftResource.LoadSynchronous();
+	const auto& Resource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
 	const auto NewHISM = NewObject<UHierarchicalInstancedStaticMeshComponent>(this, Resource->ResourceTag.GetTagName());
 	NewHISM->SetupAttachment(GetRootComponent());
 	NewHISM->SetStaticMesh(Resource->WorldMesh.LoadSynchronous());
