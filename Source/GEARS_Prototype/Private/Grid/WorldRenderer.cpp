@@ -3,8 +3,10 @@
 
 #include "WorldRenderer.h"
 
+#include "AI/NavigationSystemBase.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Data/ResourceType.h"
+#include "Grid/Types/GridPosition.h"
 #include "Settings/GridParams.h"
 
 
@@ -15,11 +17,18 @@ AWorldRenderer::AWorldRenderer()
 	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	Root->SetMobility(EComponentMobility::Static);
 	SetRootComponent(Root);
+	
+	PlaneHISM = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("PlaneHISM"));
+	PlaneHISM->SetMobility(EComponentMobility::Static);
+	PlaneHISM->SetStaticMesh(GridParams::Get().GetGridMesh());
+	PlaneHISM->SetupAttachment(Root);
+	PlaneHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 10));
 }
 
 void AWorldRenderer::BeginPlay()
 {
 	Super::BeginPlay();
+	FNavigationSystem::Build(*GetWorld());
 }
 
 void AWorldRenderer::UpdateResourcesInstances(const TArray<TArray<FTransform>>& ResourcesInstances)
@@ -49,4 +58,21 @@ TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddH
 	NewHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 7));
 	NewHISM->RegisterComponent();
 	return ResourcesComponents.Add(ResourceIndex, NewHISM);
+}
+
+void AWorldRenderer::AddPlane(const FIntPoint& ChunkIndex)
+{
+	auto Transform = FGridPosition::FromChunkIndex(ChunkIndex).ToTransform(); // TODO Center Plane
+	const auto Scale = GridParams::Get().GetChunkSize() * GridParams::Get().GetCellSize() * 0.01;
+	Transform.SetScale3D(FVector(Scale, Scale, 1));
+	PlanesInstances.Add(
+		ChunkIndex,
+		PlaneHISM->AddInstance(Transform)
+	);
+}
+
+void AWorldRenderer::RemoveCheckedPlane(const FIntPoint& ChunkIndex)
+{
+	const auto Id = PlanesInstances.FindAndRemoveChecked(ChunkIndex);
+	PlaneHISM->RemoveInstance(Id);
 }
