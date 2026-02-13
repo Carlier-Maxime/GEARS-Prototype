@@ -36,7 +36,7 @@ void UGridSettings::Update()
 {
 	CellSize = static_cast<float>(FMath::RoundUpToPowerOfTwo(FMath::Max(1, FMath::RoundToInt(CellSize))));
 	ChunkSize = FMath::RoundUpToPowerOfTwo(ChunkSize);
-	LoadRegisters();
+	LoadSoftPtr();
 	RefreshFastAccessVariables();
 	SyncSharedParams();
 	if (MPC.IsNull()) return;
@@ -65,8 +65,9 @@ void UGridSettings::Update()
 	}
 }
 
-void UGridSettings::LoadRegisters()
+void UGridSettings::LoadSoftPtr()
 {
+	if (!GridSoftMesh.IsNull()) GridMesh = GridSoftMesh.LoadSynchronous();
 	LoadRegistry(ResourceSoftRegistry, ResourceRegistry);
 	LoadRegistry(BiomeSoftRegistry, BiomeRegistry);
 }
@@ -94,6 +95,7 @@ void UGridSettings::RefreshFastAccessVariables() const
 	GridParams::Get().BiomeRegistry = BiomeRegistry;
 	GridParams::Get().Temperature = Temperature;
 	GridParams::Get().Humidity = Humidity;
+	GridParams::Get().GridMesh = GridMesh;
 }
 
 void UGridSettings::SyncSharedParams()

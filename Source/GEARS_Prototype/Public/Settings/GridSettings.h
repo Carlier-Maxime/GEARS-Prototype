@@ -20,6 +20,10 @@ class UGridSettings : public UDeveloperSettings
 
 public:
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
+	TSoftObjectPtr<UStaticMesh> GridSoftMesh;
+	UPROPERTY(Transient)
+	TObjectPtr<UStaticMesh> GridMesh;
+	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	TSoftObjectPtr<UMaterialParameterCollection> MPC;
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	uint32 ChunkSize = 16;
@@ -54,7 +58,7 @@ public:
 	
 private:
 	void Update();
-	void LoadRegisters();
+	void LoadSoftPtr();
 	template <typename T>
 	static void LoadRegistry(const TArray<TSoftObjectPtr<T>>& RegistrySoft, TArray<TObjectPtr<T>>& Registry);
 	void RefreshFastAccessVariables() const;
