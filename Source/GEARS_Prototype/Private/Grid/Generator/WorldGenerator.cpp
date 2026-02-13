@@ -33,14 +33,12 @@ void WorldGenerator::GenerateChunk(TArray<TArray<FTransform>>& OutInstances, con
 {
 	auto& Chunk = Grid.GetChunk(ChunkIndex);
 	if (ChunkIndex == FIntPoint::ZeroValue) return;
-	auto Pos = FGridPosition::FromChunkIndex(ChunkIndex);
+	auto StartPos = FGridPosition::FromChunkIndex(ChunkIndex);
 	for (uint32 x=0; x<GridParams::Get().GetChunkSize(); ++x)
 	{
-		++Pos.X;
-		Pos.Y = ChunkIndex.Y << GridParams::Get().GetChunkShift();
 		for (uint32 y=0; y<GridParams::Get().GetChunkSize(); ++y)
 		{
-			++Pos.Y;
+			const auto Pos = FGridPosition::FromGridPos(StartPos.X + x, StartPos.Y + y);
 			const auto [TypeIndex, Transform] = ResourceGenerator.Sample(Pos);
 			if (TypeIndex == -1) continue;
 			Chunk.SetResource(Pos, TypeIndex);
