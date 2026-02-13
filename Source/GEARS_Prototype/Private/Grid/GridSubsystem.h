@@ -32,8 +32,11 @@ public:
 	static FGridPosition WorldToGrid(const FVector& WorldPosition);
 	static FVector GridToWorld(const FGridPosition& GridPos);
 	
+	UPROPERTY(Transient)
 	TMap<FIntPoint, FChunkData> Chunks;
+	
 	WorldGenerator* Generator = nullptr;
-	UPROPERTY()
+	
+	UPROPERTY(Transient)
 	TObjectPtr<AWorldRenderer> Renderer = nullptr;
 };
