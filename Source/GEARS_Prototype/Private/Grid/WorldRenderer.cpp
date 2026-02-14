@@ -6,7 +6,6 @@
 #include "AI/NavigationSystemBase.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Data/ResourceType.h"
-#include "Grid/Types/GridPosition.h"
 #include "Settings/GridParams.h"
 
 
@@ -60,19 +59,19 @@ TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddH
 	return ResourcesComponents.Add(ResourceIndex, NewHISM);
 }
 
-void AWorldRenderer::AddPlane(const FIntPoint& ChunkIndex)
+void AWorldRenderer::AddPlane(const FChunkIndex& Index)
 {
-	auto Transform = FGridPosition::FromChunkIndex(ChunkIndex).ToTransform(); // TODO Center Plane
+	auto Transform = FTransform(Index.GetCenter());
 	const auto Scale = GridParams::Get().GetChunkSize() * GridParams::Get().GetCellSize() * 0.01;
 	Transform.SetScale3D(FVector(Scale, Scale, 1));
 	PlanesInstances.Add(
-		ChunkIndex,
+		Index,
 		PlaneHISM->AddInstance(Transform)
 	);
 }
 
-void AWorldRenderer::RemoveCheckedPlane(const FIntPoint& ChunkIndex)
+void AWorldRenderer::RemoveCheckedPlane(const FChunkIndex& Index)
 {
-	const auto Id = PlanesInstances.FindAndRemoveChecked(ChunkIndex);
+	const auto Id = PlanesInstances.FindAndRemoveChecked(Index);
 	PlaneHISM->RemoveInstance(Id);
 }

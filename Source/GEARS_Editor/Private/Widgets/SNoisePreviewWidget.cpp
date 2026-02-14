@@ -7,7 +7,7 @@
 #include "DetailLayoutBuilder.h"
 #include "ISinglePropertyView.h"
 #include "IStructureDataProvider.h"
-#include "Grid/Types/GridPosition.h"
+#include "Grid/Types/WorldGridPos.h"
 #include "Preview/NoisePreviewState.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
@@ -118,7 +118,7 @@ void SNoisePreviewWidget::BindPropertyCallbacks(const TArray<TSharedRef<IPropert
 		PropertyHandle->SetOnChildPropertyValueChanged(StateUpdateDelegate);
 	}
 	
-	State.OnGenerateColor = FOnGenerateColor::CreateLambda([this](const FGridPosition& Pos) { return GetColorAtPos(Pos); });
+	State.OnGenerateColor = FOnGenerateColor::CreateLambda([this](const FWorldGridPos& Pos) { return GetColorAtPos(Pos); });
 	
 	SettingsViews[GET_MEMBER_NAME_CHECKED(FNoisePreviewSettings, Seed)]->SetOnPropertyValueChanged(
 		FSimpleDelegate::CreateLambda([this]
@@ -136,7 +136,7 @@ void SNoisePreviewWidget::BindPropertyCallbacks(const TArray<TSharedRef<IPropert
 	State.Update();
 }
 
-FColor SNoisePreviewWidget::GetColorAtPos(const FGridPosition& Pos) const
+FColor SNoisePreviewWidget::GetColorAtPos(const FWorldGridPos& Pos) const
 {
 	if (OnGenerateColor.IsBound()) return OnGenerateColor.Execute(Pos);
 	return FColor::Black;

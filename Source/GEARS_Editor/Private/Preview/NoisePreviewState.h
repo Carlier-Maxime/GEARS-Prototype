@@ -3,9 +3,9 @@
 #include "CoreMinimal.h"
 #include "NoisePreviewSettings.h"
 
-struct FGridPosition;
+struct FWorldGridPos;
 
-DECLARE_DELEGATE_RetVal_OneParam(FColor, FOnGenerateColor, FGridPosition)
+DECLARE_DELEGATE_RetVal_OneParam(FColor, FOnGenerateColor, FWorldGridPos)
 
 struct FNoisePreviewState
 {

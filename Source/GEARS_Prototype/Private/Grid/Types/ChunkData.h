@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Grid/Types/GridPosition.h"
+#include "Grid/Types.h"
 
 #include "ChunkData.generated.h"
 
@@ -8,8 +8,13 @@ struct FChunkData
 {
 	GENERATED_BODY()
 	FChunkData();
-	void SetResource(const FIntPoint& LocalPos, int16 ResourceIndex);
-	void SetResource(const FGridPosition& GridPos, int16 ResourceIndex);
+	void SetResource(const FInChunkPos& Pos, int16 ResourceIndex);
+	FORCEINLINE void SetResource(const FWorldGridPos& GridPos, int16 ResourceIndex);
 private:
 	TArray<int16> ResourceMap;
 };
+
+void FChunkData::SetResource(const FWorldGridPos& GridPos, const int16 ResourceIndex)
+{
+	return SetResource(GridPos.ToInChunkPos(), ResourceIndex);
+}

@@ -11,5 +11,5 @@ public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 	
 protected:
-	virtual FColor GenerateColor(const FSamplingContext& Ctx, const FGridPosition& Pos) const override;
+	virtual FColor GenerateColor(const FSamplingContext& Ctx, const FWorldGridPos& Pos) const override;
 };

@@ -2,7 +2,6 @@
 
 
 #include "GridSubsystem.h"
-#include "Grid/Types/GridPosition.h"
 #include "Generator/WorldGenerator.h"
 #include "WorldRenderer.h"
 
@@ -25,32 +24,32 @@ void UGridSubsystem::GenWorld(const int32 Seed)
 	Renderer->UpdateResourcesInstances(std::move(Generator->Generate(8)));
 }
 
-FChunkData& UGridSubsystem::GetChunk(const FIntPoint& ChunkPos)
+FChunkData& UGridSubsystem::GetChunk(const FChunkIndex& Index)
 {
-	return Chunks.FindOrAdd(ChunkPos);
+	return Chunks.FindOrAdd(Index);
 }
 
-const FChunkData& UGridSubsystem::GetChunk(const FIntPoint& ChunkPos) const
+const FChunkData& UGridSubsystem::GetChunk(const FChunkIndex& Index) const
 {
-	return Chunks.FindChecked(ChunkPos);
+	return Chunks.FindChecked(Index);
 }
 
-FChunkData& UGridSubsystem::GetChunk(const FGridPosition& GridPos)
+FChunkData& UGridSubsystem::GetChunk(const FWorldGridPos& GridPos)
 {
-	return GetChunk(GridPos.GetChunkIndex());
+	return GetChunk(GridPos.ToChunkIndex());
 }
 
-const FChunkData& UGridSubsystem::GetChunk(const FGridPosition& GridPos) const
+const FChunkData& UGridSubsystem::GetChunk(const FWorldGridPos& GridPos) const
 {
-	return GetChunk(GridPos.GetChunkIndex());
+	return GetChunk(GridPos.ToChunkIndex());
 }
 
-FGridPosition UGridSubsystem::WorldToGrid(const FVector& WorldPosition)
+FWorldGridPos UGridSubsystem::WorldToGrid(const FVector& WorldPosition)
 {
-	return FGridPosition(WorldPosition);
+	return FWorldGridPos(WorldPosition);
 }
 
-FVector UGridSubsystem::GridToWorld(const FGridPosition& GridPos)
+FVector UGridSubsystem::GridToWorld(const FWorldGridPos& GridPos)
 {
 	return GridPos.ToWorld();
 }

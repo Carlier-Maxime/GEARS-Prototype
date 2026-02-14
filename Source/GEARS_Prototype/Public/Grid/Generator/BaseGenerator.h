@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Grid/Types/GridPosition.h"
+#include "Grid/Types/WorldGridPos.h"
 
 struct FNoiseContext;
 struct FSamplingContext;
@@ -9,7 +9,7 @@ class GEARS_PROTOTYPE_API BaseGenerator
 public:
 	BaseGenerator(int32 Seed);
 	virtual ~BaseGenerator() = default;
-	[[nodiscard]] float GetNoiseDensity(const FGridPosition& Pos, const FNoiseContext& Ctx, const FVector2D& Offset) const;
+	[[nodiscard]] float GetNoiseDensity(const FWorldGridPos& Pos, const FNoiseContext& Ctx, const FVector2D& Offset) const;
 	
 protected:
 	[[nodiscard]] static FVector2D GetRandomOffset(const FRandomStream& RngStream, float Displacement);
@@ -22,7 +22,7 @@ protected:
 		return GetOffset(Ptr.ToSoftObjectPath());
 	}
 	
-	[[nodiscard]] FRandomStream GetLocalRng(const FGridPosition& Pos) const;
+	[[nodiscard]] FRandomStream GetLocalRng(const FWorldGridPos& Pos) const;
 	[[nodiscard]] FRandomStream GetLocalRng(uint32 Hash) const;
 	
 private:

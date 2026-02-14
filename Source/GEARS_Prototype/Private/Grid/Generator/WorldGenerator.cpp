@@ -9,8 +9,8 @@ WorldGenerator::WorldGenerator(UGridSubsystem& Grid, const int32 Seed) :
 TArray<TArray<FTransform>> WorldGenerator::Generate(const uint16 ChunkRadius) const
 {
 	auto Instances = InitResourcesInstances();
-	for (auto x=-ChunkRadius; x<=ChunkRadius; ++x)
-		for (auto y=-ChunkRadius; y<=ChunkRadius; ++y)
+	for (int16 x=-ChunkRadius; x<=ChunkRadius; ++x)
+		for (int16 y=-ChunkRadius; y<=ChunkRadius; ++y)
 			GenerateChunk(Instances, {x, y});
 	return std::move(Instances);
 }
@@ -22,27 +22,23 @@ TArray<TArray<FTransform>> WorldGenerator::InitResourcesInstances()
 	return std::move(ResourcesInstances);
 }
 
-TArray<TArray<FTransform>> WorldGenerator::GenerateChunk(const FIntPoint& ChunkIndex) const
+TArray<TArray<FTransform>> WorldGenerator::GenerateChunk(const FChunkIndex& Index) const
 {
 	auto Instances = InitResourcesInstances();
-	GenerateChunk(Instances, ChunkIndex);
+	GenerateChunk(Instances, Index);
 	return std::move(Instances);
 }
 
-void WorldGenerator::GenerateChunk(TArray<TArray<FTransform>>& OutInstances, const FIntPoint& ChunkIndex) const
+void WorldGenerator::GenerateChunk(TArray<TArray<FTransform>>& OutInstances, const FChunkIndex& Index) const
 {
-	auto& Chunk = Grid.GetChunk(ChunkIndex);
-	if (ChunkIndex == FIntPoint::ZeroValue) return;
-	auto StartPos = FGridPosition::FromChunkIndex(ChunkIndex);
-	for (uint32 x=0; x<GridParams::Get().GetChunkSize(); ++x)
+	auto& Chunk = Grid.GetChunk(Index);
+	if (Index == FIntPoint::ZeroValue) return;
+	for (const auto Local : Index)
 	{
-		for (uint32 y=0; y<GridParams::Get().GetChunkSize(); ++y)
-		{
-			const auto Pos = FGridPosition::FromGridPos(StartPos.X + x, StartPos.Y + y);
-			const auto [TypeIndex, Transform] = ResourceGenerator.Sample(Pos);
-			if (TypeIndex == -1) continue;
-			Chunk.SetResource(Pos, TypeIndex);
-			OutInstances[TypeIndex].Add(Transform);
-		}
+		const auto Pos = FWorldGridPos(Index, Local);
+		const auto [TypeIndex, Transform] = ResourceGenerator.Sample(Pos);
+		if (TypeIndex == -1) continue;
+		Chunk.SetResource(Pos, TypeIndex);
+		OutInstances[TypeIndex].Add(Transform);
 	}
 }

@@ -9,7 +9,7 @@ ResourceGenerator::ResourceGenerator(const int32 Seed) : BaseGenerator(Seed)
 {
 }
 
-FProcSpawnData ResourceGenerator::Sample(const FGridPosition& Pos) const
+FProcSpawnData ResourceGenerator::Sample(const FWorldGridPos& Pos) const
 {
 	FProcSpawnData SpawnData;
 	SpawnData.ResourceTypeIndex = DetermineType(Pos);
@@ -17,7 +17,7 @@ FProcSpawnData ResourceGenerator::Sample(const FGridPosition& Pos) const
 	return std::move(SpawnData);
 }
 
-bool ResourceGenerator::ShouldSpawn(const FGridPosition& Pos, const FSamplingContext& Ctx,
+bool ResourceGenerator::ShouldSpawn(const FWorldGridPos& Pos, const FSamplingContext& Ctx,
 	const FVector2D& Offset) const
 {
 	const auto NoiseDensity = GetNoiseDensity(Pos, Ctx.Noise, Offset);
@@ -32,7 +32,7 @@ bool ResourceGenerator::ShouldSpawn(const FGridPosition& Pos, const FSamplingCon
 	return GetLocalRng(Pos).FRand() < SpawnChance;
 }
 
-int16 ResourceGenerator::DetermineType(const FGridPosition& Pos) const
+int16 ResourceGenerator::DetermineType(const FWorldGridPos& Pos) const
 {
 	const auto& Registry = GridParams::Get().GetResourceRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
@@ -43,7 +43,7 @@ int16 ResourceGenerator::DetermineType(const FGridPosition& Pos) const
 	return -1;
 }
 
-FTransform ResourceGenerator::GetVariationTransform(const FGridPosition& Pos, int16 ResourceTypeIndex) const
+FTransform ResourceGenerator::GetVariationTransform(const FWorldGridPos& Pos, int16 ResourceTypeIndex) const
 {
 	auto Transform = Pos.ToTransform();
 	if (ResourceTypeIndex == -1) return std::move(Transform);

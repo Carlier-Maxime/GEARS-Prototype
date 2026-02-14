@@ -12,7 +12,7 @@ BiomeGenerator::BiomeGenerator(const int32 Seed) :
 {
 }
 
-int8 BiomeGenerator::SampleBiome(const FGridPosition& Pos) const
+int8 BiomeGenerator::SampleBiome(const FWorldGridPos& Pos) const
 {
 	const float Temp = GetTemperature(Pos);
 	const float Humidity = GetHumidity(Pos);
@@ -26,7 +26,7 @@ int8 BiomeGenerator::SampleBiome(const FGridPosition& Pos) const
 	return -1;
 }
 
-bool BiomeGenerator::IsEligible(const FGridPosition& Pos, const UBiomeType& Biome) const
+bool BiomeGenerator::IsEligible(const FWorldGridPos& Pos, const UBiomeType& Biome) const
 {
 	return IsEligible(GetTemperature(Pos), GetHumidity(Pos), Biome);
 }
@@ -36,12 +36,12 @@ bool BiomeGenerator::IsEligible(const float Temp, const float Humidity, const UB
 	return Biome.Temperature.Contains(Temp) && Biome.Humidity.Contains(Humidity);
 }
 
-float BiomeGenerator::GetTemperature(const FGridPosition& Pos) const
+float BiomeGenerator::GetTemperature(const FWorldGridPos& Pos) const
 {
 	return GetNoiseDensity(Pos, GridParams::Get().GetTemperature(), TemperatureOffset);
 }
 
-float BiomeGenerator::GetHumidity(const FGridPosition& Pos) const
+float BiomeGenerator::GetHumidity(const FWorldGridPos& Pos) const
 {
 	return GetNoiseDensity(Pos, GridParams::Get().GetHumidity(), HumidityOffset);
 }

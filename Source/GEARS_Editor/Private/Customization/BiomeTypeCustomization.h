@@ -9,5 +9,5 @@ public:
 	static TSharedRef<IDetailCustomization> MakeInstance();
 	
 protected:
-	virtual FColor GenerateColor(const UBiomeType& Ctx, const FGridPosition& Pos) const override;
+	virtual FColor GenerateColor(const UBiomeType& Ctx, const FWorldGridPos& Pos) const override;
 };

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Types/ChunkData.h"
-#include "Grid/Types/GridPosition.h"
+#include "Grid/Types.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GridSubsystem.generated.h"
 
@@ -24,13 +24,13 @@ public:
 	
 	void GenWorld(int32 Seed);
 
-	FChunkData& GetChunk(const FIntPoint& ChunkPos);
-	const FChunkData& GetChunk(const FIntPoint& ChunkPos) const;
-	FChunkData& GetChunk(const FGridPosition& GridPos);
-	const FChunkData& GetChunk(const FGridPosition& GridPos) const;
+	FChunkData& GetChunk(const FChunkIndex& Index);
+	const FChunkData& GetChunk(const FChunkIndex& Index) const;
+	FORCEINLINE FChunkData& GetChunk(const FWorldGridPos& GridPos);
+	FORCEINLINE const FChunkData& GetChunk(const FWorldGridPos& GridPos) const;
 	
-	static FGridPosition WorldToGrid(const FVector& WorldPosition);
-	static FVector GridToWorld(const FGridPosition& GridPos);
+	FORCEINLINE static FWorldGridPos WorldToGrid(const FVector& WorldPosition);
+	FORCEINLINE static FVector GridToWorld(const FWorldGridPos& GridPos);
 	
 	UPROPERTY(Transient)
 	TMap<FIntPoint, FChunkData> Chunks;

@@ -1,6 +1,6 @@
 ﻿#include "NoisePreviewState.h"
 
-#include "Grid/Types/GridPosition.h"
+#include "Grid/Types.h"
 
 FNoisePreviewState::FNoisePreviewState()
 {
@@ -24,7 +24,7 @@ void FNoisePreviewState::Update()
 	{
 		for (int32 x = 0; x < Res; x++)
 		{
-			PixelBuffer[y * Res + x] = OnGenerateColor.Execute(FGridPosition::FromGridPos(x, y));
+			PixelBuffer[y * Res + x] = OnGenerateColor.Execute(FWorldGridPos(x, y));
 		}
 	}
 	

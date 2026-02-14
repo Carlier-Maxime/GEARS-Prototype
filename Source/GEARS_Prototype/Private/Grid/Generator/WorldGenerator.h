@@ -9,10 +9,10 @@ public:
 	virtual ~WorldGenerator() = default;
 	WorldGenerator(UGridSubsystem& Grid, int32 Seed);
 	[[nodiscard]] TArray<TArray<FTransform>> Generate(const uint16 ChunkRadius) const;
-	[[nodiscard]] TArray<TArray<FTransform>> GenerateChunk(const FIntPoint& ChunkIndex) const;
+	[[nodiscard]] TArray<TArray<FTransform>> GenerateChunk(const FChunkIndex& Index) const;
 
 private:
-	void GenerateChunk(TArray<TArray<FTransform>>& OutInstances, const FIntPoint& ChunkIndex) const;
+	void GenerateChunk(TArray<TArray<FTransform>>& OutInstances, const FChunkIndex& Index) const;
 	static TArray<TArray<FTransform>> InitResourcesInstances();
 	
 	UGridSubsystem& Grid;

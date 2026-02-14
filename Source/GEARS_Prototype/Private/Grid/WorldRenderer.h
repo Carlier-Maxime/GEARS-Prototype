@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "GameFramework/Actor.h"
+#include "Grid/Types.h"
 #include "WorldRenderer.generated.h"
 
 class UHierarchicalInstancedStaticMeshComponent;
@@ -17,8 +18,8 @@ class GEARS_PROTOTYPE_API AWorldRenderer : public AActor
 public:
 	AWorldRenderer();
 	void UpdateResourcesInstances(const TArray<TArray<FTransform>>& ResourcesInstances);
-	void AddPlane(const FIntPoint& ChunkIndex);
-	void RemoveCheckedPlane(const FIntPoint& ChunkIndex);
+	void AddPlane(const FChunkIndex& Index);
+	void RemoveCheckedPlane(const FChunkIndex& Index);
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,5 +31,5 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UHierarchicalInstancedStaticMeshComponent> PlaneHISM;
 	UPROPERTY(Transient)
-	TMap<FIntPoint, int32> PlanesInstances;
+	TMap<FChunkIndex, int32> PlanesInstances;
 };

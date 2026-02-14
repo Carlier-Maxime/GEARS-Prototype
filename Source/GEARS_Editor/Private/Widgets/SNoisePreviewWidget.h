@@ -26,7 +26,7 @@ private:
 	static void AddNumericRow(const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView);
 	void InitializeSettingsViews();
 	void BindPropertyCallbacks(const TArray<TSharedRef<IPropertyHandle>>& PropertyHandles);
-	FColor GetColorAtPos(const FGridPosition& Pos) const;
+	FColor GetColorAtPos(const FWorldGridPos& Pos) const;
 	
 	
 	FOnInt32ChangedDelegate OnSeedChanged;

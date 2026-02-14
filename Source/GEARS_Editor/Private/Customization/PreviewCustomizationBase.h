@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "DetailWidgetRow.h"
-#include "Grid/Types/GridPosition.h"
+#include "Grid/Types/WorldGridPos.h"
 #include "Widgets/SNoisePreviewWidget.h"
 
 template<typename ContextType, typename GeneratorType>
@@ -18,13 +18,13 @@ protected:
 			SNew(SNoisePreviewWidget)
 			.PropertyHandles(Handles)
 			.OnSeedChanged_Lambda([this](int32 Seed){Generator.Emplace(Seed);})
-			.OnGenerateColor_Lambda([this, Ctx](const FGridPosition& Pos)->FColor
+			.OnGenerateColor_Lambda([this, Ctx](const FWorldGridPos& Pos)->FColor
 			{
 				return GenerateColor(*Ctx, Pos);
 			})
 		];
 	}
 	
-	virtual FColor GenerateColor(const ContextType& Ctx, const FGridPosition& Pos) const = 0;
+	virtual FColor GenerateColor(const ContextType& Ctx, const FWorldGridPos& Pos) const = 0;
 	TOptional<GeneratorType> Generator;
 };

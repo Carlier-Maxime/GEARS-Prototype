@@ -39,7 +39,7 @@ FVector2D BaseGenerator::GetOrComputeOffset(const uint32 Hash, const float Displ
 	return CachedOffsets.Add(Hash, GetRandomOffset(GetLocalRng(Hash), Displacement));
 }
 
-float BaseGenerator::GetNoiseDensity(const FGridPosition& Pos, const FNoiseContext& Ctx, const FVector2D& Offset) const
+float BaseGenerator::GetNoiseDensity(const FWorldGridPos& Pos, const FNoiseContext& Ctx, const FVector2D& Offset) const
 {
 	float Total = 0.0f;
 	float Amplitude = 1.0f;
@@ -63,7 +63,7 @@ float BaseGenerator::GetNoiseDensity(const FGridPosition& Pos, const FNoiseConte
 	return (Total / MaxValue + 1.0f) * 0.5f;
 }
 
-FRandomStream BaseGenerator::GetLocalRng(const FGridPosition& Pos) const
+FRandomStream BaseGenerator::GetLocalRng(const FWorldGridPos& Pos) const
 {
 	return GetLocalRng(GetTypeHash(Pos));
 }
