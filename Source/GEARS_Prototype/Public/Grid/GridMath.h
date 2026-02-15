@@ -31,7 +31,7 @@ namespace GridMath
 	FORCEINLINE double ChunkToCenter(int32 X)
 	{
 		const auto& Params = GridParams::Get();
-		return ChunkToGrid(X) + Params.GetChunkSize() * Params.GetCellSize() * 0.5f;
+		return (ChunkToGrid(X) + static_cast<int32>(Params.GetChunkSize() >> 1)) * Params.GetCellSize();
 	}
 	
 	FORCEINLINE int16 FlattenChunk(int32 X, int32 Y)
