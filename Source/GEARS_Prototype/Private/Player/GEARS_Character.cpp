@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
+#include "Settings/GridParams.h"
 
 
 AGEARS_Character::AGEARS_Character()
@@ -18,6 +19,13 @@ AGEARS_Character::AGEARS_Character()
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	
+	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
+	const auto& Params = GridParams::Get();
+	NavInvoker->SetGenerationRadii(
+		Params.GetCellSize() * Params.GetChunkSize() * 4,
+		Params.GetCellSize() * Params.GetChunkSize() * 6
+	);
 	
 	ResetView();
 }
