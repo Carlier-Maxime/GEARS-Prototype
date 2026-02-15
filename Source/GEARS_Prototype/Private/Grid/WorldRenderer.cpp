@@ -60,7 +60,7 @@ void AWorldRenderer::RemoveCheckedResourcesInstances(const FChunkIndex& Index)
 
 TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddHISM(int16 ResourceIndex)
 {
-	if (const auto HISM = ResourcesComponents[ResourceIndex]) return *HISM;
+	if (const auto& HISM = ResourcesComponents[ResourceIndex]) return HISM;
 	const auto& Resource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
 	const auto NewHISM = NewObject<UHierarchicalInstancedStaticMeshComponent>(this, Resource->ResourceTag.GetTagName());
 	NewHISM->SetupAttachment(GetRootComponent());
