@@ -31,6 +31,7 @@ void UGridSubsystem::CreateChunk(const FChunkIndex& Index)
 {
 	auto Result = Generator->GenerateChunk(Index);
 	Chunks.Add(Index, std::move(Result.ChunkData));
+	Renderer->AddPlane(Index);
 	Renderer->AddResourcesInstances(Index, Result.ResourcesInstances);
 }
 
