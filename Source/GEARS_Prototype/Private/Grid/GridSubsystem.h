@@ -23,10 +23,8 @@ public:
 	virtual void Deinitialize() override;
 	
 	void GenWorld(int32 Seed);
-
-	FChunkData& GetChunk(const FChunkIndex& Index);
+	
 	const FChunkData& GetChunk(const FChunkIndex& Index) const;
-	FORCEINLINE FChunkData& GetChunk(const FWorldGridPos& GridPos);
 	FORCEINLINE const FChunkData& GetChunk(const FWorldGridPos& GridPos) const;
 	
 	FORCEINLINE static FWorldGridPos WorldToGrid(const FVector& WorldPosition);
@@ -39,4 +37,7 @@ public:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<AWorldRenderer> Renderer = nullptr;
+	
+private:
+	void CreateChunk(const FChunkIndex& Index);
 };

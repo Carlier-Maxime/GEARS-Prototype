@@ -24,30 +24,43 @@ AWorldRenderer::AWorldRenderer()
 	PlaneHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 10));
 }
 
+void AWorldRenderer::PostActorCreated()
+{
+	Super::PostActorCreated();
+	const auto ResourcesCount = GridParams::Get().GetResourceRegistry().Num();
+	ResourcesComponents.SetNum(ResourcesCount);
+	ResourcesInstancesByChunk.SetNum(ResourcesCount);
+}
+
 void AWorldRenderer::BeginPlay()
 {
 	Super::BeginPlay();
 	FNavigationSystem::Build(*GetWorld());
 }
 
-void AWorldRenderer::UpdateResourcesInstances(const TArray<TArray<FTransform>>& ResourcesInstances)
+void AWorldRenderer::AddResourcesInstances(const FChunkIndex& Index, const TArray<TArray<FTransform>>& ResourcesInstances)
 {
 	for (auto i=0; i<ResourcesInstances.Num(); ++i)
 	{
-		if (ResourcesInstances[i].Num() == 0)
-		{
-			if (const auto FoundHISM = ResourcesComponents.Find(i)) (*FoundHISM)->ClearInstances();
-			continue;
-		}
 		const auto HISM = FindOrAddHISM(i);
-		HISM->ClearInstances();
-		HISM->AddInstances(ResourcesInstances[i], false);
+		auto Indices = HISM->AddInstances(ResourcesInstances[i], true);
+		ResourcesInstancesByChunk[i].FindOrAdd(Index).Append(Indices);
+	}
+}
+
+void AWorldRenderer::RemoveCheckedResourcesInstances(const FChunkIndex& Index)
+{
+	for (auto i=0; i<ResourcesInstancesByChunk.Num(); ++i)
+	{
+		auto& InstancesByChunk = ResourcesInstancesByChunk[i];
+		auto Indices = InstancesByChunk.FindAndRemoveChecked(Index);
+		ResourcesComponents[i]->RemoveInstances(Indices);
 	}
 }
 
 TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddHISM(int16 ResourceIndex)
 {
-	if (const auto HISM = ResourcesComponents.Find(ResourceIndex)) return *HISM;
+	if (const auto HISM = ResourcesComponents[ResourceIndex]) return *HISM;
 	const auto& Resource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
 	const auto NewHISM = NewObject<UHierarchicalInstancedStaticMeshComponent>(this, Resource->ResourceTag.GetTagName());
 	NewHISM->SetupAttachment(GetRootComponent());
@@ -56,7 +69,7 @@ TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddH
 	NewHISM->bEnableDensityScaling = true;
 	NewHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 7));
 	NewHISM->RegisterComponent();
-	return ResourcesComponents.Add(ResourceIndex, NewHISM);
+	return ResourcesComponents[ResourceIndex] = NewHISM;
 }
 
 void AWorldRenderer::AddPlane(const FChunkIndex& Index)

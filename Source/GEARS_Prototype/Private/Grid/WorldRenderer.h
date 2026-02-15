@@ -17,7 +17,10 @@ class GEARS_PROTOTYPE_API AWorldRenderer : public AActor
 
 public:
 	AWorldRenderer();
-	void UpdateResourcesInstances(const TArray<TArray<FTransform>>& ResourcesInstances);
+	virtual void PostActorCreated() override;
+	
+	void AddResourcesInstances(const FChunkIndex& Index, const TArray<TArray<FTransform>>& ResourcesInstances);
+	void RemoveCheckedResourcesInstances(const FChunkIndex& Index);
 	void AddPlane(const FChunkIndex& Index);
 	void RemoveCheckedPlane(const FChunkIndex& Index);
 
@@ -27,9 +30,10 @@ protected:
 	
 private:
 	UPROPERTY(Transient)
-	TMap<int16, TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> ResourcesComponents;
+	TArray<TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> ResourcesComponents;
+	TArray<TMap<FChunkIndex, TArray<int32>>> ResourcesInstancesByChunk;
+	
 	UPROPERTY(Transient)
 	TObjectPtr<UHierarchicalInstancedStaticMeshComponent> PlaneHISM;
-	UPROPERTY(Transient)
 	TMap<FChunkIndex, int32> PlanesInstances;
 };

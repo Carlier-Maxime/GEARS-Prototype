@@ -19,24 +19,24 @@ void UGridSubsystem::Deinitialize()
 
 void UGridSubsystem::GenWorld(const int32 Seed)
 {
-	Generator = new WorldGenerator(*this, Seed);
+	Generator = new WorldGenerator(Seed);
 	Renderer = GetWorld()->SpawnActor<AWorldRenderer>();
-	Renderer->UpdateResourcesInstances(std::move(Generator->Generate(8)));
+	constexpr int16 ChunkRadius = 8;
+	for (int16 x=-ChunkRadius; x<=ChunkRadius; ++x)
+		for (int16 y=-ChunkRadius; y<=ChunkRadius; ++y)
+			CreateChunk(FChunkIndex(x, y));
 }
 
-FChunkData& UGridSubsystem::GetChunk(const FChunkIndex& Index)
+void UGridSubsystem::CreateChunk(const FChunkIndex& Index)
 {
-	return Chunks.FindOrAdd(Index);
+	auto Result = Generator->GenerateChunk(Index);
+	Chunks.Add(Index, std::move(Result.ChunkData));
+	Renderer->AddResourcesInstances(Index, Result.ResourcesInstances);
 }
 
 const FChunkData& UGridSubsystem::GetChunk(const FChunkIndex& Index) const
 {
 	return Chunks.FindChecked(Index);
-}
-
-FChunkData& UGridSubsystem::GetChunk(const FWorldGridPos& GridPos)
-{
-	return GetChunk(GridPos.ToChunkIndex());
 }
 
 const FChunkData& UGridSubsystem::GetChunk(const FWorldGridPos& GridPos) const
