@@ -19,7 +19,7 @@ struct FChunkIterator
 	}
 	
 	FORCEINLINE static auto Begin() {return FChunkIterator(FInChunkPos::Start);}
-	FORCEINLINE static auto End() {return FChunkIterator(FInChunkPos::End());}
+	FORCEINLINE static auto End() {return FChunkIterator(FInChunkPos::PostEnd());}
 
 private:
 	FORCEINLINE explicit FChunkIterator(const FInChunkPos& InPos) : Pos(InPos) {}

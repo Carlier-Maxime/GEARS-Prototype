@@ -19,4 +19,11 @@ struct GEARS_PROTOTYPE_API FInChunkPos : public FIntPoint
 			static_cast<int32>(GridParams::Get().GetChunkMask())
 		};
 	}
+	FORCEINLINE static FInChunkPos PostEnd()
+	{
+		return {
+			static_cast<int32>(0),
+			static_cast<int32>(GridParams::Get().GetChunkSize())
+		};
+	}
 };
