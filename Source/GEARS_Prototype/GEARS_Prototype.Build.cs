@@ -27,7 +27,8 @@ public class GEARS_Prototype : ModuleRules
 			"Niagara",
 			"UMG",
 			"Slate",
-			"SlateCore"
+			"SlateCore",
+			"NavigationSystem"
 		});
 	}
 }
