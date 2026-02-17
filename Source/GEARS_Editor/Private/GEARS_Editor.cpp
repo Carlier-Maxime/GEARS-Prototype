@@ -1,16 +1,34 @@
 ﻿#include "GEARS_Editor.h"
 
+#include "GEARS_EditorUtils.h"
 #include "Customization/BiomeTypeCustomization.h"
 #include "Customization/GridSettingsCustomization.h"
 #include "Customization/NoiseContextCustomization.h"
 #include "Customization/SamplingContextCustomization.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/SamplingContext.h"
-#include "Settings/GridSettings.h"
 
 #define LOCTEXT_NAMESPACE "FGEARS_EditorModule"
 
 void FGEARS_EditorModule::StartupModule()
+{
+	GeneratedAsset::OnRequestCreateAssetSync.BindStatic(&GEARSEditorUtils::HandleCreateAssetRequest);
+	FCoreDelegates::OnPostEngineInit.AddLambda([]{RegisterCustomLayout();});
+}
+
+void FGEARS_EditorModule::ShutdownModule()
+{
+	if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
+	{
+		auto& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+		PropertyModule.UnregisterCustomPropertyTypeLayout(FNoiseContext::StaticStruct()->GetFName());
+		PropertyModule.UnregisterCustomPropertyTypeLayout(FSamplingContext::StaticStruct()->GetFName());
+		PropertyModule.UnregisterCustomClassLayout(UBiomeType::StaticClass()->GetFName());
+		PropertyModule.UnregisterCustomClassLayout(UGridSettings::StaticClass()->GetFName());
+	}
+}
+
+void FGEARS_EditorModule::RegisterCustomLayout()
 {
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.RegisterCustomPropertyTypeLayout(
@@ -32,18 +50,6 @@ void FGEARS_EditorModule::StartupModule()
 	);
 
 	PropertyModule.NotifyCustomizationModuleChanged();
-}
-
-void FGEARS_EditorModule::ShutdownModule()
-{
-	if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
-	{
-		auto& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
-		PropertyModule.UnregisterCustomPropertyTypeLayout(FNoiseContext::StaticStruct()->GetFName());
-		PropertyModule.UnregisterCustomPropertyTypeLayout(FSamplingContext::StaticStruct()->GetFName());
-		PropertyModule.UnregisterCustomClassLayout(UBiomeType::StaticClass()->GetFName());
-		PropertyModule.UnregisterCustomClassLayout(UGridSettings::StaticClass()->GetFName());
-	}
 }
 
 #undef LOCTEXT_NAMESPACE

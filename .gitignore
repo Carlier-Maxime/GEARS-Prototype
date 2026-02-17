@@ -34,3 +34,6 @@ AutoScreenshot/
 
 # macOS
 .DS_Store
+
+# Project Specific
+Content/_Generated/

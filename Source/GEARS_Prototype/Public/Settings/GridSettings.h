@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
+#include "Assets/GeneratedAsset.h"
 #include "Grid/Generator/Context/NoiseContext.h"
+#include "Materials/MaterialParameterCollection.h"
 #include "GridSettings.generated.h"
 
 class UBiomeType;
@@ -14,7 +16,7 @@ class UResourceType;
  * 
  */
 UCLASS(Config=Game, defaultconfig)
-class UGridSettings : public UDeveloperSettings
+class GEARS_PROTOTYPE_API UGridSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
@@ -23,8 +25,11 @@ public:
 	TSoftObjectPtr<UStaticMesh> GridSoftMesh;
 	UPROPERTY(Transient)
 	TObjectPtr<UStaticMesh> GridMesh;
+	
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
-	TSoftObjectPtr<UMaterialParameterCollection> MPC;
+	FGeneratedAssetData GeneratedMPC;
+	TGeneratedAsset<UMaterialParameterCollection> MPCAsset;
+	
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	uint32 ChunkSize = 16;
 	
@@ -56,6 +61,7 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 	
+	void UpdateMPC();
 private:
 	void Update();
 	void LoadSoftPtr();

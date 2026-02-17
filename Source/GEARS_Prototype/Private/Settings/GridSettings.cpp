@@ -7,12 +7,12 @@
 #include "Data/ResourceType.h"
 
 #include "GameplayTags/GEARS_GameplayTags.h"
-#include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
 
 void UGridSettings::PostInitProperties()
 {
 	Super::PostInitProperties();
+	MPCAsset.Bind(GeneratedMPC);
 	Update();
 }
 
@@ -32,37 +32,40 @@ void UGridSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 
 #endif
 
+void UGridSettings::UpdateMPC()
+{
+	const auto MPC = MPCAsset.Get();
+	bool Updated = UpdateMPCParam(MPC->ScalarParameters, MPCSharedScalar);
+	if (UpdateMPCParam(MPC->VectorParameters, MPCSharedLinearColor)) Updated = true;
+	if (Updated)
+	{
+		#if WITH_EDITOR
+			MPC->PostEditChange();
+			if (!MPC->MarkPackageDirty())
+			{
+				UE_LOG(LogTemp, Error, TEXT("MPC (%s) cannot be marked dirty !"), *MPC->GetPathName());
+			} else
+			{
+				UE_LOG(LogTemp, Display, TEXT("Updated MPC Grid : %s"), *MPC->GetPathName());
+			}
+		#else
+			if (GetWorld())
+			{
+				auto MPCInst = GetWorld()->GetParameterCollectionInstance(MPC);
+				if (MPCInst) MPCInst->UpdateRenderState(true);
+			}
+		#endif
+	}
+}
+
 void UGridSettings::Update()
 {
 	CellSize = static_cast<float>(FMath::RoundUpToPowerOfTwo(FMath::Max(1, FMath::RoundToInt(CellSize))));
 	ChunkSize = FMath::RoundUpToPowerOfTwo(ChunkSize);
+	SyncSharedParams();
+	UpdateMPC();
 	LoadSoftPtr();
 	RefreshFastAccessVariables();
-	SyncSharedParams();
-	if (MPC.IsNull()) return;
-	const auto Mpc = MPC.LoadSynchronous();
-	if (!Mpc) return;
-	bool Updated = UpdateMPCParam(Mpc->ScalarParameters, MPCSharedScalar);
-	if (UpdateMPCParam(Mpc->VectorParameters, MPCSharedLinearColor)) Updated = true;
-	if (Updated)
-	{
-		#if WITH_EDITOR
-		Mpc->PostEditChange();
-		if (!Mpc->MarkPackageDirty())
-		{
-			UE_LOG(LogTemp, Error, TEXT("MPC (%s) cannot be marked dirty !"), *Mpc->GetPathName());
-		} else
-		{
-			UE_LOG(LogTemp, Display, TEXT("Updated MPC Grid : %s"), *Mpc->GetPathName());
-		}
-		#else
-		if (GetWorld())
-		{
-			auto MPCInst = GetWorld()->GetParameterCollectionInstance(Mpc);
-			if (MPCInst) MPCInst->UpdateRenderState(true);
-		}
-		#endif
-	}
 }
 
 void UGridSettings::LoadSoftPtr()
@@ -103,7 +106,7 @@ void UGridSettings::SyncSharedParams()
 	MPCSharedScalar.Add(TAG_Grid_Chunk_Size, ChunkSize);
 	
 	MPCSharedScalar.Add(TAG_Grid_Cell_Size, CellSize);
-	MPCSharedScalar.Add(TAG_Grid_Cell_InvSize, GridParams::Get().InvCellSize);
+	MPCSharedScalar.Add(TAG_Grid_Cell_InvSize, 1.f / CellSize);
 	MPCSharedScalar.Add(TAG_Grid_Cell_Big_Factor, CellBigFactor);
 	MPCSharedScalar.Add(TAG_Grid_Cell_Small_Factor, CellSmallFactor);
 	MPCSharedLinearColor.Add(TAG_Grid_Cell_Color, CellColor);
@@ -130,6 +133,8 @@ bool UGridSettings::UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, 
 		{
 			Param = &MPCParams.AddDefaulted_GetRef();
 			Param->ParameterName = DesiredName;
+			const auto Str = DesiredName.ToString();
+			Param->Id = FGuid::NewDeterministicGuid(FStringView(Str));
 			bUpdated = true;
 		}
 

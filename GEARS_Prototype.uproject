@@ -12,7 +12,7 @@
 		{
 			"Name": "GEARS_Editor",
 			"Type": "Editor",
-			"LoadingPhase": "PostEngineInit"
+			"LoadingPhase": "PostConfigInit"
 		}
 	],
 	"Plugins": [

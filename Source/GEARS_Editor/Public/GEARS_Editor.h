@@ -8,4 +8,7 @@ class FGEARS_EditorModule : public IModuleInterface
 public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
+    
+private:
+    static void RegisterCustomLayout();
 };
