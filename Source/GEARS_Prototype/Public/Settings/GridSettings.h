@@ -8,6 +8,7 @@
 #include "Assets/GeneratedAsset.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Materials/MaterialParameterCollection.h"
+#include "Engine/Texture2DArray.h"
 #include "GridSettings.generated.h"
 
 class UBiomeType;
@@ -29,6 +30,10 @@ public:
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	FGeneratedAssetData GeneratedMPC;
 	TGeneratedAsset<UMaterialParameterCollection> MPCAsset;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Grid")
+	FGeneratedAssetData GeneratedBiomeAtlas;
+	TGeneratedAsset<UTexture2DArray> BiomeAtlas;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	uint32 ChunkSize = 16;

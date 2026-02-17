@@ -13,6 +13,7 @@ void UGridSettings::PostInitProperties()
 {
 	Super::PostInitProperties();
 	MPCAsset.Bind(GeneratedMPC);
+	BiomeAtlas.Bind(GeneratedBiomeAtlas);
 	Update();
 }
 
