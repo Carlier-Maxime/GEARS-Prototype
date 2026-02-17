@@ -72,7 +72,7 @@ private:
 	void LoadSoftPtr();
 	template <typename T>
 	static void LoadRegistry(const TArray<TSoftObjectPtr<T>>& RegistrySoft, TArray<TObjectPtr<T>>& Registry);
-	void RefreshFastAccessVariables() const;
+	void RefreshFastAccessVariables();
 	void SyncSharedParams();
 	template <typename FCollectionParameterType, typename FValueType>
 	static bool UpdateMPCParam(TArray<FCollectionParameterType>& MPCParams, const TMap<FGameplayTag, FValueType>& SharedParams);

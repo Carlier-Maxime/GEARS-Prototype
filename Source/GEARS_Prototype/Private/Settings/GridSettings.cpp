@@ -35,7 +35,7 @@ void UGridSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 
 void UGridSettings::UpdateMPC()
 {
-	const auto MPC = MPCAsset.Get();
+	auto* MPC = MPCAsset.Get();
 	bool Updated = UpdateMPCParam(MPC->ScalarParameters, MPCSharedScalar);
 	if (UpdateMPCParam(MPC->VectorParameters, MPCSharedLinearColor)) Updated = true;
 	if (Updated)
@@ -87,7 +87,7 @@ void UGridSettings::LoadRegistry(const TArray<TSoftObjectPtr<T>>& RegistrySoft, 
 	}
 }
 
-void UGridSettings::RefreshFastAccessVariables() const
+void UGridSettings::RefreshFastAccessVariables()
 {
 	GridParams::Get().CellSize = CellSize;
 	GridParams::Get().InvCellSize = 1.f / CellSize;
@@ -100,6 +100,7 @@ void UGridSettings::RefreshFastAccessVariables() const
 	GridParams::Get().Temperature = Temperature;
 	GridParams::Get().Humidity = Humidity;
 	GridParams::Get().GridMesh = GridMesh;
+	GridParams::Get().BiomeAtlas = BiomeAtlas.Get();
 }
 
 void UGridSettings::SyncSharedParams()

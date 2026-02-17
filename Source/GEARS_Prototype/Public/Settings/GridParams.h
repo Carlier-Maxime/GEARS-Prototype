@@ -24,6 +24,7 @@ public:
 	const FNoiseContext& GetTemperature() const { return Temperature; }
 	const FNoiseContext& GetHumidity() const { return Humidity; }
 	const TObjectPtr<UStaticMesh>& GetGridMesh() const { return GridMesh; }
+	const TObjectPtr<UTexture2DArray>& GetBiomeAtlas() const { return BiomeAtlas; }
 private:
 	GridParams() = default;
 	friend class UGridSettings;
@@ -38,4 +39,5 @@ private:
 	FNoiseContext Temperature;
 	FNoiseContext Humidity;
 	TObjectPtr<UStaticMesh> GridMesh;
+	TObjectPtr<UTexture2DArray> BiomeAtlas;
 };
