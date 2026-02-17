@@ -1,7 +1,6 @@
 ﻿#include "GEARS_EditorUtils.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "UObject/SavePackage.h"
 
 void GEARSEditorUtils::HandleCreateAssetRequest(const FGeneratedAssetData& Data, UClass* AssetClass)
 {
@@ -12,13 +11,9 @@ void GEARSEditorUtils::HandleCreateAssetRequest(const FGeneratedAssetData& Data,
 	const auto Package = CreatePackage(*PackagePath);
 	const auto NewAsset = NewObject<UObject>(Package, AssetClass, *Data.Name, RF_Public | RF_Standalone);
 	FAssetRegistryModule::AssetCreated(NewAsset);
-	FSavePackageArgs SaveArgs;
-	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-	SaveArgs.SaveFlags = SAVE_NoError;
-	const auto Filename = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
-	UPackage::SavePackage(Package, NewAsset, *Filename, SaveArgs);
-	Data.Asset = NewAsset;
+	if (!NewAsset->MarkPackageDirty()) UE_LOG(LogTemp, Warning, TEXT("GEARS_Editor: Asset %s failed to mark dirty."), *AssetPath);
 	NewAsset->PreEditChange(nullptr);
 	NewAsset->PostEditChange();
+	Data.Asset = NewAsset;
 	UE_LOG(LogTemp, Log, TEXT("GEARS_Editor: Asset %s created successfully."), *AssetPath);
 }
