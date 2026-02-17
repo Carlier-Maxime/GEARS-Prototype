@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../GridSubsystem.h"
+#include "Grid/Generator/BiomeGenerator.h"
 #include "Grid/Generator/ResourceGenerator.h"
 
 struct FChunkGenerationResult
@@ -21,4 +22,5 @@ private:
 	void GenerateChunk(FChunkGenerationResult& Result, const FChunkIndex& Index) const;
 	
 	ResourceGenerator ResourceGenerator;
+	BiomeGenerator BiomeGenerator;
 };
