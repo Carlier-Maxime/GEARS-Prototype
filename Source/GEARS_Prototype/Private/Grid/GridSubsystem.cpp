@@ -3,7 +3,7 @@
 
 #include "GridSubsystem.h"
 #include "Generator/WorldGenerator.h"
-#include "WorldRenderer.h"
+#include "Rendering/WorldRenderer.h"
 
 void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
