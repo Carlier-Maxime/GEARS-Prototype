@@ -13,15 +13,13 @@ public:
 		TArray<TWeakObjectPtr<>> Objects;
 		DetailBuilder.GetObjectsBeingCustomized(Objects);
 		auto MyAsset = Cast<ContextType>(Objects[0].Get());
-	
-		TArray<FName> CategoryNames;
-		DetailBuilder.GetCategoryNames(CategoryNames);
+		
 		TArray<TSharedRef<IPropertyHandle>> AllHandles;
-		for (const auto& Name : CategoryNames)
+		for (TFieldIterator<FProperty> It(ContextType::StaticClass()); It; ++It)
 		{
-			TArray<TSharedRef<IPropertyHandle>> Handles;
-			DetailBuilder.EditCategory(Name).GetDefaultProperties(Handles);
-			AllHandles.Append(Handles);
+			TSharedRef<IPropertyHandle> Handle = DetailBuilder.GetProperty(It->GetFName());
+			if (!Handle->IsValidHandle()) continue;
+			AllHandles.Add(Handle);
 		}
 	
 		auto& Category = DetailBuilder.EditCategory("Preview", FText::GetEmpty(), ECategoryPriority::Important);
