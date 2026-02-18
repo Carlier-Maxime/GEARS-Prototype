@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "ResourceRule.h"
 #include "Engine/DataAsset.h"
 #include "BiomeType.generated.h"
 
-class UResourceType;
 /**
  * 
  */
@@ -25,7 +25,7 @@ public:
 	FFloatRange Humidity;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Resources")
-	TArray<TSoftObjectPtr<UResourceType>> Resources;
+	TArray<FResourceRule> Resources;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Visuals")
 	FLinearColor Color;
