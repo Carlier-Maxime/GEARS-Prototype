@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "PreviewDetailCustomization.h"
-#include "Data/BiomeType.h"
+#include "Data/Wrappers/BiomeType.h"
 #include "Grid/Generator/BiomeGenerator.h"
 
 class FBiomeTypeCustomization : public TPreviewDetailCustomization<UBiomeType, BiomeGenerator>

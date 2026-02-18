@@ -1,6 +1,7 @@
 ﻿#include "Grid/Generator/BiomeGenerator.h"
 
-#include "Data/BiomeType.h"
+#include "Data/Definitions/BiomeDef.h"
+#include "Data/Wrappers/BiomeType.h"
 #include "Settings/GridParams.h"
 
 constexpr float RngBiomeMove = 1024.f;
@@ -19,19 +20,18 @@ int8 BiomeGenerator::SampleBiome(const FWorldGridPos& Pos) const
 	const auto& Registry = GridParams::Get().GetBiomeRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
-		const auto& Biome = Registry[i];
-		if (!IsEligible(Temp, Humidity, *Biome)) continue;
+		if (!IsEligible(Temp, Humidity, Registry[i]->Data)) continue;
 		return i;
 	}
 	return -1;
 }
 
-bool BiomeGenerator::IsEligible(const FWorldGridPos& Pos, const UBiomeType& Biome) const
+bool BiomeGenerator::IsEligible(const FWorldGridPos& Pos, const FBiomeDefinition& Biome) const
 {
 	return IsEligible(GetTemperature(Pos), GetHumidity(Pos), Biome);
 }
 
-bool BiomeGenerator::IsEligible(const float Temp, const float Humidity, const UBiomeType& Biome)
+bool BiomeGenerator::IsEligible(const float Temp, const float Humidity, const FBiomeDefinition& Biome)
 {
 	return Biome.Temperature.Contains(Temp) && Biome.Humidity.Contains(Humidity);
 }

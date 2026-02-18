@@ -3,7 +3,7 @@
 #include "Grid/Generator/ProcSpawnData.h"
 #include "Grid/Generator/Context/DistributionRule.h"
 #include "Settings/GridParams.h"
-#include "Data/ResourceType.h"
+#include "Data/Wrappers/ResourceType.h"
 
 ResourceGenerator::ResourceGenerator(const int32 Seed) : BaseGenerator(Seed)
 {
@@ -37,7 +37,7 @@ int16 ResourceGenerator::DetermineType(const FWorldGridPos& Pos) const
 	const auto& Registry = GridParams::Get().GetResourceRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
-		if (ShouldSpawn(Pos, Registry[i]->Distribution, GetOffset(Registry[i]))) return i;
+		if (ShouldSpawn(Pos, Registry[i]->Data.Distribution, GetOffset(Registry[i]))) return i;
 	}
 	return -1;
 }
@@ -45,7 +45,7 @@ int16 ResourceGenerator::DetermineType(const FWorldGridPos& Pos) const
 FTransform ResourceGenerator::GetVariationTransform(const FWorldGridPos& Pos, int16 ResourceTypeIndex) const
 {
 	if (ResourceTypeIndex == -1) return Pos.ToTransform();
-	const auto& PlacementRule = GridParams::Get().GetResourceRegistry()[ResourceTypeIndex]->PlacementRule;
+	const auto& PlacementRule = GridParams::Get().GetResourceRegistry()[ResourceTypeIndex]->Data.PlacementRule;
 	return GetVariationTransform(Pos, PlacementRule);
 }
 

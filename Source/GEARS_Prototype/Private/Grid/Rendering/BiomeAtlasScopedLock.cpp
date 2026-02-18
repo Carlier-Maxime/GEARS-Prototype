@@ -1,6 +1,6 @@
 ﻿#include "BiomeAtlasScopedLock.h"
 
-#include "Data/BiomeType.h"
+#include "Data/Wrappers/BiomeType.h"
 #include "Engine/Texture2DArray.h"
 #include "Settings/GridParams.h"
 
@@ -24,7 +24,7 @@ void FBiomeAtlasScopedLock::UpdateSliceFromBiomeTypes(const int32 SliceIndex, co
 	const auto& BiomeRegistry = GridParams::Get().GetBiomeRegistry();
 	for (int32 i = 0; i < PixelsPerSlice; ++i)
 	{
-		const auto Color = BiomeTypes.IsValidIndex(i) && BiomeTypes[i] != -1 ? BiomeRegistry[BiomeTypes[i]]->Color.ToFColorSRGB() : FColor::Black;
+		const auto Color = BiomeTypes.IsValidIndex(i) && BiomeTypes[i] != -1 ? BiomeRegistry[BiomeTypes[i]]->Data.Color.ToFColorSRGB() : FColor::Black;
 		const auto PixelOffset = i * 4;
 		SliceData[PixelOffset + 0] = Color.B;
 		SliceData[PixelOffset + 1] = Color.G;

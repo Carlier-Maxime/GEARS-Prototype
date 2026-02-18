@@ -3,8 +3,8 @@
 #include "Settings/GridSettings.h"
 
 #include "Settings/GridParams.h"
-#include "Data/BiomeType.h"
-#include "Data/ResourceType.h"
+#include "Data/Wrappers/BiomeType.h"
+#include "Data/Wrappers/ResourceType.h"
 
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Materials/MaterialParameterCollectionInstance.h"

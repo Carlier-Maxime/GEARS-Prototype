@@ -1,21 +1,14 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
-
-#include "CoreMinimal.h"
+﻿#pragma once
 #include "GameplayTagContainer.h"
 #include "ResourceRule.h"
-#include "Engine/DataAsset.h"
-#include "BiomeType.generated.h"
 
-/**
- * 
- */
-UCLASS()
-class GEARS_PROTOTYPE_API UBiomeType : public UPrimaryDataAsset
+#include "BiomeDef.generated.h"
+
+USTRUCT()
+struct GEARS_PROTOTYPE_API FBiomeDefinition
 {
 	GENERATED_BODY()
-public:
+	
 	UPROPERTY(EditDefaultsOnly, Category="Identity")
 	FGameplayTag BiomeTag;
 
@@ -28,5 +21,5 @@ public:
 	TArray<FResourceRule> Resources;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Visuals")
-	FLinearColor Color;
+	FLinearColor Color = FLinearColor::White;
 };
