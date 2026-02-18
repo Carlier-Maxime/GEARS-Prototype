@@ -8,12 +8,12 @@ FBiomeAtlasScopedLock::FBiomeAtlasScopedLock(UTexture2DArray& InAtlas, const int
 		Atlas(InAtlas),
 		PixelsPerSlice(InPixelsPerSlice),
 		OctetsPerSlice(InOctetsPerSlice),
-		RawData(Atlas.Source.IsValid() ? Atlas.Source.LockMip(0) : nullptr)
+		RawData(static_cast<uint8*>(Atlas.GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE)))
 {}
 
 FBiomeAtlasScopedLock::~FBiomeAtlasScopedLock()
 {
-	Atlas.Source.UnlockMip(0);
+	Atlas.GetPlatformData()->Mips[0].BulkData.Unlock();
 	Atlas.UpdateResource();
 }
 

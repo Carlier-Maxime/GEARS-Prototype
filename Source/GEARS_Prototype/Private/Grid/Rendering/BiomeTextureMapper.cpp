@@ -8,19 +8,39 @@ FBiomeTextureMapper::FBiomeTextureMapper() : FBiomeTextureMapper(*GridParams::Ge
 FBiomeTextureMapper::FBiomeTextureMapper(UTexture2DArray& InAtlas) : Atlas(InAtlas)
 {
 	const auto& Params = GridParams::Get();
+	const auto Size = Params.GetChunkSize();
+	constexpr auto Depth = 1024;
+	constexpr auto Format = PF_B8G8R8A8;
+	
+	auto* PlatformData = new FTexturePlatformData();
+	PlatformData->SizeX = Size;
+	PlatformData->SizeY = Size;
+	PlatformData->SetNumSlices(Depth);
+	PlatformData->PixelFormat = Format;
+	
+	auto* Mip = new FTexture2DMipMap();
+	PlatformData->Mips.Add(Mip);
+	Mip->SizeX = Size;
+	Mip->SizeY = Size;
+	Mip->SizeZ = Depth;
+
+	const long DataSize = Size * Size * Depth * GPixelFormats[Format].BlockBytes;
+	Mip->BulkData.Lock(LOCK_READ_WRITE);
+	Mip->BulkData.Realloc(DataSize);
+	Mip->BulkData.Unlock();
+	
 	Atlas.ReleaseResource();
-	Atlas.Source.Init(0, 0, 0, 0, TSF_Invalid);
-	Atlas.Source.Init(Params.GetChunkSize(), Params.GetChunkSize(), 1024, 1, TSF_BGRA8);
+	Atlas.SetPlatformData(PlatformData);
 	Atlas.SRGB = true;
 	Atlas.NeverStream = true;
 	Atlas.CompressionSettings = TC_Default;
 	Atlas.Filter = TF_Nearest;
 	Atlas.UpdateResource();
-	Atlas.FinishCachePlatformData();
 }
 
 FBiomeAtlasScopedLock FBiomeTextureMapper::Lock() const
 {
-	const auto PixelsPerSlice = Atlas.Source.GetSizeX() * Atlas.Source.GetSizeY();
+	const auto* Data = Atlas.GetPlatformData();
+	const auto PixelsPerSlice = Data->SizeX * Data->SizeY;
 	return {Atlas, PixelsPerSlice, PixelsPerSlice * 4};
 }
