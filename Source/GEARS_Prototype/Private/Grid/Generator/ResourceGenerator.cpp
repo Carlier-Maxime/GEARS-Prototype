@@ -1,7 +1,7 @@
 ﻿#include "Grid/Generator/ResourceGenerator.h"
 
 #include "Grid/Generator/ProcSpawnData.h"
-#include "Grid/Generator/Context/SamplingContext.h"
+#include "Grid/Generator/Context/DistributionRule.h"
 #include "Settings/GridParams.h"
 #include "Data/ResourceType.h"
 
@@ -17,14 +17,14 @@ FProcSpawnData ResourceGenerator::Sample(const FWorldGridPos& Pos) const
 	return std::move(SpawnData);
 }
 
-bool ResourceGenerator::ShouldSpawn(const FWorldGridPos& Pos, const FSamplingContext& Ctx,
+bool ResourceGenerator::ShouldSpawn(const FWorldGridPos& Pos, const FDistributionRule& Rule,
 	const FVector2D& Offset) const
 {
-	const auto NoiseDensity = GetNoiseDensity(Pos, Ctx.Noise, Offset);
-	if (Ctx.ThresholdSmoothing == 0) return NoiseDensity >= Ctx.NoiseThreshold;
+	const auto NoiseDensity = GetNoiseDensity(Pos, Rule.Noise, Offset);
+	if (Rule.ThresholdSmoothing == 0) return NoiseDensity >= Rule.NoiseThreshold;
 	const float SpawnChance = FMath::SmoothStep(
-		Ctx.NoiseThreshold,
-		Ctx.NoiseThreshold + Ctx.ThresholdSmoothing, 
+		Rule.NoiseThreshold,
+		Rule.NoiseThreshold + Rule.ThresholdSmoothing, 
 		NoiseDensity
 	);
 	if (SpawnChance <= 0.f) return false;
@@ -37,36 +37,40 @@ int16 ResourceGenerator::DetermineType(const FWorldGridPos& Pos) const
 	const auto& Registry = GridParams::Get().GetResourceRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
-		const auto& Sampling = Registry[i]->Sampling;
-		if (ShouldSpawn(Pos, Sampling, GetOffset(Registry[i]))) return i;
+		if (ShouldSpawn(Pos, Registry[i]->Distribution, GetOffset(Registry[i]))) return i;
 	}
 	return -1;
 }
 
 FTransform ResourceGenerator::GetVariationTransform(const FWorldGridPos& Pos, int16 ResourceTypeIndex) const
 {
+	if (ResourceTypeIndex == -1) return Pos.ToTransform();
+	const auto& PlacementRule = GridParams::Get().GetResourceRegistry()[ResourceTypeIndex]->PlacementRule;
+	return GetVariationTransform(Pos, PlacementRule);
+}
+
+FTransform ResourceGenerator::GetVariationTransform(const FWorldGridPos& Pos, const FPlacementRule& Rule) const
+{
 	auto Transform = Pos.ToTransform();
-	if (ResourceTypeIndex == -1) return std::move(Transform);
-	const auto& Sampling = GridParams::Get().GetResourceRegistry()[ResourceTypeIndex]->Sampling;
 	const auto LocalRng = GetLocalRng(Pos);
 	
-	if (Sampling.JitterMaxOffset > 0)
+	if (Rule.JitterMaxOffset > 0)
 	{
 		const auto Loc = Transform.GetLocation();
 		Transform.SetLocation({
-			Loc.X + GridParams::Get().GetCellSize() * Sampling.JitterMaxOffset * LocalRng.FRandRange(-1, 1),
-			Loc.Y + GridParams::Get().GetCellSize() * Sampling.JitterMaxOffset * LocalRng.FRandRange(-1, 1),
+			Loc.X + GridParams::Get().GetCellSize() * Rule.JitterMaxOffset * LocalRng.FRandRange(-1, 1),
+			Loc.Y + GridParams::Get().GetCellSize() * Rule.JitterMaxOffset * LocalRng.FRandRange(-1, 1),
 			Loc.Z
 		});
 	}
 	
-	if (const auto Curve = Sampling.ScaleDistributionCurve)
+	if (Rule.ScaleCurve)
 	{
-		const auto Val = Curve->GetFloatValue(LocalRng.FRand());
+		const auto Val = Rule.ScaleCurve->GetFloatValue(LocalRng.FRand());
 		Transform.SetScale3D({Val, Val, Val});
 	}
 	
-	if (Sampling.bRandomYaw)
+	if (Rule.bRandomYaw)
 	{
 		Transform.SetRotation(FRotator(0, LocalRng.FRandRange(0, 360), 0).Quaternion());
 	}

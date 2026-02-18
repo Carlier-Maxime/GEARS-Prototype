@@ -6,7 +6,7 @@
 #include "Customization/NoiseContextCustomization.h"
 #include "Customization/SamplingContextCustomization.h"
 #include "Grid/Generator/Context/NoiseContext.h"
-#include "Grid/Generator/Context/SamplingContext.h"
+#include "Grid/Generator/Context/DistributionRule.h"
 
 #define LOCTEXT_NAMESPACE "FGEARS_EditorModule"
 
@@ -22,7 +22,7 @@ void FGEARS_EditorModule::ShutdownModule()
 	{
 		auto& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FNoiseContext::StaticStruct()->GetFName());
-		PropertyModule.UnregisterCustomPropertyTypeLayout(FSamplingContext::StaticStruct()->GetFName());
+		PropertyModule.UnregisterCustomPropertyTypeLayout(FDistributionRule::StaticStruct()->GetFName());
 		PropertyModule.UnregisterCustomClassLayout(UBiomeType::StaticClass()->GetFName());
 		PropertyModule.UnregisterCustomClassLayout(UGridSettings::StaticClass()->GetFName());
 	}
@@ -36,7 +36,7 @@ void FGEARS_EditorModule::RegisterCustomLayout()
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FNoiseContextCustomization::MakeInstance)
 	);
 	PropertyModule.RegisterCustomPropertyTypeLayout(
-		FSamplingContext::StaticStruct()->GetFName(),
+		FDistributionRule::StaticStruct()->GetFName(),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FSamplingContextCustomization::MakeInstance)
 	);
 	

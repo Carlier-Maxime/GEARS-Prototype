@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "PlacementRule.h"
 #include "Engine/DataAsset.h"
-#include "Grid/Generator/Context/SamplingContext.h"
+#include "Grid/Generator/Context/DistributionRule.h"
 #include "ResourceType.generated.h"
 
 /**
@@ -22,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Visuals")
 	TSoftObjectPtr<UStaticMesh> WorldMesh;
 	
-	UPROPERTY(EditDefaultsOnly, meta = (ShowOnlyInnerProperties))
-	FSamplingContext Sampling;
+	UPROPERTY(EditAnywhere, Category = "Sampling")
+	FPlacementRule PlacementRule;
+	
+	UPROPERTY(EditAnywhere, Category = "Sampling")
+	FDistributionRule Distribution;
 };

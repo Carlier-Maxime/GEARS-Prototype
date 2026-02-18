@@ -2,7 +2,6 @@
 #include "Grid/Types/WorldGridPos.h"
 
 struct FNoiseContext;
-struct FSamplingContext;
 
 class GEARS_PROTOTYPE_API BaseGenerator
 {
