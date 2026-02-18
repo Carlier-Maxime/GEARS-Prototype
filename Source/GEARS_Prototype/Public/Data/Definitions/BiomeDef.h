@@ -10,7 +10,7 @@ struct GEARS_PROTOTYPE_API FBiomeDefinition
 	GENERATED_BODY()
 	
 	UPROPERTY(EditDefaultsOnly, Category="Identity")
-	FGameplayTag BiomeTag;
+	FGameplayTag Tag;
 
 	UPROPERTY(EditDefaultsOnly, Category="Generation")
 	FFloatRange Temperature;

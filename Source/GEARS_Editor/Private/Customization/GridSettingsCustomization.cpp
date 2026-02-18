@@ -11,5 +11,5 @@ TSharedRef<IDetailCustomization> FGridSettingsCustomization::MakeInstance()
 FColor FGridSettingsCustomization::GenerateColor(const UGridSettings& Ctx, const FWorldGridPos& Pos) const
 {
 	const auto Index = Generator.GetValue().SampleBiome(Pos);
-	return Index==-1 ? FColor::Black : GridParams::Get().GetBiomeRegistry()[Index].Get()->Data.Color.ToFColorSRGB();
+	return Index==-1 ? FColor::Black : GridParams::Get().GetBiomeRegistry()[Index].Color.ToFColorSRGB();
 }

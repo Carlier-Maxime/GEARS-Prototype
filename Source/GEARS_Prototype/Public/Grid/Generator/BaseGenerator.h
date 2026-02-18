@@ -15,6 +15,7 @@ protected:
 	[[nodiscard]] FVector2D GetOrComputeOffset(uint32 Hash, float Displacement) const;
 	[[nodiscard]] FVector2D GetOffset(uint32 Hash) const;
 	[[nodiscard]] FVector2D GetOffset(const FSoftObjectPath& Path) const;
+	[[nodiscard]] FVector2D GetOffset(const FGameplayTag& Tag) const;
 	template<typename T>
 	[[nodiscard]] FVector2D GetOffset(const TSoftObjectPtr<T>& Ptr) const
 	{

@@ -5,7 +5,6 @@
 
 #include "AI/NavigationSystemBase.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
-#include "Data/Wrappers/ResourceType.h"
 #include "Settings/GridParams.h"
 
 
@@ -48,9 +47,9 @@ TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddH
 {
 	if (const auto& HISM = ResourcesComponents[ResourceIndex]) return HISM;
 	const auto& Resource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
-	const auto NewHISM = NewObject<UHierarchicalInstancedStaticMeshComponent>(this, Resource->Data.ResourceTag.GetTagName());
+	const auto NewHISM = NewObject<UHierarchicalInstancedStaticMeshComponent>(this, Resource.Tag.GetTagName());
 	NewHISM->SetupAttachment(GetRootComponent());
-	NewHISM->SetStaticMesh(Resource->Data.WorldMesh.LoadSynchronous());
+	NewHISM->SetStaticMesh(Resource.WorldMesh.LoadSynchronous());
 	NewHISM->SetMobility(EComponentMobility::Static);
 	NewHISM->bEnableDensityScaling = true;
 	NewHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 7));

@@ -3,8 +3,6 @@
 #include "Settings/GridSettings.h"
 
 #include "Settings/GridParams.h"
-#include "Data/Wrappers/BiomeType.h"
-#include "Data/Wrappers/ResourceType.h"
 
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
@@ -65,26 +63,8 @@ void UGridSettings::Update()
 	ChunkSize = FMath::RoundUpToPowerOfTwo(ChunkSize);
 	SyncSharedParams();
 	UpdateMPC();
-	LoadSoftPtr();
-	RefreshFastAccessVariables();
-}
-
-void UGridSettings::LoadSoftPtr()
-{
 	if (!GridSoftMesh.IsNull()) GridMesh = GridSoftMesh.LoadSynchronous();
-	LoadRegistry(ResourceSoftRegistry, ResourceRegistry);
-	LoadRegistry(BiomeSoftRegistry, BiomeRegistry);
-}
-
-template <typename T>
-void UGridSettings::LoadRegistry(const TArray<TSoftObjectPtr<T>>& RegistrySoft, TArray<TObjectPtr<T>>& Registry)
-{
-	Registry.Empty();
-	Registry.Reserve(RegistrySoft.Num());
-	for (auto& Soft : RegistrySoft)
-	{
-		if (!Soft.IsNull()) Registry.Emplace(Soft.LoadSynchronous());
-	}
+	RefreshFastAccessVariables();
 }
 
 void UGridSettings::RefreshFastAccessVariables()
@@ -95,8 +75,8 @@ void UGridSettings::RefreshFastAccessVariables()
 	GridParams::Get().ChunkSizeSquared = ChunkSize * ChunkSize;
 	GridParams::Get().ChunkShift = FMath::FloorLog2(ChunkSize);
 	GridParams::Get().ChunkMask = ChunkSize - 1;
-	GridParams::Get().ResourceRegistry = ResourceRegistry;
-	GridParams::Get().BiomeRegistry = BiomeRegistry;
+	GridParams::Get().ResourceRegistry.Emplace(ResourceSoftRegistry);
+	GridParams::Get().BiomeRegistry.Emplace(BiomeSoftRegistry);
 	GridParams::Get().Temperature = Temperature;
 	GridParams::Get().Humidity = Humidity;
 	GridParams::Get().GridMesh = GridMesh;

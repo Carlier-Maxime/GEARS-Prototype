@@ -22,6 +22,11 @@ FVector2D BaseGenerator::GetOffset(const FSoftObjectPath& Path) const
 	return GetOffset(GetTypeHash(Path));
 }
 
+FVector2D BaseGenerator::GetOffset(const FGameplayTag& Tag) const
+{
+	return GetOffset(GetTypeHash(Tag));
+}
+
 FVector2D BaseGenerator::GetOffset(const uint32 Hash) const
 {
 	return GetOrComputeOffset(Hash, RngResourceMove);

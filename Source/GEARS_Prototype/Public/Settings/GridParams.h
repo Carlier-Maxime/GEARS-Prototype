@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "Data/Registry/BiomeRegistry.h"
+#include "Data/Registry/ResourceRegistry.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 
 class UResourceType;
@@ -19,8 +21,8 @@ public:
 	uint32 GetChunkSizeSquared() const { return ChunkSizeSquared; }
 	uint32 GetChunkShift() const { return ChunkShift; }
 	uint32 GetChunkMask() const { return ChunkMask; }
-	const TArray<TObjectPtr<UResourceType>>& GetResourceRegistry() const {return ResourceRegistry;}
-	const TArray<TObjectPtr<UBiomeType>>& GetBiomeRegistry() const {return BiomeRegistry;}
+	const FResourceRegistry& GetResourceRegistry() const {return ResourceRegistry.GetValue();}
+	const FBiomeRegistry& GetBiomeRegistry() const {return BiomeRegistry.GetValue();}
 	const FNoiseContext& GetTemperature() const { return Temperature; }
 	const FNoiseContext& GetHumidity() const { return Humidity; }
 	const TObjectPtr<UStaticMesh>& GetGridMesh() const { return GridMesh; }
@@ -34,8 +36,8 @@ private:
 	uint32 ChunkSizeSquared;
 	uint32 ChunkShift;
 	uint32 ChunkMask;
-	TArray<TObjectPtr<UResourceType>> ResourceRegistry;
-	TArray<TObjectPtr<UBiomeType>> BiomeRegistry;
+	TOptional<FResourceRegistry> ResourceRegistry;
+	TOptional<FBiomeRegistry> BiomeRegistry;
 	FNoiseContext Temperature;
 	FNoiseContext Humidity;
 	TObjectPtr<UStaticMesh> GridMesh;
