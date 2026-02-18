@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BiomeTextureMapper.h"
+#include "WorldRenderScopedLock.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "GameFramework/Actor.h"
 #include "Grid/Types.h"
@@ -18,11 +20,7 @@ class GEARS_PROTOTYPE_API AWorldRenderer : public AActor
 public:
 	AWorldRenderer();
 	virtual void PostActorCreated() override;
-	
-	void AddResourcesInstances(const FChunkIndex& Index, const TArray<TArray<FTransform>>& ResourcesInstances);
-	void RemoveCheckedResourcesInstances(const FChunkIndex& Index);
-	void AddPlane(const FChunkIndex& Index);
-	void RemoveCheckedPlane(const FChunkIndex& Index);
+	FWorldRenderScopedLock Lock();
 
 protected:
 	virtual void BeginPlay() override;
@@ -36,4 +34,9 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UHierarchicalInstancedStaticMeshComponent> PlaneHISM;
 	TMap<FChunkIndex, int32> PlanesInstances;
+	FVector PlaneScale;
+	
+	FBiomeTextureMapper BiomeTextureMapper;
+	
+	friend class FWorldRenderScopedLock;
 };

@@ -4,6 +4,7 @@
 #include "GridSubsystem.h"
 #include "Generator/WorldGenerator.h"
 #include "Rendering/WorldRenderer.h"
+#include "Rendering/WorldRenderScopedLock.h"
 
 void UGridSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -21,18 +22,19 @@ void UGridSubsystem::GenWorld(const int32 Seed)
 {
 	Generator = new WorldGenerator(Seed);
 	Renderer = GetWorld()->SpawnActor<AWorldRenderer>();
+	auto RendererLock = Renderer->Lock();
 	constexpr int16 ChunkRadius = 8;
 	for (int16 x=-ChunkRadius; x<=ChunkRadius; ++x)
 		for (int16 y=-ChunkRadius; y<=ChunkRadius; ++y)
-			CreateChunk(FChunkIndex(x, y));
+			CreateChunk(FChunkIndex(x, y), RendererLock);
 }
 
-void UGridSubsystem::CreateChunk(const FChunkIndex& Index)
+void UGridSubsystem::CreateChunk(const FChunkIndex& Index, FWorldRenderScopedLock& RendererLock)
 {
 	auto Result = Generator->GenerateChunk(Index);
-	Chunks.Add(Index, std::move(Result.ChunkData));
-	Renderer->AddPlane(Index);
-	Renderer->AddResourcesInstances(Index, Result.ResourcesInstances);
+	const auto& Chunk = Chunks.Add(Index, std::move(Result.ChunkData));
+	RendererLock.AddPlane(Index, Chunk.GetBiomeMap());
+	RendererLock.AddResourcesInstances(Index, Result.ResourcesInstances);
 }
 
 const FChunkData& UGridSubsystem::GetChunk(const FChunkIndex& Index) const

@@ -8,6 +8,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "GridSubsystem.generated.h"
 
+class FWorldRenderScopedLock;
 class AWorldRenderer;
 class WorldGenerator;
 
@@ -39,5 +40,5 @@ public:
 	TObjectPtr<AWorldRenderer> Renderer = nullptr;
 	
 private:
-	void CreateChunk(const FChunkIndex& Index);
+	void CreateChunk(const FChunkIndex& Index, FWorldRenderScopedLock& RendererLock);
 };
