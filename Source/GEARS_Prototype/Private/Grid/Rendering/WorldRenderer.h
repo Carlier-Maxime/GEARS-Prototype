@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BiomeTextureMapper.h"
-#include "WorldRenderScopedLock.h"
+#include "WorldRenderBatcher.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "GameFramework/Actor.h"
 #include "Grid/Types.h"
@@ -20,7 +20,7 @@ class GEARS_PROTOTYPE_API AWorldRenderer : public AActor
 public:
 	AWorldRenderer();
 	virtual void PostActorCreated() override;
-	FWorldRenderScopedLock Lock();
+	FWorldRenderBatcher Batcher();
 
 protected:
 	virtual void BeginPlay() override;
@@ -38,5 +38,5 @@ private:
 	
 	FBiomeTextureMapper BiomeTextureMapper;
 	
-	friend class FWorldRenderScopedLock;
+	friend class FWorldRenderBatcher;
 };

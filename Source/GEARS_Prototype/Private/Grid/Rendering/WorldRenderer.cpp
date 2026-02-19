@@ -24,6 +24,7 @@ AWorldRenderer::AWorldRenderer()
 	PlaneHISM->SetNumCustomDataFloats(1);
 	PlaneHISM->SetVisibleInRayTracing(false);
 	PlaneHISM->SetAffectDynamicIndirectLighting(false);
+	PlaneHISM->bAutoRebuildTreeOnInstanceChanges = false;
 	
 	const auto Scale = GridParams::Get().GetChunkSize() * GridParams::Get().GetCellSize() * 0.01;
 	PlaneScale = FVector(Scale, Scale, 1);
@@ -52,12 +53,13 @@ TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddH
 	NewHISM->SetStaticMesh(Resource.WorldMesh.LoadSynchronous());
 	NewHISM->SetMobility(EComponentMobility::Static);
 	NewHISM->bEnableDensityScaling = true;
+	NewHISM->bAutoRebuildTreeOnInstanceChanges = false;
 	NewHISM->SetCullDistances(0, GridParams::Get().GetCellSize() * (GridParams::Get().GetChunkSize() << 7));
 	NewHISM->RegisterComponent();
 	return ResourcesComponents[ResourceIndex] = NewHISM;
 }
 
-FWorldRenderScopedLock AWorldRenderer::Lock()
+FWorldRenderBatcher AWorldRenderer::Batcher()
 {
 	return {*this};
 }
