@@ -20,14 +20,16 @@ void FNoisePreviewState::Update()
 		PixelBuffer.SetNumUninitialized(Res * Res);
 	}
 	
-	const auto DemiRes = Res >> 1;
-	for (int32 y = -DemiRes; y < DemiRes; y++)
+	const auto Step = Settings.SamplingStep;
+	const auto HalfRes = Res >> 1;
+	for (auto Iy = 0; Iy < Res; ++Iy)
 	{
-		const int32 RowOffset = (y + DemiRes) * Res;
-		for (int32 x = -DemiRes; x < DemiRes; x++)
+		const auto WorldY = (Iy - HalfRes) * Step;
+		const auto RowOffset = Iy * Res;
+		for (auto Ix = 0; Ix < Res; ++Ix)
 		{
-			const int32 PixelIndex = RowOffset + (x + DemiRes);
-			PixelBuffer[PixelIndex] = OnGenerateColor.Execute(FWorldGridPos(x, y));
+			const auto WorldX = (Ix - HalfRes) * Step;
+			PixelBuffer[RowOffset + Ix] = OnGenerateColor.Execute(FWorldGridPos(WorldX, WorldY));
 		}
 	}
 	

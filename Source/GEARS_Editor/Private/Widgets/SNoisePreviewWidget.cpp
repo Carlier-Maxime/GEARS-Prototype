@@ -132,6 +132,10 @@ void SNoisePreviewWidget::BindPropertyCallbacks(const TArray<TSharedRef<IPropert
 		StateUpdateDelegate
 	);
 	
+	SettingsViews[GET_MEMBER_NAME_CHECKED(FNoisePreviewSettings, SamplingStep)]->SetOnPropertyValueChanged(
+		StateUpdateDelegate
+	);
+	
 	OnSeedChanged.ExecuteIfBound(State.Settings.Seed);
 	State.Update();
 }

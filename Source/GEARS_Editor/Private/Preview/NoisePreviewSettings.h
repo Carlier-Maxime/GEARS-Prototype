@@ -16,4 +16,7 @@ struct FNoisePreviewSettings
 	
 	UPROPERTY(EditAnywhere, meta=(ClampMin=64, ClampMax=256, Delta=32))
 	int32 ThumbnailSize = 128;
+	
+	UPROPERTY(EditAnywhere, meta=(ClampMin=1, UIMax=16))
+	int32 SamplingStep = 1;
 };
