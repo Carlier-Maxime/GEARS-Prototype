@@ -4,7 +4,7 @@
 #include "Customization/BiomeTypeCustomization.h"
 #include "Customization/GridSettingsCustomization.h"
 #include "Customization/NoiseContextCustomization.h"
-#include "Customization/SamplingContextCustomization.h"
+#include "Customization/DistributionRuleCustomization.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/DistributionRule.h"
 
@@ -37,7 +37,7 @@ void FGEARS_EditorModule::RegisterCustomLayout()
 	);
 	PropertyModule.RegisterCustomPropertyTypeLayout(
 		FDistributionRule::StaticStruct()->GetFName(),
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FSamplingContextCustomization::MakeInstance)
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FDistributionRuleCustomization::MakeInstance)
 	);
 	
 	PropertyModule.RegisterCustomClassLayout(

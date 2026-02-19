@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "NoisePreviewSettings.h"
+#include "NoisePreviewContext.h"
 
 struct FWorldGridPos;
 
@@ -14,8 +14,7 @@ struct FNoisePreviewState
 	TArray<FColor> PixelBuffer;
 	TStrongObjectPtr<UTexture2D> Texture = nullptr;
 	FSlateBrush Brush;
-	FNoisePreviewSettings Settings;
 	FOnGenerateColor OnGenerateColor;
 	
-	void Update();
+	void Update(const FNoisePreviewContext& Ctx);
 };

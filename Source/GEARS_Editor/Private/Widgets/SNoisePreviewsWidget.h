@@ -11,27 +11,28 @@
 /**
  * 
  */
-class GEARS_EDITOR_API SNoisePreviewWidget : public SCompoundWidget
+class GEARS_EDITOR_API SNoisePreviewsWidget : public SCompoundWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SNoisePreviewWidget) {}
+	SLATE_BEGIN_ARGS(SNoisePreviewsWidget) {}
 		SLATE_ARGUMENT(TArray<TSharedRef<IPropertyHandle>>, PropertyHandles)
 		SLATE_EVENT(FOnInt32ChangedDelegate, OnSeedChanged)
-		SLATE_EVENT(FOnGenerateColor, OnGenerateColor)
 	SLATE_END_ARGS()
 	
 	void Construct(const FArguments& InArgs);
+	void AddPreview(const TFunction<FColor(FWorldGridPos)>& GenColorFn);
 
 private:
 	static void AddNumericRow(const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView);
 	void InitializeSettingsViews();
 	void BindPropertyCallbacks(const TArray<TSharedRef<IPropertyHandle>>& PropertyHandles);
-	FColor GetColorAtPos(const FWorldGridPos& Pos) const;
 	
 	
 	FOnInt32ChangedDelegate OnSeedChanged;
 	FOnGenerateColor OnGenerateColor;
-	FNoisePreviewState State;
+	TSharedPtr<SHorizontalBox> PreviewsContainer;
+	TArray<FNoisePreviewState> Previews;
+	FNoisePreviewContext NoiseParams;
 	TSharedPtr<FStructOnScope> SettingsStructOnScope;
 	TMap<FName, TSharedPtr<ISinglePropertyView>> SettingsViews;
 };

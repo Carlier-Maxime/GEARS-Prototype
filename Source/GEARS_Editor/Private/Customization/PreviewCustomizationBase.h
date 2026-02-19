@@ -2,7 +2,7 @@
 
 #include "DetailWidgetRow.h"
 #include "Grid/Types/WorldGridPos.h"
-#include "Widgets/SNoisePreviewWidget.h"
+#include "Widgets/SNoisePreviewsWidget.h"
 
 template<typename ContextType, typename GeneratorType>
 class TPreviewCustomizationBase
@@ -13,18 +13,22 @@ public:
 protected:
 	void AddPreviewRow(FDetailWidgetRow& Row, const TArray<TSharedRef<IPropertyHandle>>& Handles, const ContextType* Ctx)
 	{
+		auto Widget = SNew(SNoisePreviewsWidget)
+	        .PropertyHandles(Handles)
+	        .OnSeedChanged_Lambda([this](int32 Seed){Generator.Emplace(Seed);});
+		const auto Index = Widgets.Add(Widget);
+		for (auto Preview : BuildRowPreviewFunctions(Index, Ctx)) Widget->AddPreview(Preview);
+		
 		Row.WholeRowContent()
 		[
-			SNew(SNoisePreviewWidget)
-			.PropertyHandles(Handles)
-			.OnSeedChanged_Lambda([this](int32 Seed){Generator.Emplace(Seed);})
-			.OnGenerateColor_Lambda([this, Ctx](const FWorldGridPos& Pos)->FColor
-			{
-				return GenerateColor(*Ctx, Pos);
-			})
+			Widget
 		];
 	}
 	
-	virtual FColor GenerateColor(const ContextType& Ctx, const FWorldGridPos& Pos) const = 0;
+	virtual TArray<TFunction<FColor(FWorldGridPos)>> BuildRowPreviewFunctions(const int32 RowIndex, const ContextType* Ctx) = 0;
+	
 	TOptional<GeneratorType> Generator;
+	
+private:
+	TArray<TSharedRef<SNoisePreviewsWidget>> Widgets;
 };

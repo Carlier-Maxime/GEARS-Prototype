@@ -5,7 +5,13 @@ TSharedRef<IDetailCustomization> FBiomeTypeCustomization::MakeInstance()
 	return MakeShareable(new FBiomeTypeCustomization);
 }
 
-FColor FBiomeTypeCustomization::GenerateColor(const UBiomeType& Ctx, const FWorldGridPos& Pos) const
+TArray<TFunction<FColor(FWorldGridPos)>> FBiomeTypeCustomization::BuildRowPreviewFunctions(const int32 RowIndex,
+	const UBiomeType* Ctx)
 {
-	return Generator.GetValue().IsEligible(Pos, Ctx.Data) ? Ctx.Data.Color.ToFColorSRGB() : FColor::Black;
+	return {
+		[this, Ctx](FWorldGridPos Pos)->FColor
+		{
+			return Generator.GetValue().IsEligible(Pos, Ctx->Data) ? Ctx->Data.Color.ToFColorSRGB() : FColor::Black;
+		}
+	};
 }

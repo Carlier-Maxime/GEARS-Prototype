@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "NoisePreviewSettings.generated.h"
+#include "NoisePreviewContext.generated.h"
 
 USTRUCT()
-struct FNoisePreviewSettings
+struct FNoisePreviewContext
 {
 	GENERATED_BODY()
 

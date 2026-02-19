@@ -5,11 +5,11 @@
 #include "Grid/Generator/ResourceGenerator.h"
 #include "Grid/Generator/Context/DistributionRule.h"
 
-class FSamplingContextCustomization : public TPreviewPropertyTypeCustomization<FDistributionRule, ResourceGenerator>
+class FDistributionRuleCustomization : public TPreviewPropertyTypeCustomization<FDistributionRule, ResourceGenerator>
 {
 public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 	
 protected:
-	virtual FColor GenerateColor(const FDistributionRule& Ctx, const FWorldGridPos& Pos) const override;
+	virtual TArray<TFunction<FColor(FWorldGridPos)>> BuildRowPreviewFunctions(const int32 RowIndex, const FDistributionRule* Ctx) override;
 };

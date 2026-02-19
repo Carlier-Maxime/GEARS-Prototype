@@ -12,5 +12,5 @@ public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 	
 protected:
-	virtual FColor GenerateColor(const FNoiseContext& Ctx, const FWorldGridPos& Pos) const override;
+	virtual TArray<TFunction<FColor(FWorldGridPos)>> BuildRowPreviewFunctions(const int32 RowIndex, const FNoiseContext* Ctx) override;
 };

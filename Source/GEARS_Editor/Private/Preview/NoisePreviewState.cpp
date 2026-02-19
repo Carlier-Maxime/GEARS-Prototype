@@ -7,9 +7,9 @@ FNoisePreviewState::FNoisePreviewState()
 	Brush.SetResourceObject(Texture.Get());
 }
 
-void FNoisePreviewState::Update()
+void FNoisePreviewState::Update(const FNoisePreviewContext& Ctx)
 {
-	const int32 Res = Settings.Resolution;
+	const int32 Res = Ctx.Resolution;
 	
 	if (!Texture || Texture->GetSizeX() != Res)
 	{
@@ -20,7 +20,7 @@ void FNoisePreviewState::Update()
 		PixelBuffer.SetNumUninitialized(Res * Res);
 	}
 	
-	const auto Step = Settings.SamplingStep;
+	const auto Step = Ctx.SamplingStep;
 	const auto HalfRes = Res >> 1;
 	for (auto Iy = 0; Iy < Res; ++Iy)
 	{
@@ -29,11 +29,11 @@ void FNoisePreviewState::Update()
 		for (auto Ix = 0; Ix < Res; ++Ix)
 		{
 			const auto WorldX = (Ix - HalfRes) * Step;
-			PixelBuffer[RowOffset + Ix] = OnGenerateColor.Execute(FWorldGridPos(WorldX, WorldY));
+			PixelBuffer[RowOffset + Ix] = OnGenerateColor.IsBound() ? OnGenerateColor.Execute(FWorldGridPos(WorldX, WorldY)) : FColor::Black;
 		}
 	}
 	
-	FUpdateTextureRegion2D* Region = new FUpdateTextureRegion2D(0, 0, 0, 0, Res, Res);
+	auto* Region = new FUpdateTextureRegion2D(0, 0, 0, 0, Res, Res);
 	Texture->UpdateTextureRegions(0, 1, Region, Res * 4, 4, reinterpret_cast<uint8*>(PixelBuffer.GetData()), 
 		[](uint8* SrcData, const FUpdateTextureRegion2D* Regions) {
 			delete Regions;
