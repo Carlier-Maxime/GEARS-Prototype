@@ -39,6 +39,7 @@ void UGridSubsystem::CreateChunk(const FChunkIndex& Index, FWorldRenderBatcher& 
 {
 	static FRWLock ChunksLock;
 	auto Result = Generator->GenerateChunk(Index);
+	if (Index == FIntPoint::ZeroValue) Result.ResourcesInstances.Empty();
 	FWriteScopeLock Lock(ChunksLock);
 	const auto& Chunk = Chunks.Add(Index, std::move(Result.ChunkData));
 	RendererLock.AddChunkTask({Index, std::move(Result.ResourcesInstances), Chunk.GetBiomeMap()});

@@ -18,7 +18,6 @@ FChunkGenerationResult WorldGenerator::GenerateChunk(const FChunkIndex& Index) c
 
 void WorldGenerator::GenerateChunk(FChunkGenerationResult& Result, const FChunkIndex& Index) const
 {
-	if (Index == FIntPoint::ZeroValue) return;
 	for (const auto Local : Index)
 	{
 		const auto Pos = FWorldGridPos(Index, Local);
