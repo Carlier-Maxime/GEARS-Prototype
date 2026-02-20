@@ -22,7 +22,7 @@ class GEARS_PROTOTYPE_API UGridSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, config, Category = "Grid")
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ToolTip="The Static Mesh plane for the grid floor"))
 	TSoftObjectPtr<UStaticMesh> GridSoftMesh;
 	UPROPERTY(Transient)
 	TObjectPtr<UStaticMesh> GridMesh;
@@ -35,30 +35,30 @@ public:
 	FGeneratedAssetData GeneratedBiomeAtlas;
 	TGeneratedAsset<UTexture2DArray> BiomeAtlas;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Grid")
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=4, UIMin=16, UIMax=256, ToolTip="Size of the chunk in cell units (see below for cell size)"))
 	uint32 ChunkSize = 16;
 	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=0, UIMin=4, UIMax=64, ToolTip="Size of the map in chunk radius format"))
 	uint16 MapRadius = 8;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell", meta=(ClampMin=1, UIMin=16, UIMax=256, ToolTip="Size of a cell in world units (uu)"))
 	float CellSize = 128;
-	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell", meta=(ClampMin=0, ClampMax=1, ToolTip="Factor to multiply the cell size with to get the small cell size"))
 	float CellSmallFactor = 0.1f;
-	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell", meta=(ClampMin=1, UIMax=128, ToolTip="Factor to multiply the cell size with to get the big cell size"))
 	float CellBigFactor = 10.f;
 	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
 	FLinearColor CellColor = FLinearColor::White;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Grid|Border")
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Border", meta=(ClampMin=0, UIMax=0.3, ClampMax=1, ToolTip="Thickness of the border in percentage of cell"))
 	float BorderThickness = 0.02f;
 	UPROPERTY(EditAnywhere, config, Category = "Grid|Border")
 	FLinearColor BorderColor = FLinearColor::Black;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition")
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition", meta=(ClampMin=1, UIMax=128, ToolTip="Factor to multiply the cell size with to get the transition length"))
 	float TransitionLengthFactor = 10.f;
-	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition")
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition", meta=(ClampMin=1, UIMax=32, ToolTip="Threshold for the small cell count to trigger the transition"))
 	float TransitionSmallCellCountThreshold = 5;
-	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition")
+	UPROPERTY(EditAnywhere, config, Category = "Grid|Transition", meta=(ClampMin=16, UIMax=128, ToolTip="Threshold for the big cell count to trigger the transition"))
 	float TransitionBigCellCountThreshold = 100;
 	
 	virtual void PostInitProperties() override;
