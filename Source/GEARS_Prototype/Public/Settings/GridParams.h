@@ -15,19 +15,19 @@ public:
 		return Instance;
 	}
 	
-	float GetCellSize() const { return CellSize; }
-	float GetInvCellSize() const { return InvCellSize; }
-	uint32 GetChunkSize() const { return ChunkSize; }
-	uint32 GetChunkSizeSquared() const { return ChunkSizeSquared; }
-	uint32 GetChunkShift() const { return ChunkShift; }
-	uint32 GetChunkMask() const { return ChunkMask; }
-	uint16 GetMapRadius() const { return MapRadius; }
-	const FResourceRegistry& GetResourceRegistry() const {return ResourceRegistry.GetValue();}
-	const FBiomeRegistry& GetBiomeRegistry() const {return BiomeRegistry.GetValue();}
-	const FNoiseContext& GetTemperature() const { return Temperature; }
-	const FNoiseContext& GetHumidity() const { return Humidity; }
-	const TObjectPtr<UStaticMesh>& GetGridMesh() const { return GridMesh; }
-	const TObjectPtr<UTexture2DArray>& GetBiomeAtlas() const { return BiomeAtlas; }
+	FORCEINLINE float GetCellSize() const { return CellSize; }
+	FORCEINLINE float GetInvCellSize() const { return InvCellSize; }
+	FORCEINLINE uint32 GetChunkSize() const { return ChunkSize; }
+	FORCEINLINE uint32 GetChunkSizeSquared() const { return ChunkSizeSquared; }
+	FORCEINLINE uint32 GetChunkShift() const { return ChunkShift; }
+	FORCEINLINE uint32 GetChunkMask() const { return ChunkMask; }
+	FORCEINLINE uint16 GetMapRadius() const { return MapRadius; }
+	FORCEINLINE const FResourceRegistry& GetResourceRegistry() const {return ResourceRegistry.GetValue();}
+	FORCEINLINE const FBiomeRegistry& GetBiomeRegistry() const {return BiomeRegistry.GetValue();}
+	FORCEINLINE const FNoiseContext& GetTemperature() const { return Temperature; }
+	FORCEINLINE const FNoiseContext& GetHumidity() const { return Humidity; }
+	FORCEINLINE const TObjectPtr<UStaticMesh>& GetGridMesh() const { return GridMesh; }
+	FORCEINLINE const TObjectPtr<UTexture2DArray>& GetBiomeAtlas() const { return BiomeAtlas; }
 private:
 	GridParams() = default;
 	friend class UGridSettings;
