@@ -37,6 +37,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	uint32 ChunkSize = 16;
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=0, UIMin=4, UIMax=64, ToolTip="Size of the map in chunk radius format"))
+	uint16 MapRadius = 8;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell")
 	float CellSize = 128;

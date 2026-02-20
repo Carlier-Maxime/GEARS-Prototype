@@ -81,6 +81,7 @@ void UGridSettings::RefreshFastAccessVariables()
 	GridParams::Get().Humidity = Humidity;
 	GridParams::Get().GridMesh = GridMesh;
 	GridParams::Get().BiomeAtlas = BiomeAtlas.Get();
+	GridParams::Get().MapRadius = MapRadius;
 }
 
 void UGridSettings::SyncSharedParams()

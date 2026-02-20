@@ -21,6 +21,7 @@ public:
 	uint32 GetChunkSizeSquared() const { return ChunkSizeSquared; }
 	uint32 GetChunkShift() const { return ChunkShift; }
 	uint32 GetChunkMask() const { return ChunkMask; }
+	uint16 GetMapRadius() const { return MapRadius; }
 	const FResourceRegistry& GetResourceRegistry() const {return ResourceRegistry.GetValue();}
 	const FBiomeRegistry& GetBiomeRegistry() const {return BiomeRegistry.GetValue();}
 	const FNoiseContext& GetTemperature() const { return Temperature; }
@@ -36,6 +37,7 @@ private:
 	uint32 ChunkSizeSquared;
 	uint32 ChunkShift;
 	uint32 ChunkMask;
+	uint16 MapRadius;
 	TOptional<FResourceRegistry> ResourceRegistry;
 	TOptional<FBiomeRegistry> BiomeRegistry;
 	FNoiseContext Temperature;
