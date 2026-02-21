@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "BiomeAtlasScopedLock.h"
+#include "BiomeIndexMapScopedLock.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Grid/Types.h"
 
@@ -9,7 +9,7 @@ struct FChunkRenderData
 {
 	FChunkIndex Index;
 	TArray<TArray<FTransform>> Resources;
-	TArray<int8> BiomeMap;
+	TArray<uint8> BiomeMap;
 };
 
 class FWorldRenderBatcher
@@ -24,10 +24,10 @@ public:
 
 private:
 	void ApplyResourcesInstances(const FChunkIndex& Index, const TArray<TArray<FTransform>>& ResourcesInstances);
-	void ApplyPlane(const FChunkIndex& Index, const TArray<int8>& BiomeMap);	
+	void ApplyPlane(const FChunkIndex& Index, const TArray<uint8>& BiomeMap);	
 	
 	AWorldRenderer& Renderer;
-	FBiomeAtlasScopedLock BiomeTextureMapper;
+	FBiomeIndexMapScopedLock BiomeTextureMapper;
 	FCriticalSection DataGuard;
 	TArray<FChunkRenderData> PendingAdds;
 	TSet<TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> UpdatedHISMs;

@@ -24,8 +24,8 @@ void UGridSubsystem::GenWorld(const int32 Seed)
 	Renderer = GetWorld()->SpawnActor<AWorldRenderer>();
 	auto RendererLock = Renderer->Batcher();
 	const uint16 ChunkRadius = GridParams::Get().GetMapRadius();
-	const int32 Diameter = (ChunkRadius<<1) + 1;
-	const int32 ChunksCount = Diameter * Diameter;
+	const int32 Diameter = GridMath::GetChunkMapDiameter();
+	const int32 ChunksCount = GridMath::GetChunkCount();
 	RendererLock.ReserveTasks(ChunksCount);
 	ParallelFor(ChunksCount, [this, &RendererLock, Diameter, ChunkRadius](int32 Index)
 	{

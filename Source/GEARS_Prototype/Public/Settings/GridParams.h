@@ -22,11 +22,15 @@ public:
 	FORCEINLINE uint32 GetChunkShift() const { return ChunkShift; }
 	FORCEINLINE uint32 GetChunkMask() const { return ChunkMask; }
 	FORCEINLINE uint16 GetMapRadius() const { return MapRadius; }
+	FORCEINLINE uint16 GetBiomeChunkFactor() const { return BiomeChunkFactor; }
+	FORCEINLINE uint16 GetBiomeChunkShift() const { return BiomeChunkShift; }
+	FORCEINLINE uint16 GetBiomeChunkMask() const { return BiomeChunkMask; }
 	FORCEINLINE const FResourceRegistry& GetResourceRegistry() const {return ResourceRegistry.GetValue();}
 	FORCEINLINE const FBiomeRegistry& GetBiomeRegistry() const {return BiomeRegistry.GetValue();}
 	FORCEINLINE const FNoiseContext& GetTemperature() const { return Temperature; }
 	FORCEINLINE const FNoiseContext& GetHumidity() const { return Humidity; }
 	FORCEINLINE const TObjectPtr<UStaticMesh>& GetGridMesh() const { return GridMesh; }
+	FORCEINLINE const TObjectPtr<UTexture2DArray>& GetBiomeIndexMap() const { return BiomeIndexMap; }
 	FORCEINLINE const TObjectPtr<UTexture2DArray>& GetBiomeAtlas() const { return BiomeAtlas; }
 private:
 	GridParams() = default;
@@ -38,10 +42,14 @@ private:
 	uint32 ChunkShift;
 	uint32 ChunkMask;
 	uint16 MapRadius;
+	uint16 BiomeChunkFactor;
+	uint16 BiomeChunkShift;
+	uint16 BiomeChunkMask;
 	TOptional<FResourceRegistry> ResourceRegistry;
 	TOptional<FBiomeRegistry> BiomeRegistry;
 	FNoiseContext Temperature;
 	FNoiseContext Humidity;
 	TObjectPtr<UStaticMesh> GridMesh;
+	TObjectPtr<UTexture2DArray> BiomeIndexMap;
 	TObjectPtr<UTexture2DArray> BiomeAtlas;
 };

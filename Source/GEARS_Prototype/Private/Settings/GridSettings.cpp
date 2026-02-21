@@ -12,6 +12,7 @@ void UGridSettings::PostInitProperties()
 	Super::PostInitProperties();
 	MPCAsset.Bind(GeneratedMPC);
 	BiomeAtlas.Bind(GeneratedBiomeAtlas);
+	BiomeIndexMap.Bind(GeneratedBiomeIndexMap);
 	Update();
 }
 
@@ -61,6 +62,7 @@ void UGridSettings::Update()
 {
 	CellSize = static_cast<float>(FMath::RoundUpToPowerOfTwo(FMath::Max(1, FMath::RoundToInt(CellSize))));
 	ChunkSize = FMath::RoundUpToPowerOfTwo(ChunkSize);
+	BiomeChunkFactor = FMath::RoundUpToPowerOfTwo(BiomeChunkFactor);
 	SyncSharedParams();
 	UpdateMPC();
 	if (!GridSoftMesh.IsNull()) GridMesh = GridSoftMesh.LoadSynchronous();
@@ -82,6 +84,10 @@ void UGridSettings::RefreshFastAccessVariables()
 	GridParams::Get().GridMesh = GridMesh;
 	GridParams::Get().BiomeAtlas = BiomeAtlas.Get();
 	GridParams::Get().MapRadius = MapRadius;
+	GridParams::Get().BiomeChunkFactor = BiomeChunkFactor;
+	GridParams::Get().BiomeChunkShift = FMath::FloorLog2(BiomeChunkFactor);
+	GridParams::Get().BiomeChunkMask = BiomeChunkFactor - 1;
+	GridParams::Get().BiomeIndexMap = BiomeIndexMap.Get();
 }
 
 void UGridSettings::SyncSharedParams()
@@ -100,6 +106,8 @@ void UGridSettings::SyncSharedParams()
 	MPCSharedScalar.Add(TAG_Grid_Transition_Length_Factor, TransitionLengthFactor);
 	MPCSharedScalar.Add(TAG_Grid_Transition_Small_CellCountThreshold, TransitionSmallCellCountThreshold);
 	MPCSharedScalar.Add(TAG_Grid_Transition_Big_CellCountThreshold, TransitionBigCellCountThreshold);
+	
+	MPCSharedScalar.Add(TAG_Grid_Biome_Chunk_Factor, BiomeChunkFactor);
 }
 
 template <typename FCollectionParameterType, typename FValueType>

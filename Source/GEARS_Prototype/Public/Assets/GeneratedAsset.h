@@ -17,7 +17,11 @@ struct TGeneratedAsset
 	~TGeneratedAsset() = default;
 	
 	void Bind(const FGeneratedAssetData& InData);
-	FORCEINLINE T* Get() {return Data ? Cast<T>(Data->Asset) : nullptr;}
+	FORCEINLINE T* Get()
+	{
+		if (!Data) UE_LOG(LogTemp, Fatal, TEXT("TGeneratedAsset<T> is not bound!"));
+		return Cast<T>(Data->Asset);
+	}
 	FORCEINLINE bool IsValid() const {return Data && Data->Asset;}
 	void ForceLoad();
 	

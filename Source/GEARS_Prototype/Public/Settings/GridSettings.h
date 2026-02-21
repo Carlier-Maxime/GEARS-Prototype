@@ -30,6 +30,10 @@ public:
 	UPROPERTY(EditAnywhere, config, Category = "Grid")
 	FGeneratedAssetData GeneratedMPC;
 	TGeneratedAsset<UMaterialParameterCollection> MPCAsset;
+
+	UPROPERTY(EditAnywhere, Config, Category = "Grid")
+	FGeneratedAssetData GeneratedBiomeIndexMap;
+	TGeneratedAsset<UTexture2DArray> BiomeIndexMap;
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Grid")
 	FGeneratedAssetData GeneratedBiomeAtlas;
@@ -37,8 +41,10 @@ public:
 	
 	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=4, UIMin=16, UIMax=256, ToolTip="Size of the chunk in cell units (see below for cell size)"))
 	uint32 ChunkSize = 16;
-	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=0, UIMin=4, UIMax=64, ToolTip="Size of the map in chunk radius format"))
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=0, UIMin=4, UIMax=32, ToolTip="Size of the map in chunk radius format"))
 	uint16 MapRadius = 8;
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=1, UIMin=4, UIMax=64, ToolTip="Number of chunks per side mapped to a single Texture 2D Array slice. A value of 8 means one slice covers an 8x8 grid of chunks."))
+	uint16 BiomeChunkFactor = 8;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell", meta=(ClampMin=1, UIMin=16, UIMax=256, ToolTip="Size of a cell in world units (uu)"))
 	float CellSize = 128;

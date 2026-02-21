@@ -38,4 +38,56 @@ namespace GridMath
 	{
 		return X + Y * GridParams::Get().GetChunkSize();
 	}
+	
+	FORCEINLINE uint16 GetChunkMapDiameter()
+	{
+		return (GridParams::Get().GetMapRadius()<<1) + 1;
+	}
+	
+	FORCEINLINE uint32 GetChunkCount()
+	{
+		return GetChunkMapDiameter() * GetChunkMapDiameter();
+	}
+	
+	FORCEINLINE uint32 GetBiomeChunkMapRadius()
+	{
+		const auto& Params = GridParams::Get();
+		const uint32 Total = Params.GetMapRadius();
+		const uint32 Shift = Params.GetBiomeChunkShift();
+		const uint32 Divisor = 1 << Shift;
+		return (Total + Divisor - 1) >> Shift;
+	}
+	
+	FORCEINLINE uint32 GetBiomeChunkMapDiameter()
+	{
+		const uint32 Total = GetChunkMapDiameter();
+		const uint32 Shift = GridParams::Get().GetBiomeChunkShift();
+		const uint32 Divisor = 1 << Shift;
+		return (Total + Divisor - 1) >> Shift;
+	}
+	
+	FORCEINLINE uint32 GetBiomeChunkCount()
+	{
+		return GetBiomeChunkMapDiameter() * GetBiomeChunkMapDiameter();
+	}
+	
+	FORCEINLINE int16 FlattenBiomeChunk(int32 X, int32 Y)
+	{
+		return X + Y * GridParams::Get().GetBiomeChunkFactor();
+	}
+	
+	FORCEINLINE int32 ChunkToBiomeChunkIndex(int32 X)
+	{
+		return X >> GridParams::Get().GetBiomeChunkShift();
+	}
+	
+	FORCEINLINE int32 ChunkToInBiomeChunk(int32 X)
+	{
+		return X & static_cast<int32>(GridParams::Get().GetBiomeChunkMask());
+	}
+	
+	FORCEINLINE int32 BiomeChunkToChunk(int32 X)
+	{
+		return X << GridParams::Get().GetBiomeChunkShift();
+	}
 }

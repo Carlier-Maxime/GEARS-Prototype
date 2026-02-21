@@ -1,16 +1,22 @@
 ﻿#include "BiomeTextureMapper.h"
 
 #include "Engine/Texture2DArray.h"
+#include "Grid/GridMath.h"
 #include "Settings/GridParams.h"
 
-FBiomeTextureMapper::FBiomeTextureMapper() : FBiomeTextureMapper(*GridParams::Get().GetBiomeAtlas()) {}
+FBiomeTextureMapper::FBiomeTextureMapper() : FBiomeTextureMapper(*GridParams::Get().GetBiomeAtlas(), *GridParams::Get().GetBiomeIndexMap()) {}
 
-FBiomeTextureMapper::FBiomeTextureMapper(UTexture2DArray& InAtlas) : Atlas(InAtlas)
+FBiomeTextureMapper::FBiomeTextureMapper(UTexture2DArray& InAtlas, UTexture2DArray& InIndexMap) : Atlas(InAtlas), IndexMap(InIndexMap)
 {
 	const auto& Params = GridParams::Get();
-	const auto Size = Params.GetChunkSize();
-	constexpr auto Depth = 1024;
-	constexpr auto Format = PF_B8G8R8A8;
+	ConfigureT2A(Atlas, 1, Params.GetBiomeRegistry().Num(), PF_B8G8R8A8);
+	ConfigureT2A(IndexMap, Params.GetBiomeChunkFactor() << Params.GetChunkShift(), GridMath::GetBiomeChunkCount(), PF_R8);
+	FillAtlas();
+}
+
+void FBiomeTextureMapper::ConfigureT2A(UTexture2DArray& Texture, const uint16 Size, const uint16 Depth, const EPixelFormat& Format)
+{
+	const bool bIsDataFormat = Format == PF_R8|| Format == PF_R16_UINT || Format == PF_R32_UINT;
 	
 	auto* PlatformData = new FTexturePlatformData();
 	PlatformData->SizeX = Size;
@@ -24,23 +30,41 @@ FBiomeTextureMapper::FBiomeTextureMapper(UTexture2DArray& InAtlas) : Atlas(InAtl
 	Mip->SizeY = Size;
 	Mip->SizeZ = Depth;
 
-	const long DataSize = Size * Size * Depth * GPixelFormats[Format].BlockBytes;
+	const int64 BlockBytes = GPixelFormats[Format].BlockBytes;
+	const int64 TotalBytes = static_cast<int64>(Size) * Size * Depth * BlockBytes;
+
 	Mip->BulkData.Lock(LOCK_READ_WRITE);
-	Mip->BulkData.Realloc(DataSize);
+	Mip->BulkData.Realloc(TotalBytes);
 	Mip->BulkData.Unlock();
 	
-	Atlas.ReleaseResource();
-	Atlas.SetPlatformData(PlatformData);
-	Atlas.SRGB = true;
-	Atlas.NeverStream = true;
-	Atlas.CompressionSettings = TC_Default;
-	Atlas.Filter = TF_Nearest;
-	Atlas.UpdateResource();
+	Texture.ReleaseResource();
+	Texture.SetPlatformData(PlatformData);
+	Texture.SRGB = !bIsDataFormat;
+	Texture.NeverStream = true;
+	Texture.CompressionSettings = bIsDataFormat ? TC_Displacementmap : TC_Default;
+	Texture.Filter = TF_Nearest;
+	Texture.UpdateResource();
 }
 
-FBiomeAtlasScopedLock FBiomeTextureMapper::Lock() const
+void FBiomeTextureMapper::FillAtlas()
 {
-	const auto* Data = Atlas.GetPlatformData();
-	const auto PixelsPerSlice = Data->SizeX * Data->SizeY;
-	return {Atlas, PixelsPerSlice, PixelsPerSlice * 4};
+	const FTextureScopedLock Texture(Atlas, 4);
+	const auto& Registry = GridParams::Get().GetBiomeRegistry();
+	for (int32 i=0; i<Registry.Num(); ++i)
+	{
+		Texture.UpdateSlice(i, [&](FPixelWriteContext Ctx)
+		{
+			const auto Color = Registry[i].Color.ToFColorSRGB();
+			Ctx.SliceData[Ctx.PixelOffset] = Color.B;
+			Ctx.SliceData[Ctx.PixelOffset + 1] = Color.G;
+			Ctx.SliceData[Ctx.PixelOffset + 2] = Color.R;
+			Ctx.SliceData[Ctx.PixelOffset + 3] = Color.A;
+		});
+	}
+}
+
+FBiomeIndexMapScopedLock FBiomeTextureMapper::Lock() const
+{
+
+	return FBiomeIndexMapScopedLock{IndexMap};
 }

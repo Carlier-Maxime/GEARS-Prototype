@@ -12,7 +12,7 @@ BiomeGenerator::BiomeGenerator(const int32 Seed) :
 {
 }
 
-int8 BiomeGenerator::SampleBiome(const FWorldGridPos& Pos) const
+uint8 BiomeGenerator::SampleBiome(const FWorldGridPos& Pos) const
 {
 	const float Temp = GetTemperature(Pos);
 	const float Humidity = GetHumidity(Pos);
@@ -22,7 +22,7 @@ int8 BiomeGenerator::SampleBiome(const FWorldGridPos& Pos) const
 		if (!IsEligible(Temp, Humidity, Registry[i])) continue;
 		return i;
 	}
-	return -1;
+	return Registry.INVALID_INDEX;
 }
 
 bool BiomeGenerator::IsEligible(const FWorldGridPos& Pos, const FBiomeDefinition& Biome) const

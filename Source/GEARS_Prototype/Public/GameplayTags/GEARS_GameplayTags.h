@@ -17,6 +17,8 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Border_Color)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Length_Factor)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Small_CellCountThreshold)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Transition_Big_CellCountThreshold)
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Biome_Chunk_Factor)
 #pragma endregion
 
 #pragma region biome

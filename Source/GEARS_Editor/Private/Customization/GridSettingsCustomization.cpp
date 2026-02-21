@@ -14,8 +14,9 @@ TArray<TFunction<FColor(FWorldGridPos)>> FGridSettingsCustomization::BuildRowPre
 	return {
 		[this](FWorldGridPos Pos)->FColor
 		{
+			auto& Registry = GridParams::Get().GetBiomeRegistry();
 			const auto Index = Generator.GetValue().SampleBiome(Pos);
-			return Index==-1 ? FColor::Black : GridParams::Get().GetBiomeRegistry()[Index].Color.ToFColorSRGB();
+			return Index==Registry.INVALID_INDEX ? FColor::Black : Registry[Index].Color.ToFColorSRGB();
 		}
 	};
 }

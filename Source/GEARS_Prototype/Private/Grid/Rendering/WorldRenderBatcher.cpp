@@ -54,7 +54,7 @@ void FWorldRenderBatcher::ApplyResourcesInstances(const FChunkIndex& Index, cons
 	}
 }
 
-void FWorldRenderBatcher::ApplyPlane(const FChunkIndex& Index, const TArray<int8>& BiomeMap)
+void FWorldRenderBatcher::ApplyPlane(const FChunkIndex& Index, const TArray<uint8>& BiomeMap)
 {
 	auto Transform = FTransform(Index.GetCenter());
 	Transform.SetScale3D(Renderer.PlaneScale);
@@ -62,7 +62,8 @@ void FWorldRenderBatcher::ApplyPlane(const FChunkIndex& Index, const TArray<int8
 		Index,
 		Renderer.PlaneHISM->AddInstance(Transform)
 	);
-	BiomeTextureMapper.UpdateSliceFromBiomeTypes(Instance, BiomeMap);
-	Renderer.PlaneHISM->SetCustomDataValue(Instance, 0, static_cast<float>(Instance));
+	const auto SliceIndex = BiomeTextureMapper.GetSliceIndex(Index.ToBiomeChunkIndex());
+	BiomeTextureMapper.UpdateBiomeChunkPart(SliceIndex, Index.ToInBiomeChunkPos(), BiomeMap);
+	Renderer.PlaneHISM->SetCustomDataValue(Instance, 0, static_cast<float>(SliceIndex));
 	UpdatedHISMs.Add(Renderer.PlaneHISM);
 }

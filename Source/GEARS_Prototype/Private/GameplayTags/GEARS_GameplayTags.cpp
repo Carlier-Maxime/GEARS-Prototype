@@ -15,6 +15,8 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Border_Thickness, "Grid.Border.Thickness")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Transition_Length_Factor, "Grid.Transition.Length.Factor")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Transition_Small_CellCountThreshold, "Grid.Transition.Small.CellCountThreshold")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Transition_Big_CellCountThreshold, "Grid.Transition.Big.CellCountThreshold")
+
+UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Biome_Chunk_Factor, "Grid.Biome.Chunk.Factor")
 #pragma endregion
 
 #pragma region biome

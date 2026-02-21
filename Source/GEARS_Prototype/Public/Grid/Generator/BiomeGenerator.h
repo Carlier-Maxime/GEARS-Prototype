@@ -8,7 +8,7 @@ class GEARS_PROTOTYPE_API BiomeGenerator : public BaseGenerator
 public:
 	BiomeGenerator(int32 Seed);
 	
-	int8 SampleBiome(const FWorldGridPos& Pos) const;
+	uint8 SampleBiome(const FWorldGridPos& Pos) const;
 	bool IsEligible(const FWorldGridPos& Pos, const FBiomeDefinition& Biome) const;
 	static bool IsEligible(float Temp, float Humidity, const FBiomeDefinition& Biome);
 	float GetTemperature(const FWorldGridPos& Pos) const;

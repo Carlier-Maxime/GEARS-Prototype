@@ -14,7 +14,7 @@ void FChunkData::SetResource(const FInChunkPos& Pos, const int16 ResourceIndex)
 	ResourceMap[Pos.Flatten()] = ResourceIndex;
 }
 
-void FChunkData::SetBiome(const FInChunkPos& Pos, int8 Biome)
+void FChunkData::SetBiome(const FInChunkPos& Pos, uint8 Biome)
 {
 	BiomeMap[Pos.Flatten()] = Biome;
 }
