@@ -18,11 +18,14 @@ FChunkGenerationResult WorldGenerator::GenerateChunk(const FChunkIndex& Index) c
 
 void WorldGenerator::GenerateChunk(FChunkGenerationResult& Result, const FChunkIndex& Index) const
 {
+	const auto& BiomeRegistry = GridParams::Get().GetBiomeRegistry();
 	for (const auto Local : Index)
 	{
 		const auto Pos = FWorldGridPos(Index, Local);
-		Result.ChunkData.SetBiome(Pos, BiomeGenerator.SampleBiome(Pos));
-		const auto [TypeIndex, Transform] = ResourceGenerator.Sample(Pos);
+		const auto BiomeIndex = BiomeGenerator.SampleBiome(Pos);
+		Result.ChunkData.SetBiome(Pos, BiomeIndex);
+		if (BiomeIndex == BiomeRegistry.INVALID_INDEX) continue;
+		const auto [TypeIndex, Transform] = ResourceGenerator.Sample(Pos, BiomeRegistry[BiomeIndex].Resources);
 		if (TypeIndex == -1) continue;
 		Result.ChunkData.SetResource(Pos, TypeIndex);
 		Result.ResourcesInstances[TypeIndex].Add(Transform);

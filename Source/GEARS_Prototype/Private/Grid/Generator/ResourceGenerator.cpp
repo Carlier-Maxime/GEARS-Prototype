@@ -8,10 +8,10 @@ ResourceGenerator::ResourceGenerator(const int32 Seed) : BaseGenerator(Seed)
 {
 }
 
-FProcSpawnData ResourceGenerator::Sample(const FWorldGridPos& Pos) const
+FProcSpawnData ResourceGenerator::Sample(const FWorldGridPos& Pos, const TArray<FResourceRule>& Rules) const
 {
 	FProcSpawnData SpawnData;
-	SpawnData.ResourceTypeIndex = DetermineType(Pos);
+	SpawnData.ResourceTypeIndex = DetermineType(Pos, Rules);
 	SpawnData.Transform = GetVariationTransform(Pos, SpawnData.ResourceTypeIndex);
 	return std::move(SpawnData);
 }
@@ -31,12 +31,12 @@ bool ResourceGenerator::ShouldSpawn(const FWorldGridPos& Pos, const FDistributio
 	return GetLocalRng(Pos).FRand() < SpawnChance;
 }
 
-int16 ResourceGenerator::DetermineType(const FWorldGridPos& Pos) const
+int16 ResourceGenerator::DetermineType(const FWorldGridPos& Pos, const TArray<FResourceRule>& Rules) const
 {
 	const auto& Registry = GridParams::Get().GetResourceRegistry();
-	for (auto i=0; i<Registry.Num(); ++i)
+	for (const auto& Rule : Rules)
 	{
-		if (ShouldSpawn(Pos, Registry[i].Distribution, GetOffset(Registry[i].Tag))) return i;
+		if (ShouldSpawn(Pos, Rule.Distribution, GetOffset(Rule.ResourceTag))) return Registry.GetIndex(Rule.ResourceTag);
 	}
 	return -1;
 }

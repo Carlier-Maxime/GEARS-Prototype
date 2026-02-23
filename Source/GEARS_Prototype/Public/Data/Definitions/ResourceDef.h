@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
 #include "Data/Definitions/PlacementRule.h"
-#include "Grid/Generator/Context/DistributionRule.h"
 
 #include "ResourceDef.generated.h"
 
@@ -18,7 +17,4 @@ struct GEARS_PROTOTYPE_API FResourceDefinition
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Sampling")
 	FPlacementRule PlacementRule;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Sampling")
-	FDistributionRule Distribution;
 };
