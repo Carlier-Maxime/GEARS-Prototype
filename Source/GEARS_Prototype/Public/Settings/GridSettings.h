@@ -45,6 +45,8 @@ public:
 	uint16 MapRadius = 8;
 	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ClampMin=1, UIMin=4, UIMax=64, ToolTip="Number of chunks per side mapped to a single Texture 2D Array slice. A value of 8 means one slice covers an 8x8 grid of chunks."))
 	uint16 BiomeChunkFactor = 8;
+	UPROPERTY(EditAnywhere, config, Category = "Grid", meta=(ToolTip="Select a specific seed for debug, keep -1 for random seed."))
+	int32 DebugSeed = -1;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Grid|Cell", meta=(ClampMin=1, UIMin=16, UIMax=256, ToolTip="Size of a cell in world units (uu)"))
 	float CellSize = 128;

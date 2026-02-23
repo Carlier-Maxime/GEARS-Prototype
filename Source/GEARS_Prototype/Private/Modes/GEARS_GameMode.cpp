@@ -9,6 +9,9 @@ void AGEARS_GameMode::InitGame(const FString& MapName, const FString& Options, F
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 	Seed = static_cast<int32>(FDateTime::Now().GetTicks() % INT_MAX);
+	#if WITH_EDITOR
+	if (const auto DebugSeed = GridParams::Get().GetDebugSeed(); DebugSeed != -1) Seed = DebugSeed;
+	#endif
 	UE_LOG(LogTemp, Display, TEXT("Seed: %d"), Seed);
 	if (!GetWorld()) return;
 	if (const auto Grid = GetWorld()->GetSubsystem<UGridSubsystem>()) Grid->GenWorld(Seed);

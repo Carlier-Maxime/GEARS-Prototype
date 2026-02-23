@@ -88,6 +88,7 @@ void UGridSettings::RefreshFastAccessVariables()
 	GridParams::Get().BiomeChunkShift = FMath::FloorLog2(BiomeChunkFactor);
 	GridParams::Get().BiomeChunkMask = BiomeChunkFactor - 1;
 	GridParams::Get().BiomeIndexMap = BiomeIndexMap.Get();
+	GridParams::Get().DebugSeed = DebugSeed;
 }
 
 void UGridSettings::SyncSharedParams()

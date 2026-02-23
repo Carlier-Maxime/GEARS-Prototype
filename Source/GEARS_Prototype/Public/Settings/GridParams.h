@@ -32,6 +32,7 @@ public:
 	FORCEINLINE const TObjectPtr<UStaticMesh>& GetGridMesh() const { return GridMesh; }
 	FORCEINLINE const TObjectPtr<UTexture2DArray>& GetBiomeIndexMap() const { return BiomeIndexMap; }
 	FORCEINLINE const TObjectPtr<UTexture2DArray>& GetBiomeAtlas() const { return BiomeAtlas; }
+	FORCEINLINE int32 GetDebugSeed() const { return DebugSeed; }
 private:
 	GridParams() = default;
 	friend class UGridSettings;
@@ -45,6 +46,7 @@ private:
 	uint16 BiomeChunkFactor;
 	uint16 BiomeChunkShift;
 	uint16 BiomeChunkMask;
+	int32 DebugSeed;
 	TOptional<FResourceRegistry> ResourceRegistry;
 	TOptional<FBiomeRegistry> BiomeRegistry;
 	FNoiseContext Temperature;
