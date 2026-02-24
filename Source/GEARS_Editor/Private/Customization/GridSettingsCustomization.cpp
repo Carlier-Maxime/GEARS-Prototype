@@ -17,6 +17,13 @@ TArray<FNoisePreviewState::FGenColorFn> FGridSettingsCustomization::BuildRowPrev
 			auto& Registry = GridParams::Get().GetBiomeRegistry();
 			const auto Index = Generator.GetValue().SampleBiome(Pixel.ToWorld());
 			return Index==Registry.INVALID_INDEX ? FColor::Black : Registry[Index].Color.ToFColorSRGB();
+		},
+		[this](FNoisePreviewState::FPixelWriteContext Pixel)->FColor
+		{
+			auto& Registry = GridParams::Get().GetBiomeRegistry();
+			const auto Climate = Pixel.ToNormalizedUV();
+			const auto Index = Generator.GetValue().SampleBiome(Climate.X, Climate.Y);
+			return Index==Registry.INVALID_INDEX ? FColor::Black : Registry[Index].Color.ToFColorSRGB();
 		}
 	};
 }
