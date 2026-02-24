@@ -12,10 +12,8 @@ BiomeGenerator::BiomeGenerator(const int32 Seed) :
 {
 }
 
-uint8 BiomeGenerator::SampleBiome(const FWorldGridPos& Pos) const
+uint8 BiomeGenerator::SampleBiome(const float Temp, const float Humidity)
 {
-	const float Temp = GetTemperature(Pos);
-	const float Humidity = GetHumidity(Pos);
 	const auto& Registry = GridParams::Get().GetBiomeRegistry();
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
