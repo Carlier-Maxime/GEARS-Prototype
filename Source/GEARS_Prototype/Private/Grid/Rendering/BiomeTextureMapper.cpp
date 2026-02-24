@@ -9,7 +9,7 @@ FBiomeTextureMapper::FBiomeTextureMapper() : FBiomeTextureMapper(*GridParams::Ge
 FBiomeTextureMapper::FBiomeTextureMapper(UTexture2DArray& InAtlas, UTexture2DArray& InIndexMap) : Atlas(InAtlas), IndexMap(InIndexMap)
 {
 	const auto& Params = GridParams::Get();
-	ConfigureT2A(Atlas, 1, Params.GetBiomeRegistry().Num(), PF_B8G8R8A8);
+	ConfigureT2A(Atlas, 1, Params.GetBiomeRegistry().Num()+1, PF_B8G8R8A8);
 	ConfigureT2A(IndexMap, Params.GetBiomeChunkFactor() << Params.GetChunkShift(), GridMath::GetBiomeChunkCount(), PF_R8);
 	FillAtlas();
 }
@@ -50,17 +50,21 @@ void FBiomeTextureMapper::FillAtlas()
 {
 	const FTextureScopedLock Texture(Atlas, 4);
 	const auto& Registry = GridParams::Get().GetBiomeRegistry();
+	FColor Color;
+	auto Lambda_SetColor = [&](FPixelWriteContext Ctx)
+	{
+		Ctx.SliceData[Ctx.PixelOffset] = Color.B;
+		Ctx.SliceData[Ctx.PixelOffset + 1] = Color.G;
+		Ctx.SliceData[Ctx.PixelOffset + 2] = Color.R;
+		Ctx.SliceData[Ctx.PixelOffset + 3] = Color.A;
+	};
 	for (int32 i=0; i<Registry.Num(); ++i)
 	{
-		Texture.UpdateSlice(i, [&](FPixelWriteContext Ctx)
-		{
-			const auto Color = Registry[i].Color.ToFColorSRGB();
-			Ctx.SliceData[Ctx.PixelOffset] = Color.B;
-			Ctx.SliceData[Ctx.PixelOffset + 1] = Color.G;
-			Ctx.SliceData[Ctx.PixelOffset + 2] = Color.R;
-			Ctx.SliceData[Ctx.PixelOffset + 3] = Color.A;
-		});
+		Color = Registry[i].Color.ToFColorSRGB();
+		Texture.UpdateSlice(i, Lambda_SetColor);
 	}
+	Color = FColor::Black;
+	Texture.UpdateSlice(Registry.Num(), Lambda_SetColor);
 }
 
 FBiomeIndexMapScopedLock FBiomeTextureMapper::Lock() const
