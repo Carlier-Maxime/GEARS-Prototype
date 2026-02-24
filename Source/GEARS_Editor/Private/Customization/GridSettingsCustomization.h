@@ -9,5 +9,5 @@ public:
 	static TSharedRef<IDetailCustomization> MakeInstance();
 	
 protected:
-	virtual TArray<TFunction<FColor(FWorldGridPos)>> BuildRowPreviewFunctions(const int32 RowIndex, const UGridSettings* Ctx) override;
+	virtual TArray<FNoisePreviewState::FGenColorFn> BuildRowPreviewFunctions(const int32 RowIndex, const UGridSettings* Ctx) override;
 };

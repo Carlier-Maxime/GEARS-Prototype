@@ -8,14 +8,14 @@ TSharedRef<IDetailCustomization> FGridSettingsCustomization::MakeInstance()
 	return MakeShareable(new FGridSettingsCustomization);
 }
 
-TArray<TFunction<FColor(FWorldGridPos)>> FGridSettingsCustomization::BuildRowPreviewFunctions(const int32 RowIndex,
+TArray<FNoisePreviewState::FGenColorFn> FGridSettingsCustomization::BuildRowPreviewFunctions(const int32 RowIndex,
 	const UGridSettings* Ctx)
 {
 	return {
-		[this](FWorldGridPos Pos)->FColor
+		[this](FNoisePreviewState::FPixelWriteContext Pixel)->FColor
 		{
 			auto& Registry = GridParams::Get().GetBiomeRegistry();
-			const auto Index = Generator.GetValue().SampleBiome(Pos);
+			const auto Index = Generator.GetValue().SampleBiome(Pixel.ToWorld());
 			return Index==Registry.INVALID_INDEX ? FColor::Black : Registry[Index].Color.ToFColorSRGB();
 		}
 	};

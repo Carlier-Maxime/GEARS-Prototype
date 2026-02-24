@@ -2,19 +2,60 @@
 
 #include "CoreMinimal.h"
 #include "NoisePreviewContext.h"
-
-struct FWorldGridPos;
-
-DECLARE_DELEGATE_RetVal_OneParam(FColor, FOnGenerateColor, FWorldGridPos)
+#include "Grid/Types.h"
 
 struct FNoisePreviewState
 {
+	struct FPixelWriteContext
+	{	
+		FPixelWriteContext(const int32 X, const int32 Y, const int32 Res, const int32 Step) : X(X), Y(Y), Res(Res), Step(Step) {}
+		
+		FORCEINLINE FIntPoint ToTextureCoord() const {
+			return {X, Y};
+		}
+		
+		FORCEINLINE FIntPoint ToScaledCoord() const
+		{
+			return {X * Step, Y * Step};
+		}
+		
+		FORCEINLINE FWorldGridPos ToWorld() const
+		{
+			return {
+				(X - (Res >> 1)) * Step,
+				(Y - (Res >> 1)) * Step
+			};
+		}
+		
+		FORCEINLINE FVector2D ToNormalizedUV() const
+		{
+			const float Divisor = Res>1 ? static_cast<float>(Res - 1) : 1.f;
+			return {
+				X / Divisor,
+				Y / Divisor
+			 };
+		}
+		
+		FORCEINLINE FVector2D ToSampledUV() const
+		{
+			return {
+				(X + 0.5f) / Res,
+				(Y + 0.5f) / Res
+			};
+		}
+			
+		private: 
+			int32 X, Y, Res, Step;
+	};
+	
+	using FGenColorFn = TFunction<FColor(FPixelWriteContext)>;
+
 	FNoisePreviewState();
 	
 	TArray<FColor> PixelBuffer;
 	TStrongObjectPtr<UTexture2D> Texture = nullptr;
 	FSlateBrush Brush;
-	FOnGenerateColor OnGenerateColor;
+	FGenColorFn GenerateColorFn;
 	
 	void Update(const FNoisePreviewContext& Ctx);
 };

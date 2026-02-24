@@ -7,7 +7,6 @@
 #include "DetailLayoutBuilder.h"
 #include "ISinglePropertyView.h"
 #include "IStructureDataProvider.h"
-#include "Grid/Types/WorldGridPos.h"
 #include "Preview/NoisePreviewState.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
@@ -62,10 +61,10 @@ void SNoisePreviewsWidget::AddNumericRow(
 	];
 }
 
-void SNoisePreviewsWidget::AddPreview(const TFunction<FColor(FWorldGridPos)>& GenColorFn)
+void SNoisePreviewsWidget::AddPreview(const FNoisePreviewState::FGenColorFn& GenColorFn)
 {
 	auto Index = Previews.Emplace();
-	Previews[Index].OnGenerateColor.BindLambda(GenColorFn);
+	Previews[Index].GenerateColorFn = GenColorFn;
 	PreviewsContainer->AddSlot()
         .AutoWidth()
         .Padding(5.f)

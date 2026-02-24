@@ -25,7 +25,7 @@ protected:
 		];
 	}
 	
-	virtual TArray<TFunction<FColor(FWorldGridPos)>> BuildRowPreviewFunctions(const int32 RowIndex, const ContextType* Ctx) = 0;
+	virtual TArray<FNoisePreviewState::FGenColorFn> BuildRowPreviewFunctions(const int32 RowIndex, const ContextType* Ctx) = 0;
 	
 	TOptional<GeneratorType> Generator;
 	

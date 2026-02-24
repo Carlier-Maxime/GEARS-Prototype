@@ -6,13 +6,13 @@ TSharedRef<IPropertyTypeCustomization> FDistributionRuleCustomization::MakeInsta
 	return MakeShareable(new FDistributionRuleCustomization);
 }
 
-TArray<TFunction<FColor(FWorldGridPos)>> FDistributionRuleCustomization::BuildRowPreviewFunctions(const int32 RowIndex,
+TArray<FNoisePreviewState::FGenColorFn> FDistributionRuleCustomization::BuildRowPreviewFunctions(const int32 RowIndex,
 	const FDistributionRule* Ctx)
 {
 	return {
-		[this, Ctx](FWorldGridPos Pos)->FColor
+		[this, Ctx](FNoisePreviewState::FPixelWriteContext Pixel)->FColor
 		{
-			const uint8 ColorVal = Generator.GetValue().ShouldSpawn(Pos, *Ctx, FVector2D::ZeroVector) ? 255 : 0;
+			const uint8 ColorVal = Generator.GetValue().ShouldSpawn(Pixel.ToWorld(), *Ctx, FVector2D::ZeroVector) ? 255 : 0;
 			return {ColorVal, ColorVal, ColorVal, 255};
 		}
 	};

@@ -21,14 +21,11 @@ void FNoisePreviewState::Update(const FNoisePreviewContext& Ctx)
 	}
 	
 	const auto Step = Ctx.SamplingStep;
-	const auto HalfRes = Res >> 1;
-	const auto Worker = [this, Res, HalfRes, Step](int32 Index)
+	const auto Worker = [this, Res, Step](int32 Index)
 	{
 		const int32 x = Index % Res;
 		const int32 y = Index / Res;
-		const auto WorldX = (x - HalfRes) * Step;
-		const auto WorldY = (y - HalfRes) * Step;
-		PixelBuffer[Index] = OnGenerateColor.IsBound() ? OnGenerateColor.Execute(FWorldGridPos(WorldX, WorldY)) : FColor::Black;
+		PixelBuffer[Index] = GenerateColorFn.IsSet() ? GenerateColorFn({x, y, Res, Step}) : FColor::Black;
 	};
 	const auto Size = Res * Res;
 	if (Res < 64) for (auto I = 0; I < Size; ++I) Worker(I);

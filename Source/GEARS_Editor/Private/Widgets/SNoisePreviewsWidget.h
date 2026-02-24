@@ -20,7 +20,7 @@ public:
 	SLATE_END_ARGS()
 	
 	void Construct(const FArguments& InArgs);
-	void AddPreview(const TFunction<FColor(FWorldGridPos)>& GenColorFn);
+	void AddPreview(const FNoisePreviewState::FGenColorFn& GenColorFn);
 
 private:
 	static void AddNumericRow(const TSharedRef<SGridPanel>& Grid, const int32 Row, const FName& Label, const TSharedRef<ISinglePropertyView>& PropertyView);
@@ -29,7 +29,6 @@ private:
 	
 	
 	FOnInt32ChangedDelegate OnSeedChanged;
-	FOnGenerateColor OnGenerateColor;
 	TSharedPtr<SHorizontalBox> PreviewsContainer;
 	TArray<FNoisePreviewState> Previews;
 	FNoisePreviewContext NoiseParams;
