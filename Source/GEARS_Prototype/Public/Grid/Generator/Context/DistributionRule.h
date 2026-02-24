@@ -22,4 +22,7 @@ struct FDistributionRule
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = 0, ClampMax = 1))
 	float ThresholdSmoothing = 0; 
+	
+	UPROPERTY(EditAnywhere, meta = (ClampMin = 0, UIMax = 16))
+	uint32 Spacing = 0;
 };

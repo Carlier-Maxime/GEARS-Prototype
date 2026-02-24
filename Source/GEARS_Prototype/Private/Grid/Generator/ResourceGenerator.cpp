@@ -16,9 +16,26 @@ FProcSpawnData ResourceGenerator::Sample(const FWorldGridPos& Pos, const TArray<
 	return std::move(SpawnData);
 }
 
-bool ResourceGenerator::ShouldSpawn(const FWorldGridPos& Pos, const FDistributionRule& Rule,
-	const FVector2D& Offset) const
+bool ResourceGenerator::PassesSpacingTest(const FWorldGridPos& Pos, const uint32 Spacing, int32 Salt) const
 {
+	if (!Spacing) return true;
+	const auto Space = Spacing*2 + 1;
+	const auto SafeRadius = FMath::Max<uint32>(1,Spacing - (Spacing >> 2));
+	const int32 GridX = Pos.X >= 0 ? Pos.X / Space : (Pos.X - Space + 1) / Space;
+	const int32 GridY = Pos.Y >= 0 ? Pos.Y / Space : (Pos.Y - Space + 1) / Space;
+	const FIntPoint SpacingPos(GridX, GridY);
+	const auto SpaceRng = GetLocalRng(HashCombineFast(Salt, GetTypeHash(SpacingPos)));
+	const auto OffsetX = SpaceRng.RandRange(Spacing - SafeRadius, Spacing + SafeRadius);
+	const auto OffsetY = SpaceRng.RandRange(Spacing - SafeRadius, Spacing + SafeRadius);
+	int32 LocalX = Pos.X % Space; if (LocalX < 0) LocalX += Space;
+	int32 LocalY = Pos.Y % Space; if (LocalY < 0) LocalY += Space;
+	return LocalX == OffsetX && LocalY == OffsetY;
+}
+
+bool ResourceGenerator::ShouldSpawn(const FWorldGridPos& Pos, const FDistributionRule& Rule,
+                                    const FVector2D& Offset) const
+{
+	if (!PassesSpacingTest(Pos, Rule.Spacing, GetTypeHash(Offset))) return false;
 	const auto NoiseDensity = GetNoiseDensity(Pos, Rule.Noise, Offset);
 	if (Rule.ThresholdSmoothing == 0) return NoiseDensity >= Rule.NoiseThreshold;
 	const float SpawnChance = FMath::SmoothStep(
