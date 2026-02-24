@@ -51,7 +51,7 @@ void FBiomeTextureMapper::FillAtlas()
 	const FTextureScopedLock Texture(Atlas, 4);
 	const auto& Registry = GridParams::Get().GetBiomeRegistry();
 	FColor Color;
-	auto Lambda_SetColor = [&](FPixelWriteContext Ctx)
+	auto Lambda_SetColor = [&](FTextureScopedLock::FPixelWriteContext Ctx)
 	{
 		Ctx.SliceData[Ctx.PixelOffset] = Color.B;
 		Ctx.SliceData[Ctx.PixelOffset + 1] = Color.G;

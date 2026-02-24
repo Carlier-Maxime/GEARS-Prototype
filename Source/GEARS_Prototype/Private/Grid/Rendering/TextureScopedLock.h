@@ -1,15 +1,15 @@
 ﻿#pragma once
 
-struct FPixelWriteContext
-{
-	uint8* SliceData;
-	int32 DataIndex;
-	int32 PixelOffset;
-};
-
 class FTextureScopedLock
 {
 public:
+	struct FPixelWriteContext
+	{
+		uint8* SliceData;
+		int32 DataIndex;
+		int32 PixelOffset;
+	};
+	
 	FTextureScopedLock(UTexture2DArray& InTexture, uint16 InOctetsPerPixel);
 	virtual ~FTextureScopedLock();
 	
