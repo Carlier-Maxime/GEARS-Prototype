@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
+#include "Engine/AssetManager.h"
 
 template<typename T, typename TDef>
 concept DataWrapper = requires(T A) {
@@ -14,6 +15,7 @@ requires DataWrapper<TWrapper, TDefinition>
 class TDataRegistry
 {
 public:
+	TDataRegistry(const FString& InRegistryName, const FName& Path);
 	TDataRegistry(const FString& InRegistryName, const TArray<TSoftObjectPtr<TWrapper>>& InWrappedData);
 	~TDataRegistry();
 	
@@ -29,6 +31,10 @@ public:
 	static constexpr auto INVALID_INDEX = static_cast<TIndexType>(-1);
 
 private:
+	void Reserve(int32 Num);
+	void RegisterAsset(TWrapper* Asset);
+	void FinalizeInitialization();
+	
 	FString RegistryName;
 	TArray<TDefinition> Definitions;
 	TMap<FGameplayTag, TIndexType> TagToIndex;
@@ -37,46 +43,68 @@ private:
 #endif
 };
 
+template <typename TDefinition, typename TWrapper, std::integral TIndexType> requires DataWrapper<TWrapper, TDefinition>
+TDataRegistry<TDefinition, TWrapper, TIndexType>::TDataRegistry(const FString& InRegistryName, const FName& Path) : RegistryName(InRegistryName)
+{
+	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+	TArray<FAssetData> Assets;
+	AssetRegistry.ScanPathsSynchronous({Path.ToString()});
+	AssetRegistry.GetAssetsByPath(Path, Assets, true);
+
+	Reserve(Assets.Num());
+	for (const auto& Asset : Assets) RegisterAsset(Cast<TWrapper>(Asset.GetAsset()));
+	FinalizeInitialization();
+}
 
 template<typename TDefinition, typename TWrapper, std::integral TIndexType = int32> requires DataWrapper<TWrapper, TDefinition>
 TDataRegistry<TDefinition, TWrapper, TIndexType>::TDataRegistry(const FString& InRegistryName, const TArray<TSoftObjectPtr<TWrapper>>& InWrappedData) : RegistryName(InRegistryName)
 {
-	Definitions.Reserve(InWrappedData.Num());
-	TagToIndex.Reserve(InWrappedData.Num());
+	Reserve(InWrappedData.Num());
+	for (auto& Soft : InWrappedData) RegisterAsset(Soft.LoadSynchronous());
+	FinalizeInitialization();
+}
 
-	for (auto& Soft : InWrappedData)
+template <typename TDefinition, typename TWrapper, std::integral TIndexType> requires DataWrapper<TWrapper, TDefinition>
+void TDataRegistry<TDefinition, TWrapper, TIndexType>::Reserve(int32 Num)
+{
+	Definitions.Reserve(Num);
+	TagToIndex.Reserve(Num);
+}
+
+template <typename TDefinition, typename TWrapper, std::integral TIndexType> requires DataWrapper<TWrapper, TDefinition>
+void TDataRegistry<TDefinition, TWrapper, TIndexType>::RegisterAsset(TWrapper* Asset)
+{
+	if (!Asset)
 	{
-		if (Definitions.Num() >= std::numeric_limits<TIndexType>::max())
-		{
-			UE_LOG(LogTemp, Fatal, TEXT("[%s] Registry overflow! Increase TIndexType size."), *RegistryName);
-		}
-			
-		TWrapper* LoadedAsset = Soft.LoadSynchronous();
-		if (!LoadedAsset)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[%s] Failed to load a DataAsset (Null or Invalid path)"), *RegistryName);
-			continue;
-		}
-			
-		auto& Data = LoadedAsset->Data;
-		if (!Data.Tag.IsValid())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[%s] Asset skipped: Tag is 'None'. Check asset: %s"), 
-				*RegistryName, *LoadedAsset->GetName());
-			continue;
-		}
-		if (TagToIndex.Contains(Data.Tag))
-		{
-			UE_LOG(LogTemp, Error, TEXT("[%s] Duplicate Tag detected: %s"), *RegistryName, *Data.Tag.ToString());
-			continue;
-		}
-
-		const TIndexType Index = static_cast<TIndexType>(Definitions.Add(Data));
-		TagToIndex.Add(Data.Tag, Index);
-          
-		UE_LOG(LogTemp, Verbose, TEXT("[%s] Registered: %s at Index %lld"), *RegistryName, *Data.Tag.ToString(), (int64)Index);
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Failed to load a DataAsset (Null or Invalid path)"), *RegistryName);
+		return;
 	}
-       
+	if (Definitions.Num() >= std::numeric_limits<TIndexType>::max())
+	{
+		UE_LOG(LogTemp, Fatal, TEXT("[%s] Registry overflow! Increase TIndexType size."), *RegistryName);
+	}
+	auto& Data = Asset->Data;
+	if (!Data.Tag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Asset skipped: Tag is 'None'. Check asset: %s"), 
+			*RegistryName, *Asset->GetName());
+		return;
+	}
+	if (TagToIndex.Contains(Data.Tag))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[%s] Duplicate Tag detected: %s"), *RegistryName, *Data.Tag.ToString());
+		return;
+	}
+
+	const TIndexType Index = static_cast<TIndexType>(Definitions.Add(Data));
+	TagToIndex.Add(Data.Tag, Index);
+          
+	UE_LOG(LogTemp, Verbose, TEXT("[%s] Registered: %s at Index %lld"), *RegistryName, *Data.Tag.ToString(), (int64)Index);
+}
+
+template <typename TDefinition, typename TWrapper, std::integral TIndexType> requires DataWrapper<TWrapper, TDefinition>
+void TDataRegistry<TDefinition, TWrapper, TIndexType>::FinalizeInitialization()
+{
 	UE_LOG(LogTemp, Log, TEXT("[%s] Initialized with %d definitions."), *RegistryName, Definitions.Num());
 	
 #if WITH_EDITOR
