@@ -65,7 +65,8 @@ float BaseGenerator::GetNoiseDensity(const FWorldGridPos& Pos, const FNoiseConte
 		CurrentFreq *= Ctx.Lacunarity;
 	}
 	
-	return (Total / MaxValue + 1.0f) * 0.5f;
+	const float t = (Total / MaxValue + 1.0f) * 0.5f;
+	return t * t * (3.0f - 2.0f * t);
 }
 
 FRandomStream BaseGenerator::GetLocalRng(const FWorldGridPos& Pos) const
