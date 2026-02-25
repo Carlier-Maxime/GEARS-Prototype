@@ -5,6 +5,7 @@
 class FResourceRegistry : public TDataRegistry<FResourceDefinition, UResourceType, int16>
 {
 public:
+	explicit FResourceRegistry(const FName& Path) : TDataRegistry("ResourceRegistry", Path) {}
 	explicit FResourceRegistry(const TArray<TSoftObjectPtr<UResourceType>>& InWrappedData) :
 			TDataRegistry("ResourceRegistry", InWrappedData)
 	{}

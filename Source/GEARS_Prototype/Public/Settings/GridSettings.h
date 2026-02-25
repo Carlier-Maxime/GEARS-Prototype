@@ -87,8 +87,8 @@ private:
 	TMap<FGameplayTag, float> MPCSharedScalar;
 	TMap<FGameplayTag, FLinearColor> MPCSharedLinearColor;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Resources", meta = (AllowPrivateAccess = true))
-	TArray<TSoftObjectPtr<UResourceType>> ResourceSoftRegistry;
+	UPROPERTY(EditAnywhere, config, Category = "Resources", meta=(AllowPrivateAccess = true))
+	FName ResourcesPath;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
 	TArray<TSoftObjectPtr<UBiomeType>> BiomeSoftRegistry;
