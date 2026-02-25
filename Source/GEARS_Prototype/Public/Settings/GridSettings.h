@@ -91,8 +91,7 @@ private:
 	FName ResourcesPath;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
-	TArray<TSoftObjectPtr<UBiomeType>> BiomeSoftRegistry;
-	
+	FName BiomesPath;
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
 	FNoiseContext Temperature;
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
