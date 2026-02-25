@@ -33,7 +33,9 @@ uint8 BiomeGenerator::SampleBiome(const float Temp, const float Humidity)
 
 bool BiomeGenerator::IsEligible(const float Temp, const float Humidity, const FBiomeDefinition& Biome)
 {
-	return GridParams::Get().GetBiomeRegistry()[SampleBiome(Temp, Humidity)].Tag == Biome.Tag;
+	const auto Index = SampleBiome(Temp, Humidity);
+	const auto& Registry = GridParams::Get().GetBiomeRegistry();
+	return Index != Registry.INVALID_INDEX && Registry[Index].Tag == Biome.Tag;
 }
 
 float BiomeGenerator::GetTemperature(const FWorldGridPos& Pos) const
