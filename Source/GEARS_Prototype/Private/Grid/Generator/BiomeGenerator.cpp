@@ -15,22 +15,25 @@ BiomeGenerator::BiomeGenerator(const int32 Seed) :
 uint8 BiomeGenerator::SampleBiome(const float Temp, const float Humidity)
 {
 	const auto& Registry = GridParams::Get().GetBiomeRegistry();
+	auto MinDist = std::numeric_limits<float>::max();
+	auto BestIndex = Registry.INVALID_INDEX;
 	for (auto i=0; i<Registry.Num(); ++i)
 	{
-		if (!IsEligible(Temp, Humidity, Registry[i])) continue;
-		return i;
+		for (const auto& Point : Registry[i].ClimateInfluences)
+		{
+			if (const auto Dist = Point.ManhattanDistance(Temp, Humidity); Dist < MinDist)
+			{
+				MinDist = Dist;
+				BestIndex = i;
+			}
+		}
 	}
-	return Registry.INVALID_INDEX;
-}
-
-bool BiomeGenerator::IsEligible(const FWorldGridPos& Pos, const FBiomeDefinition& Biome) const
-{
-	return IsEligible(GetTemperature(Pos), GetHumidity(Pos), Biome);
+	return BestIndex;
 }
 
 bool BiomeGenerator::IsEligible(const float Temp, const float Humidity, const FBiomeDefinition& Biome)
 {
-	return Biome.Temperature.Contains(Temp) && Biome.Humidity.Contains(Humidity);
+	return GridParams::Get().GetBiomeRegistry()[SampleBiome(Temp, Humidity)].Tag == Biome.Tag;
 }
 
 float BiomeGenerator::GetTemperature(const FWorldGridPos& Pos) const

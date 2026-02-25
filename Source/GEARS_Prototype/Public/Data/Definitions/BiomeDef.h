@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "ClimatePoint.h"
 #include "GameplayTagContainer.h"
 #include "ResourceRule.h"
 
@@ -13,9 +14,7 @@ struct GEARS_PROTOTYPE_API FBiomeDefinition
 	FGameplayTag Tag;
 
 	UPROPERTY(EditDefaultsOnly, Category="Generation")
-	FFloatRange Temperature;
-	UPROPERTY(EditDefaultsOnly, Category="Generation")
-	FFloatRange Humidity;
+	TArray<FClimatePoint> ClimateInfluences = {FClimatePoint()};
 	
 	UPROPERTY(EditDefaultsOnly, Category="Resources")
 	TArray<FResourceRule> Resources;

@@ -13,8 +13,13 @@ public:
 	{
 		return SampleBiome(GetTemperature(Pos), GetHumidity(Pos));
 	}
-	bool IsEligible(const FWorldGridPos& Pos, const FBiomeDefinition& Biome) const;
+	
+	FORCEINLINE bool IsEligible(const FWorldGridPos& Pos, const FBiomeDefinition& Biome) const
+	{
+		return IsEligible(GetTemperature(Pos), GetHumidity(Pos), Biome);
+	}
 	static bool IsEligible(float Temp, float Humidity, const FBiomeDefinition& Biome);
+	
 	float GetTemperature(const FWorldGridPos& Pos) const;
 	float GetHumidity(const FWorldGridPos& Pos) const;
 	
