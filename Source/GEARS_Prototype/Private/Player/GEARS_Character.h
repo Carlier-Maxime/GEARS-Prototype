@@ -27,8 +27,13 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNavigationInvokerComponent> NavInvoker;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = true, ClampMin=1, UIMax=16))
+	uint8 NavGenerationMultiplier = 4;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = true, ClampMin=1, UIMax=24))
+	uint8 NavRemovalMultiplier = 6;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess = true))
 	USpringArmComponent *SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess = true))
@@ -38,4 +43,5 @@ private:
 	TSoftObjectPtr<UInputAction> MoveAction;
 	
 	void Move(const struct FInputActionValue& Value);
+	void AutoSetNavRadius();
 };

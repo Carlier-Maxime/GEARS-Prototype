@@ -21,12 +21,7 @@ AGEARS_Character::AGEARS_Character()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
-	const auto& Params = GridParams::Get();
-	NavInvoker->SetGenerationRadii(
-		Params.GetCellSize() * Params.GetChunkSize() * 4,
-		Params.GetCellSize() * Params.GetChunkSize() * 6
-	);
-	
+	AutoSetNavRadius();
 	ResetView();
 }
 
@@ -46,10 +41,19 @@ void AGEARS_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ThisClass::Move);
 }
 
+void AGEARS_Character::AutoSetNavRadius()
+{
+	const auto& Params = GridParams::Get();
+	NavInvoker->SetGenerationRadii(
+		Params.GetCellSize() * Params.GetChunkSize() * NavGenerationMultiplier,
+		Params.GetCellSize() * Params.GetChunkSize() * NavRemovalMultiplier
+	);
+}
+
 void AGEARS_Character::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AutoSetNavRadius();
 }
 
 void AGEARS_Character::Move(const FInputActionValue& Value)
