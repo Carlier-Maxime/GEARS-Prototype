@@ -53,7 +53,10 @@ int16 ResourceGenerator::DetermineType(const FWorldGridPos& Pos, const TArray<FR
 	const auto& Registry = GridParams::Get().GetResourceRegistry();
 	for (const auto& Rule : Rules)
 	{
-		if (ShouldSpawn(Pos, Rule.Distribution, GetOffset(Rule.ResourceTag))) return Registry.GetIndex(Rule.ResourceTag);
+		if (!ShouldSpawn(Pos, Rule.Distribution, GetOffset(Rule.ResourceTag))) continue;
+		const auto Tags = Registry.TagsOf(Rule.ResourceTag);
+		const auto Index = Tags.Num()==1 ? 0 : GetLocalRng(Pos).RandRange(0, Tags.Num()-1);
+		return Registry.GetIndex(Tags.GetByIndex(Index));
 	}
 	return -1;
 }

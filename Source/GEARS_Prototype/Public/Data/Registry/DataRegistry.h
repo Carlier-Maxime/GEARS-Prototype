@@ -20,6 +20,7 @@ public:
 	~TDataRegistry();
 	
 	[[nodiscard]] FORCEINLINE const TDefinition& operator[] (const TIndexType Index) const { return Definitions[Index]; }
+	[[nodiscard]] FORCEINLINE int16 GetIndexChecked(const FGameplayTag& Tag) const {return TagToIndex.FindChecked(Tag);}
 	[[nodiscard]] FORCEINLINE int16 GetIndex(const FGameplayTag& Tag) const
 	{
 		const TIndexType* Found = TagToIndex.Find(Tag);
@@ -27,6 +28,11 @@ public:
 	}
 	[[nodiscard]] FORCEINLINE const TDefinition& operator[] (const FGameplayTag& Tag) const { return Definitions[TagToIndex.FindChecked(Tag)]; }
 	[[nodiscard]] FORCEINLINE TIndexType Num() const { return Definitions.Num(); }
+	[[nodiscard]] FORCEINLINE FGameplayTagContainer TagsOf(const FGameplayTag& Tag) const
+	{
+		auto* Found = TagsHierarchy.Find(Tag);
+		return Found ? *Found : FGameplayTagContainer::EmptyContainer;
+	}
 
 	static constexpr auto INVALID_INDEX = static_cast<TIndexType>(-1);
 
@@ -38,6 +44,7 @@ private:
 	FString RegistryName;
 	TArray<TDefinition> Definitions;
 	TMap<FGameplayTag, TIndexType> TagToIndex;
+	TMap<FGameplayTag, FGameplayTagContainer> TagsHierarchy;
 #if WITH_EDITOR
 	FDelegateHandle OnAnyTWrapperChangedHandle;
 #endif
@@ -98,6 +105,10 @@ void TDataRegistry<TDefinition, TWrapper, TIndexType>::RegisterAsset(TWrapper* A
 
 	const TIndexType Index = static_cast<TIndexType>(Definitions.Add(Data));
 	TagToIndex.Add(Data.Tag, Index);
+	for (auto Tag : Data.Tag.GetGameplayTagParents())
+	{
+		TagsHierarchy.FindOrAdd(Tag).AddTag(Data.Tag);
+	}
           
 	UE_LOG(LogTemp, Verbose, TEXT("[%s] Registered: %s at Index %lld"), *RegistryName, *Data.Tag.ToString(), (int64)Index);
 }
