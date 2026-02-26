@@ -21,7 +21,7 @@ class GEARS_PROTOTYPE_API AGEARS_PlayerController : public APlayerController
 public:
 	void SnapYaw90();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+	virtual void StopMovement() override;
 	void RequestViewReset();
 
 protected:
@@ -49,7 +49,9 @@ private:
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
 	FTSTicker::FDelegateHandle SnapYawDelegate;
 	FDelegateHandle CamSnapChangedHandle;
+	FTimerHandle MoveDelayedHandle;
 	
+	void MoveToLocation(FVector Location);
 	void MoveToCursor();
 	void Zoom(const FInputActionValue& Value);
 	void HiddenCursor();

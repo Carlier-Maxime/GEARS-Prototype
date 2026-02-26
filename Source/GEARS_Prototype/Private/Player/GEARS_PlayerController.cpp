@@ -8,12 +8,16 @@
 #include "GEARS_Character.h"
 #include "Definitions/GEARS_Macro.h"
 #include "InputMappingContext.h"
+#include "NavigationSystem.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AI/NavigationSystemBase.h"
 #include "Engine/AssetManager.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
+#include "Settings/GridParams.h"
 
 void AGEARS_PlayerController::BeginPlay()
 {
@@ -60,9 +64,10 @@ void AGEARS_PlayerController::OnPossess(APawn* aPawn)
 void AGEARS_PlayerController::MoveToCursor()
 {
 	FHitResult Hit;
-	if (!GetPawn()) return;
 	if (!GetHitResultUnderCursor(ECC_Visibility, true, Hit)) return;
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, Hit.Location);
+
+	MoveToLocation(Hit.Location);
+	
 	ensureSoftPtrOrRet(ClickFX,);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 		GetWorld(), 
@@ -70,6 +75,33 @@ void AGEARS_PlayerController::MoveToCursor()
 		Hit.ImpactPoint, 
 		Hit.ImpactNormal.Rotation()
 	);
+}
+
+void AGEARS_PlayerController::MoveToLocation(FVector Location)
+{
+	if (!GetPawn()) return;
+	auto* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	auto* NavInvoker = GetPawn()->FindComponentByClass<UNavigationInvokerComponent>();
+	if (!NavSys || !NavInvoker) return;
+	auto Radius = NavInvoker->GetGenerationRadius();
+	auto StartLoc = GetPawn()->GetActorLocation();
+	auto DistToLoc = FVector::Dist(Location, StartLoc);
+	double ExtentVal = GridParams::Get().GetCellSize() * 0.25f;
+	if (DistToLoc > Radius) ExtentVal += DistToLoc - Radius;
+	FVector Extent(ExtentVal, ExtentVal, ExtentVal);
+	FNavLocation NavLoc;
+	NavSys->ProjectPointToNavigation(Location, NavLoc, Extent);
+	MoveDelayedHandle.Invalidate();
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, NavLoc.Location);
+	if (NavLoc.Location == Location) return;
+	const auto* MoveComponent = GetPawn()->GetMovementComponent();
+	if (!MoveComponent) return;
+	const auto ElapsedHalfTime = 0.5*FVector::Dist(NavLoc.Location, StartLoc) / MoveComponent->GetMaxSpeed();
+	if (ElapsedHalfTime < 0.5) return;
+	GetWorldTimerManager().SetTimer(MoveDelayedHandle, [this, Location]()
+	{
+		MoveToLocation(Location);
+	}, ElapsedHalfTime, false);
 }
 
 void AGEARS_PlayerController::Zoom(const FInputActionValue& Value)
@@ -158,4 +190,10 @@ void AGEARS_PlayerController::RequestViewReset()
 	const auto MyChar = Cast<AGEARS_Character>(GetCharacter());
 	if (!MyChar) return;
 	MyChar->ResetView();
+}
+
+void AGEARS_PlayerController::StopMovement()
+{
+	MoveDelayedHandle.Invalidate();
+	Super::StopMovement();
 }
