@@ -91,9 +91,9 @@ void AGEARS_PlayerController::MoveToLocation(FVector Location)
 	FVector Extent(ExtentVal, ExtentVal, ExtentVal);
 	FNavLocation NavLoc;
 	NavSys->ProjectPointToNavigation(Location, NavLoc, Extent);
-	MoveDelayedHandle.Invalidate();
+	GetWorldTimerManager().ClearTimer(MoveDelayedHandle);
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, NavLoc.Location);
-	if (NavLoc.Location == Location) return;
+	if (DistToLoc <= Radius) return;
 	const auto* MoveComponent = GetPawn()->GetMovementComponent();
 	if (!MoveComponent) return;
 	const auto ElapsedHalfTime = 0.5*FVector::Dist(NavLoc.Location, StartLoc) / MoveComponent->GetMaxSpeed();
@@ -194,6 +194,6 @@ void AGEARS_PlayerController::RequestViewReset()
 
 void AGEARS_PlayerController::StopMovement()
 {
-	MoveDelayedHandle.Invalidate();
+	GetWorldTimerManager().ClearTimer(MoveDelayedHandle);
 	Super::StopMovement();
 }
