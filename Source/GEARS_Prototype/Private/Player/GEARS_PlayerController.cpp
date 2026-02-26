@@ -97,7 +97,7 @@ void AGEARS_PlayerController::MoveToLocation(FVector Location)
 	const auto* MoveComponent = GetPawn()->GetMovementComponent();
 	if (!MoveComponent) return;
 	const auto ElapsedHalfTime = 0.5*FVector::Dist(NavLoc.Location, StartLoc) / MoveComponent->GetMaxSpeed();
-	if (ElapsedHalfTime < 0.5) return;
+	if (ElapsedHalfTime < 0.1) return;
 	GetWorldTimerManager().SetTimer(MoveDelayedHandle, [this, Location]()
 	{
 		MoveToLocation(Location);

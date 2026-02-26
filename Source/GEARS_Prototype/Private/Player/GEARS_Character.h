@@ -29,10 +29,10 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNavigationInvokerComponent> NavInvoker;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = true, ClampMin=1, UIMax=8))
+	uint8 NavGenerationMultiplier = 2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = true, ClampMin=1, UIMax=16))
-	uint8 NavGenerationMultiplier = 4;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Navigation", meta = (AllowPrivateAccess = true, ClampMin=1, UIMax=24))
-	uint8 NavRemovalMultiplier = 6;
+	uint8 NavRemovalMultiplier = 4;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess = true))
 	USpringArmComponent *SpringArm;
