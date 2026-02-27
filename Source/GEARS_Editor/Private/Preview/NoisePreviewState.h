@@ -27,13 +27,13 @@ struct FNoisePreviewState
 			};
 		}
 		
-		FORCEINLINE FVector2D ToNormalizedUV() const
+		FORCEINLINE FVector2D ToNormalizedUV(const bool bInvY = true, const bool bInvX = false) const
 		{
 			const float Divisor = Res>1 ? static_cast<float>(Res - 1) : 1.f;
-			return {
-				X / Divisor,
-				Y / Divisor
-			 };
+			FVector2D Ret{X/Divisor, Y/Divisor};
+			if (bInvY) Ret.Y = 1.f - Ret.Y;
+			if (bInvX) Ret.X = 1.f - Ret.X;
+			return Ret;
 		}
 		
 		FORCEINLINE FVector2D ToSampledUV() const
