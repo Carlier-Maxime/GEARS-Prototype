@@ -9,6 +9,7 @@ Script/
 # Rider & IDE Specific
 .idea/
 .vs/
+.vsconfig
 *.sln
 *.vcxproj
 *.filters
