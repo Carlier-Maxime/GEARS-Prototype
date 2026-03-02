@@ -27,7 +27,7 @@ within an industrial simulation context, focusing on high-performance **Native C
 - [x] **Project Initialization:** UE 5.7+ C++ Blank Project & Git LFS configuration.
 - [x] **RTS-Style 3C:** Top-down camera system (Pan/Zoom) with Mouse Picking for grid interaction.
 - [x] **World Subsystem:** Implementation of a C++ `WorldSubsystem` for high-performance grid math (World-to-Grid coordinates).
-- [ ] **Environment:** Procedural generation for trees (wood) and mineral veins using Noise-based sampling.
+- [x] **Environment:** Procedural generation for trees (wood) and mineral veins using Noise-based sampling.
 
 ### Phase 2: Survival & Manual Interaction
 - [ ] **Data Architecture:** Base implementation of `UItemDataAsset` and `UMachineDataAsset` (Data-Driven design).
