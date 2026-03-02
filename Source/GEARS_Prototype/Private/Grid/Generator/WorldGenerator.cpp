@@ -13,7 +13,7 @@ FChunkGenerationResult WorldGenerator::GenerateChunk(const FChunkIndex& Index) c
 {
 	FChunkGenerationResult Result;
 	GenerateChunk(Result, Index);
-	return std::move(Result);
+	return Result;
 }
 
 void WorldGenerator::GenerateChunk(FChunkGenerationResult& Result, const FChunkIndex& Index) const

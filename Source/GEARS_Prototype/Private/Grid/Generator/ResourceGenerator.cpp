@@ -13,7 +13,7 @@ FProcSpawnData ResourceGenerator::Sample(const FWorldGridPos& Pos, const TArray<
 	FProcSpawnData SpawnData;
 	SpawnData.ResourceTypeIndex = DetermineType(Pos, Rules);
 	SpawnData.Transform = GetVariationTransform(Pos, SpawnData.ResourceTypeIndex);
-	return std::move(SpawnData);
+	return SpawnData;
 }
 
 bool ResourceGenerator::PassesSpacingTest(const FWorldGridPos& Pos, const uint32 Spacing, int32 Salt) const
@@ -93,5 +93,5 @@ FTransform ResourceGenerator::GetVariationTransform(const FWorldGridPos& Pos, co
 	{
 		Transform.SetRotation(FRotator(0, LocalRng.FRandRange(0, 360), 0).Quaternion());
 	}
-	return std::move(Transform);
+	return Transform;
 }

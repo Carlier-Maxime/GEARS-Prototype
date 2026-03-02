@@ -63,7 +63,7 @@ TDataRegistry<TDefinition, TWrapper, TIndexType>::TDataRegistry(const FString& I
 	FinalizeInitialization();
 }
 
-template<typename TDefinition, typename TWrapper, std::integral TIndexType = int32> requires DataWrapper<TWrapper, TDefinition>
+template<typename TDefinition, typename TWrapper, std::integral TIndexType> requires DataWrapper<TWrapper, TDefinition>
 TDataRegistry<TDefinition, TWrapper, TIndexType>::TDataRegistry(const FString& InRegistryName, const TArray<TSoftObjectPtr<TWrapper>>& InWrappedData) : RegistryName(InRegistryName)
 {
 	Reserve(InWrappedData.Num());
