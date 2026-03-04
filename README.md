@@ -105,3 +105,6 @@ within an industrial simulation context, focusing on high-performance **Native C
 1. Clone the repository: `git clone [REPO_URL]`
 2. Right-click `GEARS.uproject` > `Generate Visual Studio project files`.
 3. Open the project with **JetBrains Rider** or VS2022.
+
+---
+📜 **Credits:** All community assets used in this project are listed in [CREDITS.md](./CREDITS.md).
