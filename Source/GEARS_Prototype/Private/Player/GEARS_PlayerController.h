@@ -51,8 +51,9 @@ private:
 	FDelegateHandle CamSnapChangedHandle;
 	FTimerHandle MoveDelayedHandle;
 	
-	void MoveToLocation(FVector Location);
-	void MoveToCursor();
+	void InteractWithWorld();
+	bool MoveToLocation(FVector Location);
+	void MoveFeedback(const FHitResult& Hit) const;
 	void Zoom(const FInputActionValue& Value);
 	void HiddenCursor();
 	void ShowCursor();
