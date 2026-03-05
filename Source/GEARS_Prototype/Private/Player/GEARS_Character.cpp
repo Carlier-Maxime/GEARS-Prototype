@@ -3,8 +3,9 @@
 
 #include "GEARS_Character.h"
 #include "EnhancedInputComponent.h"
-#include "Definitions/GEARS_Macro.h"
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Definitions/GEARS_Macro.h"
 #include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
 #include "Settings/GridParams.h"
@@ -21,6 +22,7 @@ AGEARS_Character::AGEARS_Character()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AutoSetNavRadius();
 	ResetView();
 }

@@ -7,12 +7,14 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "AbilitySystemInterface.h"
+#include "GAS/Attributes/CharacterAttributeSet.h"
 #include "GEARS_Character.generated.h"
 
 class UInputAction;
 
 UCLASS()
-class GEARS_PROTOTYPE_API AGEARS_Character : public ACharacter
+class GEARS_PROTOTYPE_API AGEARS_Character : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -41,6 +43,12 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action", meta=(AllowPrivateAccess = true))
 	TSoftObjectPtr<UInputAction> MoveAction;
+	
+	UPROPERTY()
+	UAbilitySystemComponent* AbilitySystemComponent;
+	UPROPERTY()
+	const UCharacterAttributeSet* AttributeSet;
+	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	
 	void Move(const struct FInputActionValue& Value);
 	void AutoSetNavRadius();
