@@ -44,6 +44,7 @@ void AGEARS_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	check(Input);
 	
 	ensureSoftPtrOrRet(MoveAction,);
+	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Started, this, &ThisClass::MoveStart);
 	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ThisClass::Move);
 	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Completed, this, &ThisClass::MoveEnd);
 	
@@ -67,6 +68,11 @@ void AGEARS_Character::BeginPlay()
 	AutoSetNavRadius();
 }
 
+void AGEARS_Character::MoveStart()
+{
+	if (ASC) ASC->AddLooseGameplayTag(TAG_State_Moving_Manual, 1, EGameplayTagReplicationState::CountToOwner);
+}
+
 void AGEARS_Character::Move(const FInputActionValue& Value)
 {
 	if (const auto PC = GetController()) PC->StopMovement();
@@ -79,8 +85,6 @@ void AGEARS_Character::Move(const FInputActionValue& Value)
 	
 	AddMovementInput(ForwardDirection, Direction.X);
 	AddMovementInput(RightDirection, Direction.Y);
-	
-	if (ASC) ASC->AddLooseGameplayTag(TAG_State_Moving_Manual, 1, EGameplayTagReplicationState::CountToOwner);
 }
 
 void AGEARS_Character::MoveEnd()
