@@ -66,13 +66,10 @@ void AGEARS_PlayerController::OnPossess(APawn* aPawn)
 void AGEARS_PlayerController::InteractWithWorld()
 {
 	FHitResult Hit;
-	if (!GetHitResultUnderCursor(ECC_Visibility, true, Hit)) return;
-	if (Hit.bBlockingHit)
-	{
-		FGameplayEventData Payload;
-		Payload.TargetData = UAbilitySystemBlueprintLibrary::AbilityTargetDataFromHitResult(Hit);
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), TAG_Ability_Move_Pathfinding, Payload);
-	}
+	if (!GetHitResultUnderCursor(ECC_Visibility, true, Hit) || !Hit.bBlockingHit) return;
+	FGameplayEventData Payload;
+	Payload.TargetData = UAbilitySystemBlueprintLibrary::AbilityTargetDataFromHitResult(Hit);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), TAG_Ability_Interact, Payload);
 }
 
 void AGEARS_PlayerController::Zoom(const FInputActionValue& Value)

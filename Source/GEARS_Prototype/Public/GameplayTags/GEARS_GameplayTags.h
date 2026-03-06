@@ -48,6 +48,7 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Mineral_Gold)
 
 #pragma region ability
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Move_Pathfinding)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Interact)
 #pragma endregion
 
 #pragma region state

@@ -46,6 +46,7 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Mineral_Gold, "Resource.Mineral.Gold")
 
 #pragma region ability
 UE_DEFINE_GAMEPLAY_TAG(TAG_Ability_Move_Pathfinding, "Ability.Move.Pathfinding")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Ability_Interact, "Ability.Interact")
 #pragma endregion
 
 #pragma region state

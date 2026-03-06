@@ -21,6 +21,10 @@ public:
 	AWorldRenderer();
 	virtual void PostActorCreated() override;
 	FWorldRenderBatcher Batcher();
+	FORCEINLINE bool IsResourceComponent(UPrimitiveComponent* Component) const;
+	bool IsResourceComponent(UHierarchicalInstancedStaticMeshComponent* HISM) const;
+	FORCEINLINE bool IsPlane(UPrimitiveComponent* Component) const;
+	bool IsPlane(UHierarchicalInstancedStaticMeshComponent* HISM) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -40,3 +44,13 @@ private:
 	
 	friend class FWorldRenderBatcher;
 };
+
+inline bool AWorldRenderer::IsResourceComponent(UPrimitiveComponent* Component) const
+{
+	return IsResourceComponent(Cast<UHierarchicalInstancedStaticMeshComponent>(Component));
+}
+
+inline bool AWorldRenderer::IsPlane(UPrimitiveComponent* Component) const
+{
+	return IsPlane(Cast<UHierarchicalInstancedStaticMeshComponent>(Component));
+}

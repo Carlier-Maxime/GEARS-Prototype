@@ -63,3 +63,13 @@ FWorldRenderBatcher AWorldRenderer::Batcher()
 {
 	return {*this};
 }
+
+bool AWorldRenderer::IsResourceComponent(UHierarchicalInstancedStaticMeshComponent* HISM) const
+{
+	return HISM && ResourcesComponents.Contains(HISM);
+}
+
+bool AWorldRenderer::IsPlane(UHierarchicalInstancedStaticMeshComponent* HISM) const
+{
+	return HISM == PlaneHISM;
+}
