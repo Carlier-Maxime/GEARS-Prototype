@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
+#include "GAS/Attributes/CharacterAttributeSet.h"
 #include "Grid/Rendering/WorldRenderer.h"
 
 UGA_Interact::UGA_Interact()
@@ -36,8 +37,17 @@ void UGA_Interact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	Payload.TargetData = TriggerEventData->TargetData;
 	FGameplayTag AbilityTag = FGameplayTag::EmptyTag;
 	
-	if (Renderer->IsPlane(Component)) AbilityTag = TAG_Ability_Move_Pathfinding;
-	else if (Renderer->IsResourceComponent(Component)) UE_LOG(LogTemp, Warning, TEXT("TODO Implement Mine Resource")); // TODO
+	auto* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!ASC) return;
+	if (Renderer->IsPlane(Component))
+	{
+		AbilityTag = TAG_Ability_Move_Pathfinding;
+		Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetArrivalPrecisionAttribute());;
+	} else if (Renderer->IsResourceComponent(Component))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TODO Implement Mine Resource")); // TODO
+		Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestRangeAttribute());
+	}
 	
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(ActorInfo->OwnerActor.Get(), AbilityTag, Payload);
 }

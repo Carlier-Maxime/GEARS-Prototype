@@ -11,7 +11,6 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "Settings/GridParams.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 
 UGA_MoveTo::UGA_MoveTo()
@@ -44,6 +43,7 @@ void UGA_MoveTo::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	FHitResult Hit = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData, 0);
 	Pawn = Cast<APawn>(ActorInfo->AvatarActor.Get());
 	DesiredLocation = Hit.Location;
+	ExtentValBase = TriggerEventData->EventMagnitude>0 ? TriggerEventData->EventMagnitude : 1;
 	if (!MoveToLocation()) return EndCancel();
 	FGameplayCueParameters Params;
 	Params.Location = DesiredLocation;
@@ -66,7 +66,7 @@ bool UGA_MoveTo::MoveToLocation()
 	const auto Radius = NavInvoker->GetGenerationRadius();
 	const auto StartLoc = Pawn->GetActorLocation();
 	const auto DistToLoc = FVector::Dist(DesiredLocation, StartLoc);
-	double ExtentVal = GridParams::Get().GetCellSize() * 0.25f;
+	double ExtentVal = ExtentValBase;
 	if (DistToLoc > Radius) ExtentVal += DistToLoc - Radius;
 	const FVector Extent(ExtentVal, ExtentVal, ExtentVal);
 	FNavLocation NavLoc;

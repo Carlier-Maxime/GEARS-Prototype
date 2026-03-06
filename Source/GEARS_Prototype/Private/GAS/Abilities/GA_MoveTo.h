@@ -33,6 +33,7 @@ private:
 	UPROPERTY()
 	APawn* Pawn;
 	FVector DesiredLocation;
+	float ExtentValBase;
 	UPROPERTY()
 	UAbilityTask_WaitDelay* MoveTask;
 };
