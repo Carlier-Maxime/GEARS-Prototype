@@ -105,15 +105,7 @@ void UGA_MoveTo::OnTickPathUpdate()
 void UGA_MoveTo::OnMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
 	if (Result.IsInterrupted()) return;
-	UnboundTickDelegate();
-	if (Result.IsSuccess())
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-	}
-	else if (Result.IsFailure())
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
-	}
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, !Result.IsSuccess());
 }
 
 void UGA_MoveTo::UnboundTickDelegate()
@@ -126,9 +118,12 @@ void UGA_MoveTo::UnboundTickDelegate()
 	TickDelegateHandle.Reset();
 }
 
-void UGA_MoveTo::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-                               const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
+void UGA_MoveTo::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	UnboundTickDelegate();
-	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
+	const FGameplayEventData Payload;
+	auto* Actor = GetAvatarActorFromActorInfo();
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Actor, bWasCancelled ? TAG_Event_Movement_Cancel : TAG_Event_Movement_Arrived, Payload);
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

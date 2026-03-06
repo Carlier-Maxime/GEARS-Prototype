@@ -57,3 +57,8 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_State_Moving_Auto, "State.Moving.Auto")
 #pragma region cue
 UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Move_Confirm, "GameplayCue.Move.Confirm")
 #pragma endregion
+
+#pragma region event
+UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Movement_Arrived, "Event.Movement.Arrived")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Movement_Cancel, "Event.Movement.Cancel")
+#pragma endregion

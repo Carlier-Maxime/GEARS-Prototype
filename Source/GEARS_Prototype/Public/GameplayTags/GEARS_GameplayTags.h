@@ -59,3 +59,8 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Moving_Auto)
 #pragma region cue
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Cue_Move_Confirm)
 #pragma endregion
+
+#pragma region event
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Event_Movement_Arrived)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Event_Movement_Cancel)
+#pragma endregion
