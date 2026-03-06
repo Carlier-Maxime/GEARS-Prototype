@@ -45,3 +45,16 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Mineral_Iron)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Mineral_Copper)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Mineral_Gold)
 #pragma endregion
+
+#pragma region ability
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Move_Pathfinding)
+#pragma endregion
+
+#pragma region state
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Moving_Manual)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Moving_Auto)
+#pragma endregion
+
+#pragma region cue
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Cue_Move_Confirm)
+#pragma endregion

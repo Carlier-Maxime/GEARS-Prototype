@@ -43,3 +43,16 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Mineral_Iron, "Resource.Mineral.Iron")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Mineral_Copper, "Resource.Mineral.Copper")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Mineral_Gold, "Resource.Mineral.Gold")
 #pragma endregion
+
+#pragma region ability
+UE_DEFINE_GAMEPLAY_TAG(TAG_Ability_Move_Pathfinding, "Ability.Move.Pathfinding")
+#pragma endregion
+
+#pragma region state
+UE_DEFINE_GAMEPLAY_TAG(TAG_State_Moving_Manual, "State.Moving.Manual")
+UE_DEFINE_GAMEPLAY_TAG(TAG_State_Moving_Auto, "State.Moving.Auto")
+#pragma endregion
+
+#pragma region cue
+UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Move_Confirm, "GameplayCue.Move.Confirm")
+#pragma endregion

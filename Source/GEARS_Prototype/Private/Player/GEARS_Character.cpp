@@ -6,6 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Definitions/GEARS_Macro.h"
+#include "GameplayTags/GEARS_GameplayTags.h"
+#include "GAS/Abilities/GA_MoveTo.h"
 #include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
 #include "Settings/GridParams.h"
@@ -22,7 +24,7 @@ AGEARS_Character::AGEARS_Character()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AutoSetNavRadius();
 	ResetView();
 }
@@ -41,6 +43,9 @@ void AGEARS_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	
 	ensureSoftPtrOrRet(MoveAction,);
 	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ThisClass::Move);
+	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Completed, this, &ThisClass::MoveEnd);
+	
+	if (ASC) ASC->GiveAbility(FGameplayAbilitySpec(UGA_MoveTo::StaticClass(), 1, INDEX_NONE, this));
 }
 
 void AGEARS_Character::AutoSetNavRadius()
@@ -70,6 +75,13 @@ void AGEARS_Character::Move(const FInputActionValue& Value)
 	
 	AddMovementInput(ForwardDirection, Direction.X);
 	AddMovementInput(RightDirection, Direction.Y);
+	
+	if (ASC) ASC->AddLooseGameplayTag(TAG_State_Moving_Manual, 1, EGameplayTagReplicationState::CountToOwner);
+}
+
+void AGEARS_Character::MoveEnd()
+{
+	if (ASC) ASC->RemoveLooseGameplayTag(TAG_State_Moving_Manual, 1);
 }
 
 void AGEARS_Character::ResetView()

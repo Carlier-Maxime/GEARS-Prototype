@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GEARS_PlayerController.generated.h"
 
+class UPathFollowingComponent;
 struct FInputActionValue;
 class USpringArmComponent;
 class UNiagaraSystem;
@@ -19,6 +20,8 @@ class GEARS_PROTOTYPE_API AGEARS_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+	AGEARS_PlayerController();
+	
 	void SnapYaw90();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void StopMovement() override;
@@ -41,19 +44,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	TSoftObjectPtr<UInputAction> OrbitModifier;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="FX")
-	TSoftObjectPtr<UNiagaraSystem> ClickFX;
-	
 private:
 	UPROPERTY()
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
 	FTSTicker::FDelegateHandle SnapYawDelegate;
 	FDelegateHandle CamSnapChangedHandle;
-	FTimerHandle MoveDelayedHandle;
+	
+	UPROPERTY()
+	UPathFollowingComponent* PathFollowingComponent;
 	
 	void InteractWithWorld();
-	bool MoveToLocation(FVector Location);
-	void MoveFeedback(const FHitResult& Hit) const;
 	void Zoom(const FInputActionValue& Value);
 	void HiddenCursor();
 	void ShowCursor();

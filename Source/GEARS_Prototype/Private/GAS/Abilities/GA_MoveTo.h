@@ -1,0 +1,38 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "AITypes.h"
+#include "Abilities/GameplayAbility.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "GA_MoveTo.generated.h"
+
+struct FPathFollowingResult;
+/**
+ * 
+ */
+UCLASS()
+class GEARS_PROTOTYPE_API UGA_MoveTo : public UGameplayAbility
+{
+	GENERATED_BODY()
+public:
+	UGA_MoveTo();
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	virtual void CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility) override;
+
+private:
+	bool MoveToLocation();
+	UFUNCTION()
+	void OnTickPathUpdate();
+	void LoopPathCheck(const FVector& IntermediateLocation);
+	void OnMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result);
+	void UnboundTickDelegate();
+	
+	FDelegateHandle TickDelegateHandle;
+	UPROPERTY()
+	APawn* Pawn;
+	FVector DesiredLocation;
+	UPROPERTY()
+	UAbilityTask_WaitDelay* MoveTask;
+};

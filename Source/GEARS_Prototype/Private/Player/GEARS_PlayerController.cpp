@@ -8,16 +8,19 @@
 #include "GEARS_Character.h"
 #include "Definitions/GEARS_Macro.h"
 #include "InputMappingContext.h"
-#include "NavigationSystem.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "NiagaraFunctionLibrary.h"
-#include "AI/NavigationSystemBase.h"
-#include "Engine/AssetManager.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "Abilities/GameplayAbilityTypes.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameplayTags/GEARS_GameplayTags.h"
+#include "Navigation/PathFollowingComponent.h"
 #include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
-#include "Settings/GridParams.h"
+
+AGEARS_PlayerController::AGEARS_PlayerController()
+{
+	PathFollowingComponent = CreateDefaultSubobject<UPathFollowingComponent>(TEXT("PathFollowingComponent"));
+}
 
 void AGEARS_PlayerController::BeginPlay()
 {
@@ -30,7 +33,6 @@ void AGEARS_PlayerController::BeginPlay()
 		check(Subsystem);
 		Subsystem->AddMappingContext(DefaultIMC.LoadSynchronous(), InputPriority);
 	}
-	if (ensureSoftPtr(ClickFX)) UAssetManager::GetStreamableManager().RequestAsyncLoad(ClickFX.ToSoftObjectPath());
 	CamSnapChangedHandle = CameraParams::Get().OnSnapYawStateChanged.AddLambda([this](bool) { SnapYaw90(); });
 }
 
@@ -65,46 +67,12 @@ void AGEARS_PlayerController::InteractWithWorld()
 {
 	FHitResult Hit;
 	if (!GetHitResultUnderCursor(ECC_Visibility, true, Hit)) return;
-	if (MoveToLocation(Hit.Location)) MoveFeedback(Hit);
-}
-
-bool AGEARS_PlayerController::MoveToLocation(FVector Location)
-{
-	if (!GetPawn()) return false;
-	auto* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-	auto* NavInvoker = GetPawn()->FindComponentByClass<UNavigationInvokerComponent>();
-	if (!NavSys || !NavInvoker) return false;
-	auto Radius = NavInvoker->GetGenerationRadius();
-	auto StartLoc = GetPawn()->GetActorLocation();
-	auto DistToLoc = FVector::Dist(Location, StartLoc);
-	double ExtentVal = GridParams::Get().GetCellSize() * 0.25f;
-	if (DistToLoc > Radius) ExtentVal += DistToLoc - Radius;
-	FVector Extent(ExtentVal, ExtentVal, ExtentVal);
-	FNavLocation NavLoc;
-	if (!NavSys->ProjectPointToNavigation(Location, NavLoc, Extent)) return false;
-	GetWorldTimerManager().ClearTimer(MoveDelayedHandle);
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, NavLoc.Location);
-	if (DistToLoc <= Radius) return true;
-	const auto* MoveComponent = GetPawn()->GetMovementComponent();
-	if (!MoveComponent) return true;
-	const auto ElapsedHalfTime = 0.5*FVector::Dist(NavLoc.Location, StartLoc) / MoveComponent->GetMaxSpeed();
-	if (ElapsedHalfTime < 0.1) return true;
-	GetWorldTimerManager().SetTimer(MoveDelayedHandle, [this, Location]()
+	if (Hit.bBlockingHit)
 	{
-		MoveToLocation(Location);
-	}, ElapsedHalfTime, false);
-	return true;
-}
-
-void AGEARS_PlayerController::MoveFeedback(const FHitResult& Hit) const
-{
-	ensureSoftPtrOrRet(ClickFX,);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-		GetWorld(), 
-		ClickFX.LoadSynchronous(), 
-		Hit.ImpactPoint, 
-		Hit.ImpactNormal.Rotation()
-	);
+		FGameplayEventData Payload;
+		Payload.TargetData = UAbilitySystemBlueprintLibrary::AbilityTargetDataFromHitResult(Hit);
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), TAG_Ability_Move_Pathfinding, Payload);
+	}
 }
 
 void AGEARS_PlayerController::Zoom(const FInputActionValue& Value)
@@ -197,6 +165,11 @@ void AGEARS_PlayerController::RequestViewReset()
 
 void AGEARS_PlayerController::StopMovement()
 {
-	GetWorldTimerManager().ClearTimer(MoveDelayedHandle);
+	if (auto* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()))
+	{
+		const FGameplayTagContainer TagsToCancel{TAG_Ability_Move_Pathfinding};
+		ASC->CancelAbilities(&TagsToCancel);
+	}
+	
 	Super::StopMovement();
 }

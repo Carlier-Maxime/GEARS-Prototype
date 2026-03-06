@@ -21,6 +21,7 @@ class GEARS_PROTOTYPE_API AGEARS_Character : public ACharacter, public IAbilityS
 public:
 	AGEARS_Character();
 	virtual void Tick(float DeltaTime) override;
+	void MoveEnd();
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
 	void ResetView();
@@ -45,10 +46,10 @@ private:
 	TSoftObjectPtr<UInputAction> MoveAction;
 	
 	UPROPERTY()
-	UAbilitySystemComponent* AbilitySystemComponent;
+	UAbilitySystemComponent* ASC;
 	UPROPERTY()
 	const UCharacterAttributeSet* AttributeSet;
-	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
+	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return ASC; }
 	
 	void Move(const struct FInputActionValue& Value);
 	void AutoSetNavRadius();
