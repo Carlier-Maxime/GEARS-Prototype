@@ -3,6 +3,7 @@
 
 #include "CharacterAttributeSet.h"
 
+#include "GameplayTags/GEARS_GameplayTags.h"
 #include "Settings/GridParams.h"
 
 UCharacterAttributeSet::UCharacterAttributeSet()
@@ -11,4 +12,11 @@ UCharacterAttributeSet::UCharacterAttributeSet()
 	InitArrivalPrecision(CellSize * 0.25f);
 	InitHarvestRange(CellSize * 1.5f);
 	InitRemoteAccessRange(CellSize * 16.f);
+}
+
+FGameplayAttribute UCharacterAttributeSet::GetInteractionRangeAttribute(const FGameplayTag TypeTag)
+{
+	if (TypeTag.MatchesTag(TAG_Biome)) return GetArrivalPrecisionAttribute();
+	if (TypeTag.MatchesTag(TAG_Resource)) return GetHarvestRangeAttribute();
+	return GetArrivalPrecisionAttribute();
 }

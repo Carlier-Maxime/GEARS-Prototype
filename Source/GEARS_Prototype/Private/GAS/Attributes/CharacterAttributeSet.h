@@ -34,4 +34,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Attributes|Interaction")
 	FGameplayAttributeData RemoteAccessRange;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, RemoteAccessRange);
+	
+	static FGameplayAttribute GetInteractionRangeAttribute(FGameplayTag TypeTag); 
 };

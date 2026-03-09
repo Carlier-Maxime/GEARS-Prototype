@@ -21,10 +21,9 @@ public:
 	AWorldRenderer();
 	virtual void PostActorCreated() override;
 	FWorldRenderBatcher Batcher();
-	FORCEINLINE bool IsResourceComponent(UPrimitiveComponent* Component) const;
-	bool IsResourceComponent(UHierarchicalInstancedStaticMeshComponent* HISM) const;
-	FORCEINLINE bool IsPlane(UPrimitiveComponent* Component) const;
-	bool IsPlane(UHierarchicalInstancedStaticMeshComponent* HISM) const;
+	FGameplayTag GetTypeTag(const FHitResult& Hit) const;
+	FORCEINLINE FGameplayTag GetBiomeTag(const FHitResult& Hit) const;
+	FGameplayTag GetBiomeTag(const FWorldGridPos& Pos) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,12 +44,7 @@ private:
 	friend class FWorldRenderBatcher;
 };
 
-inline bool AWorldRenderer::IsResourceComponent(UPrimitiveComponent* Component) const
+inline FGameplayTag AWorldRenderer::GetBiomeTag(const FHitResult& Hit) const
 {
-	return IsResourceComponent(Cast<UHierarchicalInstancedStaticMeshComponent>(Component));
-}
-
-inline bool AWorldRenderer::IsPlane(UPrimitiveComponent* Component) const
-{
-	return IsPlane(Cast<UHierarchicalInstancedStaticMeshComponent>(Component));
+	return GetBiomeTag(FWorldGridPos{Hit.Location});
 }

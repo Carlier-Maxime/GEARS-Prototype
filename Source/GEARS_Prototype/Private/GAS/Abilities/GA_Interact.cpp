@@ -34,19 +34,11 @@ void UGA_Interact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	const auto Hit = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData, 0);
 	const auto* Renderer = Cast<AWorldRenderer>(Hit.GetActor());
 	auto* ASC = GetAbilitySystemComponentFromActorInfo();
-	if (!ASC || !Renderer || !Hit.Component.IsValid()) return EndCancel();
-	auto* Component = Hit.Component.Get();
+	if (!ASC || !Renderer) return EndCancel();
 	
 	FGameplayEventData Payload;
 	Payload.TargetData = TriggerEventData->TargetData;
-	
-	if (Renderer->IsPlane(Component))
-	{
-		Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetArrivalPrecisionAttribute());;
-	} else if (Renderer->IsResourceComponent(Component))
-	{
-		Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestRangeAttribute());
-	}
+	Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetInteractionRangeAttribute(Renderer->GetTypeTag(Hit)));
 	
 	InitMoveTask();
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(ActorInfo->OwnerActor.Get(), TAG_Ability_Move_Pathfinding, Payload);

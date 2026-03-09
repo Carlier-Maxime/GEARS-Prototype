@@ -5,6 +5,8 @@
 
 #include "AI/NavigationSystemBase.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
+#include "GameplayTags/GEARS_GameplayTags.h"
+#include "Grid/GridSubsystem.h"
 #include "Settings/GridParams.h"
 
 
@@ -64,12 +66,19 @@ FWorldRenderBatcher AWorldRenderer::Batcher()
 	return {*this};
 }
 
-bool AWorldRenderer::IsResourceComponent(UHierarchicalInstancedStaticMeshComponent* HISM) const
+FGameplayTag AWorldRenderer::GetTypeTag(const FHitResult& Hit) const
 {
-	return HISM && ResourcesComponents.Contains(HISM);
+	if (!Hit.Component.IsValid()) return FGameplayTag::EmptyTag;
+	auto* HISM = Cast<UHierarchicalInstancedStaticMeshComponent>(Hit.Component.Get());
+	if (HISM == PlaneHISM) return GetBiomeTag(Hit);
+	auto Index = ResourcesComponents.Find(HISM);
+	if (Index != INDEX_NONE) return GridParams::Get().GetResourceRegistry()[Index].Tag;
+	return FGameplayTag::EmptyTag;
 }
 
-bool AWorldRenderer::IsPlane(UHierarchicalInstancedStaticMeshComponent* HISM) const
+FGameplayTag AWorldRenderer::GetBiomeTag(const FWorldGridPos& Pos) const
 {
-	return HISM == PlaneHISM;
+	auto* Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
+	if (!Grid) return FGameplayTag::EmptyTag;
+	return Grid->GetBiome(Pos).Tag;
 }
