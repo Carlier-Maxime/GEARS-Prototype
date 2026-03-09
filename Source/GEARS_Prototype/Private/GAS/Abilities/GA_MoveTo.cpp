@@ -35,6 +35,7 @@ void UGA_MoveTo::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	auto EndCancel = [&]{EndAbility(Handle, ActorInfo, ActivationInfo, true, true);};
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo)) return EndCancel();
 	if (!TriggerEventData || !TriggerEventData->TargetData.IsValid(0)) return EndCancel();
+	CurrentEventData = *TriggerEventData;
 	if (MoveTask) 
 	{
 		MoveTask->EndTask();
@@ -121,9 +122,9 @@ void UGA_MoveTo::UnboundTickDelegate()
 void UGA_MoveTo::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	const auto Payload = std::move(CurrentEventData);
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 	UnboundTickDelegate();
-	const FGameplayEventData Payload;
 	auto* Actor = GetAvatarActorFromActorInfo();
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Actor, bWasCancelled ? TAG_Event_Movement_Cancel : TAG_Event_Movement_Arrived, Payload);
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
