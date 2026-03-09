@@ -53,11 +53,15 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Mineral_Gold)
 #pragma region ability
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Move_Pathfinding)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Interact)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Interact_Harvest)
 #pragma endregion
 
 #pragma region state
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Moving)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Moving_Manual)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Moving_Auto)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Interacting)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Harvesting)
 #pragma endregion
 
 #pragma region cue
@@ -67,4 +71,5 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Cue_Move_Confirm)
 #pragma region event
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Event_Movement_Arrived)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Event_Movement_Cancel)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Event_Interact_Execute)
 #pragma endregion

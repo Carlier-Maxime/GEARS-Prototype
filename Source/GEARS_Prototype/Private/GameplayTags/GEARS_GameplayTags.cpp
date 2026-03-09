@@ -50,11 +50,15 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Mineral_Gold, "Resource.Mineral.Gold")
 #pragma region ability
 UE_DEFINE_GAMEPLAY_TAG(TAG_Ability_Move_Pathfinding, "Ability.Move.Pathfinding")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Ability_Interact, "Ability.Interact")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Ability_Interact_Harvest, "Ability.Interact.Harvest")
 #pragma endregion
 
 #pragma region state
+UE_DEFINE_GAMEPLAY_TAG(TAG_State_Moving, "State.Moving")
 UE_DEFINE_GAMEPLAY_TAG(TAG_State_Moving_Manual, "State.Moving.Manual")
 UE_DEFINE_GAMEPLAY_TAG(TAG_State_Moving_Auto, "State.Moving.Auto")
+UE_DEFINE_GAMEPLAY_TAG(TAG_State_Interacting, "State.Interacting")
+UE_DEFINE_GAMEPLAY_TAG(TAG_State_Harvesting, "State.Harvesting")
 #pragma endregion
 
 #pragma region cue
@@ -64,4 +68,5 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Move_Confirm, "GameplayCue.Move.Confirm")
 #pragma region event
 UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Movement_Arrived, "Event.Movement.Arrived")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Movement_Cancel, "Event.Movement.Cancel")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Interact_Execute, "Event.Interact.Execute")
 #pragma endregion
