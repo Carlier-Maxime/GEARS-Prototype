@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Definitions/GEARS_Macro.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
+#include "GAS/Abilities/GA_Harvest.h"
 #include "GAS/Abilities/GA_Interact.h"
 #include "GAS/Abilities/GA_MoveTo.h"
 #include "Settings/CameraParams.h"
@@ -51,6 +52,7 @@ void AGEARS_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (!ASC) return; 
 	ASC->GiveAbility(FGameplayAbilitySpec(UGA_MoveTo::StaticClass(), 1, INDEX_NONE, this));
 	ASC->GiveAbility(FGameplayAbilitySpec(UGA_Interact::StaticClass(), 1, INDEX_NONE, this));
+	ASC->GiveAbility(FGameplayAbilitySpec(UGA_Harvest::StaticClass(), 1, INDEX_NONE, this));
 }
 
 void AGEARS_Character::AutoSetNavRadius()
