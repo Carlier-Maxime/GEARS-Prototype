@@ -21,6 +21,7 @@ UGA_Interact::UGA_Interact()
 	AbilityTriggers.Add(TriggerData);
 	
 	SetAssetTags(FGameplayTagContainer{TAG_Ability_Interact});
+	ActivationOwnedTags.AddTag(TAG_State_Interacting);
 	CancelAbilitiesWithTag.AddTag(TAG_Ability_Interact);
 }
 
@@ -38,7 +39,9 @@ void UGA_Interact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	
 	FGameplayEventData Payload;
 	Payload.TargetData = TriggerEventData->TargetData;
-	Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetInteractionRangeAttribute(Renderer->GetTypeTag(Hit)));
+	const auto TypeTag = Renderer->GetTypeTag(Hit);
+	Payload.TargetTags = FGameplayTagContainer{TypeTag};
+	Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetInteractionRangeAttribute(TypeTag));
 	
 	InitMoveTask();
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(ActorInfo->OwnerActor.Get(), TAG_Ability_Move_Pathfinding, Payload);
@@ -88,8 +91,8 @@ void UGA_Interact::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 
 void UGA_Interact::OnMoveArrived(FGameplayEventData Payload)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Arrived to destination for interact !")); //TODO 
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CurrentActorInfo->OwnerActor.Get(), TAG_Event_Interact_Execute, Payload);
 }
 
 void UGA_Interact::OnMoveCanceled(FGameplayEventData Payload)
