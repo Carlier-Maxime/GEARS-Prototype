@@ -22,6 +22,8 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Grid_Biome_Chunk_Factor)
 #pragma endregion
 
 #pragma region biome
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome)
+
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Forest_Autumn)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Forest_Deciduous)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Forest_Coniferous)
@@ -36,6 +38,8 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Biome_Jungle_Edge)
 #pragma endregion 
 
 #pragma region resource
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource)
+
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Organic_Wood)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Organic_Biomass)
 

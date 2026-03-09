@@ -20,6 +20,7 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Grid_Biome_Chunk_Factor, "Grid.Biome.Chunk.Factor")
 #pragma endregion
 
 #pragma region biome
+UE_DEFINE_GAMEPLAY_TAG(TAG_Biome, "Biome")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Forest_Autumn, "Biome.Forest.Autumn")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Forest_Deciduous, "Biome.Forest.Deciduous")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Forest_Coniferous, "Biome.Forest.Coniferous")
@@ -34,6 +35,8 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Biome_Jungle_Edge, "Biome.Jungle.Edge")
 #pragma endregion
 
 #pragma region resource
+UE_DEFINE_GAMEPLAY_TAG(TAG_Resource, "Resource")
+
 UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Organic_Wood, "Resource.Organic.Wood")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Organic_Biomass, "Resource.Organic.Biomass")
 
