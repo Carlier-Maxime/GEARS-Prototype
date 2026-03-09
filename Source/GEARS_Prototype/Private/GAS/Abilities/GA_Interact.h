@@ -30,6 +30,7 @@ protected:
 		const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	
 private:
+	void InitMoveTask();
 	void ClearMoveTask();
 	
 	UPROPERTY()

@@ -28,6 +28,7 @@ void UGA_Interact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	auto EndCancel = [&]{EndAbility(Handle, ActorInfo, ActivationInfo, true, true);};
+	
 	ClearMoveTask();
 	if (!TriggerEventData || !TriggerEventData->TargetData.IsValid(0) || !ActorInfo->OwnerActor.IsValid()) return EndCancel();
 	const auto Hit = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData, 0);
@@ -47,6 +48,12 @@ void UGA_Interact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		Payload.EventMagnitude = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestRangeAttribute());
 	}
 	
+	InitMoveTask();
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(ActorInfo->OwnerActor.Get(), TAG_Ability_Move_Pathfinding, Payload);
+}
+
+void UGA_Interact::InitMoveTask()
+{
 	MoveArrivedTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
 		this, 
 		TAG_Event_Movement_Arrived, 
@@ -64,8 +71,6 @@ void UGA_Interact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	);
 	MoveCanceledTask->EventReceived.AddUniqueDynamic(this, &UGA_Interact::OnMoveCanceled);
 	MoveCanceledTask->ReadyForActivation();
-	
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(ActorInfo->OwnerActor.Get(), TAG_Ability_Move_Pathfinding, Payload);
 }
 
 void UGA_Interact::ClearMoveTask()
