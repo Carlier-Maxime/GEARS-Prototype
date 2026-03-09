@@ -31,6 +31,8 @@ public:
 	FORCEINLINE static FWorldGridPos WorldToGrid(const FVector& WorldPosition);
 	FORCEINLINE static FVector GridToWorld(const FWorldGridPos& GridPos);
 	
+	FORCEINLINE const FBiomeDefinition& GetBiome(const FWorldGridPos& GridPos) const;
+	
 	UPROPERTY(Transient)
 	TMap<FIntPoint, FChunkData> Chunks;
 	
@@ -42,3 +44,8 @@ public:
 private:
 	void CreateChunk(const FChunkIndex& Index, FWorldRenderBatcher& RendererLock);
 };
+
+inline const FBiomeDefinition& UGridSubsystem::GetBiome(const FWorldGridPos& GridPos) const
+{
+	return GetChunk(GridPos).GetBiome(GridPos.ToInChunkPos());
+}
