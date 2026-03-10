@@ -39,4 +39,5 @@ private:
 	float ExtentValBase;
 	UPROPERTY()
 	UAbilityTask_WaitDelay* MoveTask;
+	bool bMoveHasFinished = false;
 };

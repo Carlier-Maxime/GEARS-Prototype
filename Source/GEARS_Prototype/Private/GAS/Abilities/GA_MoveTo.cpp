@@ -41,6 +41,7 @@ void UGA_MoveTo::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		MoveTask->EndTask();
 		MoveTask = nullptr;
 	}
+	bMoveHasFinished = false;
 
 	Pawn = Cast<APawn>(ActorInfo->AvatarActor.Get());
 	DesiredLocation = Hit.Location;
@@ -106,6 +107,7 @@ void UGA_MoveTo::OnTickPathUpdate()
 void UGA_MoveTo::OnMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
 	if (Result.IsInterrupted()) return;
+	bMoveHasFinished = true;
 	EndAbilitySimple(true, !Result.IsSuccess());
 }
 
@@ -126,5 +128,6 @@ void UGA_MoveTo::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 	UnboundTickDelegate();
 	auto* Actor = GetAvatarActorFromActorInfo();
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Actor, bWasCancelled ? TAG_Event_Movement_Cancel : TAG_Event_Movement_Arrived, Payload);
+	auto EventTag = bWasCancelled || !bMoveHasFinished ? &TAG_Event_Movement_Cancel : &TAG_Event_Movement_Arrived;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Actor, *EventTag, Payload);
 }
