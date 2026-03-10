@@ -44,6 +44,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action", meta=(AllowPrivateAccess = true))
 	TSoftObjectPtr<UInputAction> MoveAction;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 	UPROPERTY()
 	UAbilitySystemComponent* ASC;
 	UPROPERTY()

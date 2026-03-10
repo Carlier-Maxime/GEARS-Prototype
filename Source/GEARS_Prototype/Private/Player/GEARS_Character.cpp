@@ -8,8 +8,6 @@
 #include "Definitions/GEARS_Macro.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
-#include "GAS/Abilities/GA_Harvest.h"
-#include "GAS/Abilities/GA_Interact.h"
 #include "GAS/Abilities/GA_MoveTo.h"
 #include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
@@ -50,10 +48,11 @@ void AGEARS_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ThisClass::Move);
 	Input->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Completed, this, &ThisClass::MoveEnd);
 	
-	if (!ASC) return; 
-	ASC->GiveAbility(FGameplayAbilitySpec(UGA_MoveTo::StaticClass(), 1, INDEX_NONE, this));
-	ASC->GiveAbility(FGameplayAbilitySpec(UGA_Interact::StaticClass(), 1, INDEX_NONE, this));
-	ASC->GiveAbility(FGameplayAbilitySpec(UGA_Harvest::StaticClass(), 1, INDEX_NONE, this));
+	check(ASC);
+	for (auto Ability : StartupAbilities)
+	{
+		ASC->GiveAbility(FGameplayAbilitySpec(Ability, 1, INDEX_NONE, this));
+	}
 }
 
 void AGEARS_Character::AutoSetNavRadius()
