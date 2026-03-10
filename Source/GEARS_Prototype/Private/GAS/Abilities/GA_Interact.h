@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "GA_Common.h"
 #include "GA_Interact.generated.h"
 
 class UAbilityTask_WaitGameplayEvent;
@@ -12,7 +12,7 @@ class UAbilityTask_WaitDelay;
  * 
  */
 UCLASS()
-class GEARS_PROTOTYPE_API UGA_Interact : public UGameplayAbility
+class GEARS_PROTOTYPE_API UGA_Interact : public UGA_Common
 {
 	GENERATED_BODY()
 public:

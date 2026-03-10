@@ -32,16 +32,16 @@ UGA_MoveTo::UGA_MoveTo()
 void UGA_MoveTo::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                  const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	auto EndCancel = [&]{EndAbility(Handle, ActorInfo, ActivationInfo, true, true);};
+	FHitResult Hit;
+	if (!TryHitResultFrom(TriggerEventData, Hit)) return EndCancel();
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo)) return EndCancel();
-	if (!TriggerEventData || !TriggerEventData->TargetData.IsValid(0)) return EndCancel();
 	CurrentEventData = *TriggerEventData;
 	if (MoveTask) 
 	{
 		MoveTask->EndTask();
 		MoveTask = nullptr;
 	}
-	FHitResult Hit = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData, 0);
+
 	Pawn = Cast<APawn>(ActorInfo->AvatarActor.Get());
 	DesiredLocation = Hit.Location;
 	ExtentValBase = TriggerEventData->EventMagnitude>0 ? TriggerEventData->EventMagnitude : 1;
@@ -106,7 +106,7 @@ void UGA_MoveTo::OnTickPathUpdate()
 void UGA_MoveTo::OnMoveFinished(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
 	if (Result.IsInterrupted()) return;
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, !Result.IsSuccess());
+	EndAbilitySimple(true, !Result.IsSuccess());
 }
 
 void UGA_MoveTo::UnboundTickDelegate()

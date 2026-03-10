@@ -28,14 +28,11 @@ UGA_Interact::UGA_Interact()
 void UGA_Interact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	auto EndCancel = [&]{EndAbility(Handle, ActorInfo, ActivationInfo, true, true);};
-	
 	ClearMoveTask();
-	if (!TriggerEventData || !TriggerEventData->TargetData.IsValid(0) || !ActorInfo->OwnerActor.IsValid()) return EndCancel();
-	const auto Hit = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData, 0);
-	const auto* Renderer = Cast<AWorldRenderer>(Hit.GetActor());
-	auto* ASC = GetAbilitySystemComponentFromActorInfo();
-	if (!ASC || !Renderer) return EndCancel();
+	AWorldRenderer* Renderer = nullptr;
+	UAbilitySystemComponent* ASC = nullptr;
+	FHitResult Hit;
+	if (!TryHitResultFrom(TriggerEventData, Hit, &Renderer, &ASC)) return EndCancel();
 	
 	FGameplayEventData Payload;
 	Payload.TargetData = TriggerEventData->TargetData;
@@ -91,11 +88,11 @@ void UGA_Interact::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 
 void UGA_Interact::OnMoveArrived(FGameplayEventData Payload)
 {
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	EndFinish();
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CurrentActorInfo->OwnerActor.Get(), TAG_Event_Interact_Execute, Payload);
 }
 
 void UGA_Interact::OnMoveCanceled(FGameplayEventData Payload)
 {
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	EndCancel();
 }

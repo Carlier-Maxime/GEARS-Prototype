@@ -33,5 +33,5 @@ void UGA_Harvest::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 void UGA_Harvest::OnMoveStarted()
 {
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	EndFinish();
 }

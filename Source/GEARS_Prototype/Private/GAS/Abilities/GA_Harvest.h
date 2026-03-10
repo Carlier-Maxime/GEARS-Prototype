@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "GA_Common.h"
 #include "GA_Harvest.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GEARS_PROTOTYPE_API UGA_Harvest : public UGameplayAbility
+class GEARS_PROTOTYPE_API UGA_Harvest : public UGA_Common
 {
 	GENERATED_BODY()
 public:

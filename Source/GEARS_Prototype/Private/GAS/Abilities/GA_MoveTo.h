@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AITypes.h"
-#include "Abilities/GameplayAbility.h"
+#include "GA_Common.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "GA_MoveTo.generated.h"
 
@@ -13,7 +13,7 @@ struct FPathFollowingResult;
  * 
  */
 UCLASS()
-class GEARS_PROTOTYPE_API UGA_MoveTo : public UGameplayAbility
+class GEARS_PROTOTYPE_API UGA_MoveTo : public UGA_Common
 {
 	GENERATED_BODY()
 public:
