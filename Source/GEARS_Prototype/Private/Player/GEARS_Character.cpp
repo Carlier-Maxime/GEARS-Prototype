@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Definitions/GEARS_Macro.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "GAS/Abilities/GA_Harvest.h"
 #include "GAS/Abilities/GA_Interact.h"

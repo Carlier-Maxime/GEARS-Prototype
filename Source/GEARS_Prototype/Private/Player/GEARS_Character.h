@@ -6,11 +6,11 @@
 #include "NavigationInvokerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemInterface.h"
 #include "GAS/Attributes/CharacterAttributeSet.h"
 #include "GEARS_Character.generated.h"
 
+class USpringArmComponent;
 class UInputAction;
 
 UCLASS()
