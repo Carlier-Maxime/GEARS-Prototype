@@ -6,6 +6,7 @@
 #include "GA_Common.h"
 #include "GA_Harvest.generated.h"
 
+class UHierarchicalInstancedStaticMeshComponent;
 /**
  * 
  */
@@ -22,4 +23,5 @@ protected:
 private:
 	UFUNCTION()
 	void OnMoveStarted();
+	FHitResult CalcMiningHit(const FHitResult& BaseHit, double Marge, UHierarchicalInstancedStaticMeshComponent* HISM = nullptr) const;
 };
