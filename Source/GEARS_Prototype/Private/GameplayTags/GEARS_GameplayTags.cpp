@@ -69,4 +69,5 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Move_Confirm, "GameplayCue.Move.Confirm")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Movement_Arrived, "Event.Movement.Arrived")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Movement_Cancel, "Event.Movement.Cancel")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Interact_Execute, "Event.Interact.Execute")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Harvest_Impact, "Event.Harvest.Impact")
 #pragma endregion
