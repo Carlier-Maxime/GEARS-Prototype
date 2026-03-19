@@ -5,6 +5,8 @@
 
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 
 UGA_Harvest::UGA_Harvest()
@@ -32,12 +34,17 @@ void UGA_Harvest::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	auto HISM = Cast<UHierarchicalInstancedStaticMeshComponent>(Hit.Component);
 	if (!HISM || Hit.Item == INDEX_NONE) return EndCancel();
 	
-	auto* WaitTask = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, TAG_State_Moving);
-	WaitTask->Added.AddUniqueDynamic(this, &UGA_Harvest::OnMoveStarted);
-	WaitTask->ReadyForActivation();
+	auto* WaitTag = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, TAG_State_Moving);
+	WaitTag->Added.AddUniqueDynamic(this, &UGA_Harvest::OnMoveStarted);
+	WaitTag->ReadyForActivation();
 	
-	const auto MiningHit = CalcMiningHit(Hit, TriggerEventData->EventMagnitude, HISM);
-	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 2); // TODO Implement Harvesting
+	RefreshMiningHit(Hit, TriggerEventData->EventMagnitude, HISM);
+	auto* WaitEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, TAG_Event_Harvest_Impact, nullptr, false);
+	WaitEvent->EventReceived.AddUniqueDynamic(this, &ThisClass::OnImpact);
+	WaitEvent->ReadyForActivation();
+	
+	if (AnimMontage) ImpactFromMontage();
+	else OneImpactAndStop();
 }
 
 void UGA_Harvest::OnMoveStarted()
@@ -45,7 +52,7 @@ void UGA_Harvest::OnMoveStarted()
 	EndFinish();
 }
 
-FHitResult UGA_Harvest::CalcMiningHit(const FHitResult& BaseHit, const double Marge, UHierarchicalInstancedStaticMeshComponent* HISM) const
+void UGA_Harvest::RefreshMiningHit(const FHitResult& BaseHit, const double Marge, UHierarchicalInstancedStaticMeshComponent* HISM)
 {
 	FTransform InstanceTr;
 	if (!HISM) HISM = Cast<UHierarchicalInstancedStaticMeshComponent>(BaseHit.Component);
@@ -56,11 +63,34 @@ FHitResult UGA_Harvest::CalcMiningHit(const FHitResult& BaseHit, const double Ma
 	auto Vec = FVector(BaseHit.Location.X, BaseHit.Location.Y, FMath::Min(MaxZ, StartTrace.Z)) - StartTrace;
 	auto EndTrace = StartTrace + Vec.GetSafeNormal() * FMath::Max(Marge>1e-5 ? Marge : 1, Vec.Size());
 	
-	FHitResult MiningHit;
+	FHitResult NewMiningHit;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(CurrentActorInfo->OwnerActor.Get());
 	Params.bTraceComplex = true;
-	if (!GetWorld()->LineTraceSingleByChannel(MiningHit, StartTrace, EndTrace, ECC_Visibility, Params)) return BaseHit;
-	if (MiningHit.Item != BaseHit.Item || MiningHit.Component != BaseHit.Component) return BaseHit;
-	return MiningHit;
+	if (!GetWorld()->LineTraceSingleByChannel(NewMiningHit, StartTrace, EndTrace, ECC_Visibility, Params)) MiningHit = BaseHit;
+	else if (NewMiningHit.Item != BaseHit.Item || NewMiningHit.Component != BaseHit.Component) MiningHit = BaseHit;
+	else MiningHit = NewMiningHit;
+}
+
+void UGA_Harvest::OnImpact(FGameplayEventData Payload)
+{
+	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 0.25); // TODO Implement Harvesting
+}
+
+void UGA_Harvest::ImpactFromMontage()
+{
+	auto* Proxy = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AnimMontage);
+	Proxy->OnCompleted.AddDynamic(this, &ThisClass::EndFinish);
+	Proxy->OnInterrupted.AddDynamic(this, &ThisClass::EndFinish);
+	Proxy->OnCancelled.AddDynamic(this, &ThisClass::EndFinish);
+	Proxy->ReadyForActivation();
+}
+
+void UGA_Harvest::OneImpactAndStop()
+{
+	FGameplayEventData Payload;
+	Payload.EventTag = TAG_Event_Harvest_Impact;
+	Payload.Instigator = CurrentActorInfo->OwnerActor.Get();
+	OnImpact(Payload);
+	EndFinish();
 }

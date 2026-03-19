@@ -18,10 +18,19 @@ public:
 	UGA_Harvest();
 
 protected:
+	UFUNCTION()
+	void OnImpact(FGameplayEventData Payload);
+	void OneImpactAndStop();
+	void ImpactFromMontage();
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	                             const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 private:
 	UFUNCTION()
 	void OnMoveStarted();
-	FHitResult CalcMiningHit(const FHitResult& BaseHit, double Marge, UHierarchicalInstancedStaticMeshComponent* HISM = nullptr) const;
+	void RefreshMiningHit(const FHitResult& BaseHit, double Marge, UHierarchicalInstancedStaticMeshComponent* HISM = nullptr);
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> AnimMontage = nullptr;
+	
+	FHitResult MiningHit;
 };
