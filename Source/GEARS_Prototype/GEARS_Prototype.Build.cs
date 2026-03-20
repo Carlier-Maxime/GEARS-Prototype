@@ -28,7 +28,9 @@ public class GEARS_Prototype : ModuleRules
 			"UMG",
 			"Slate",
 			"SlateCore",
-			"NavigationSystem"
+			"NavigationSystem",
+			"ControlRig",
+			"RigVM"
 		});
 	}
 }
