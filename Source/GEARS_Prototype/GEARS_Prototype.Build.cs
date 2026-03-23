@@ -30,7 +30,8 @@ public class GEARS_Prototype : ModuleRules
 			"SlateCore",
 			"NavigationSystem",
 			"ControlRig",
-			"RigVM"
+			"RigVM",
+			"PBIK"
 		});
 	}
 }
