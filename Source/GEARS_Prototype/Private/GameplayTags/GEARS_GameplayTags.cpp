@@ -71,3 +71,10 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Movement_Cancel, "Event.Movement.Cancel")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Interact_Execute, "Event.Interact.Execute")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Event_Harvest_Impact, "Event.Harvest.Impact")
 #pragma endregion
+
+#pragma region IK
+UE_DEFINE_GAMEPLAY_TAG(TAG_IK, "IK")
+UE_DEFINE_GAMEPLAY_TAG(TAG_IK_Arm, "IK.Arm")
+UE_DEFINE_GAMEPLAY_TAG(TAG_IK_Arm_Left, "IK.Arm.Left")
+UE_DEFINE_GAMEPLAY_TAG(TAG_IK_Arm_Right, "IK.Arm.Right")
+#pragma endregion
