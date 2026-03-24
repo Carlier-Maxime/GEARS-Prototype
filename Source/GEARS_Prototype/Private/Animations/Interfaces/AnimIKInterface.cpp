@@ -10,5 +10,6 @@ FIKSlot& IAnimIKInterface::GetIK(const FGameplayTag Tag)
 	if (!Tag.MatchesTag(TAG_IK)) UE_LOG(LogTemp, Error, TEXT("Invalid IK tag: %s"), *Tag.ToString());
 	FIKSlot NewIK;
 	NewIK.Tag = Tag;
+	NewIK.Weight = 0;
 	return IKSlots.Add(Tag, NewIK);
 }
