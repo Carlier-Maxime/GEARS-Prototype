@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Animations/Interfaces/AnimIKInterface.h"
 #include "CharacterAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GEARS_PROTOTYPE_API UCharacterAnimInstance : public UAnimInstance
+class GEARS_PROTOTYPE_API UCharacterAnimInstance : public UAnimInstance, public IAnimIKInterface
 {
 	GENERATED_BODY()
 	
