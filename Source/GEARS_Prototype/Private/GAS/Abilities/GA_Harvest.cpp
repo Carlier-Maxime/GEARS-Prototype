@@ -7,6 +7,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Animations/Interfaces/AnimIKInterface.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 
 UGA_Harvest::UGA_Harvest()
@@ -83,6 +84,19 @@ void UGA_Harvest::ImpactFromMontage()
 	Proxy->OnCompleted.AddDynamic(this, &ThisClass::EndFinish);
 	Proxy->OnInterrupted.AddDynamic(this, &ThisClass::EndFinish);
 	Proxy->OnCancelled.AddDynamic(this, &ThisClass::EndFinish);
+	
+	if (CurrentActorInfo->OwnerActor.IsValid())
+	{
+		if (const auto* Mesh = CurrentActorInfo->OwnerActor.Get()->FindComponentByClass<USkeletalMeshComponent>())
+		{
+			if (auto* IKInterface = Cast<IAnimIKInterface>(Mesh->GetAnimInstance()))
+			{
+				IKInterface->GetIK(TAG_IK_Arm_Left).Target.SetLocation(MiningHit.Location);
+				IKInterface->GetIK(TAG_IK_Arm_Right).Target.SetLocation(MiningHit.Location);
+			}
+		}
+	}
+	
 	Proxy->ReadyForActivation();
 }
 
