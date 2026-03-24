@@ -15,5 +15,5 @@ struct FRigUnit_PopulateBoneSettings : public FRigUnitMutable
 	TArray<FPBIKBoneSetting> Settings;
 	
 private:
-	static EPBIKLimitType GetLimitType(const FRigControlLimitEnabled& Limit);
+	static EPBIKLimitType GetLimitType(const FRigControlLimitEnabled& Limit, float Min, float Max);
 };
