@@ -9,6 +9,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Animations/Interfaces/AnimIKInterface.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
+#include "Grid/GridSubsystem.h"
 
 UGA_Harvest::UGA_Harvest()
 {
@@ -75,7 +76,11 @@ void UGA_Harvest::RefreshMiningHit(const FHitResult& BaseHit, const double Marge
 
 void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 {
-	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 0.25); // TODO Implement Harvesting
+	auto* Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
+	if (!Grid) return;
+	auto ResourceIndex = Grid->RemoveResource(MiningHit.Location);
+	if (ResourceIndex == FResourceRegistry::INVALID_INDEX) return;
+	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 0.25); // TODO Implement Harvesting : Make Inventory System and give loot of this resource
 }
 
 void UGA_Harvest::ImpactFromMontage()
