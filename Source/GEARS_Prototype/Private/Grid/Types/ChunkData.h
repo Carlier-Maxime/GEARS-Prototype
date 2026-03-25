@@ -8,6 +8,8 @@ struct FChunkData
 {
 	GENERATED_BODY()
 	FChunkData();
+	FORCEINLINE int16 GetResourceIndex(const FInChunkPos& Pos) const;
+	FORCEINLINE int16 GetResourceIndex(const FWorldGridPos& GridPos) const;
 	void SetResource(const FInChunkPos& Pos, int16 ResourceIndex);
 	FORCEINLINE void SetResource(const FWorldGridPos& GridPos, int16 ResourceIndex);
 	
@@ -52,4 +54,14 @@ inline const FBiomeDefinition& FChunkData::GetBiome(const FWorldGridPos& GridPos
 inline const FBiomeDefinition& FChunkData::GetBiome(const FInChunkPos& Pos) const
 {
 	return GridParams::Get().GetBiomeRegistry()[GetBiomeIndex(Pos)];
+}
+
+inline int16 FChunkData::GetResourceIndex(const FInChunkPos& Pos) const
+{
+	return ResourceMap[Pos.Flatten()];
+}
+
+inline int16 FChunkData::GetResourceIndex(const FWorldGridPos& GridPos) const
+{
+	return GetResourceIndex(GridPos.ToInChunkPos());
 }
