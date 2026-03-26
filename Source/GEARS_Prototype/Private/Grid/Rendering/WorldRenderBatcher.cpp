@@ -50,13 +50,13 @@ void FWorldRenderBatcher::ApplyResourcesInstances(const FChunkIndex& Index, cons
 		auto& Instances = ResourcesInstances[i];
 		if (Instances.IsEmpty()) continue;
 		auto Indices = HISM->AddInstances(Instances, true);
-		Renderer.InstancesReferences.Reserve(HISM->GetInstanceCount());
+		Renderer.InstancesReferences[i].Reserve(HISM->GetInstanceCount());
 		auto& IndicesLinker = Renderer.FindOrAddResourceInstances(i, Index);
 		for (auto j=0; j<Indices.Num(); ++j)
 		{
 			auto LinkerIndex = FWorldGridPos(Instances[j].GetLocation()).ToInChunkPos().Flatten();
 			IndicesLinker[LinkerIndex] = Indices[j];
-			Renderer.InstancesReferences.Emplace(&IndicesLinker[LinkerIndex]);
+			Renderer.InstancesReferences[i].Emplace(Index, LinkerIndex);
 		}
 		UpdatedHISMs.Add(HISM);
 	}

@@ -38,6 +38,7 @@ void AWorldRenderer::PostActorCreated()
 	const auto ResourcesCount = GridParams::Get().GetResourceRegistry().Num();
 	ResourcesComponents.SetNum(ResourcesCount);
 	ResourcesInstancesByChunk.SetNum(ResourcesCount);
+	InstancesReferences.SetNum(ResourcesCount);
 }
 
 void AWorldRenderer::BeginPlay()
@@ -105,10 +106,10 @@ void AWorldRenderer::RemoveResource(const FChunkIndex& Chunk, const FInChunkPos&
 	HISM->RemoveInstance(Instance);
 	if (LastIdx != Instance)
 	{
-		auto* MovedInstancePtr = InstancesReferences[LastIdx];
-		*MovedInstancePtr = Instance;
-		InstancesReferences[Instance] = MovedInstancePtr;
+		auto& MovedInstanceRef = InstancesReferences[Resource][LastIdx];
+		ResourcesInstancesByChunk[Resource][MovedInstanceRef.ChunkIndex][MovedInstanceRef.InPosFlatten] = Instance;
+		InstancesReferences[Resource][Instance] = MovedInstanceRef;
 	}
 	Instances[InPos.Flatten()] = INDEX_NONE;
-	InstancesReferences.RemoveAtSwap(Instance);
+	InstancesReferences[Resource].RemoveAtSwap(Instance);
 }

@@ -32,10 +32,16 @@ protected:
 	TArray<int32>& FindOrAddResourceInstances(int16 ResourceIndex, const FChunkIndex& Chunk);
 	
 private:
+	
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> ResourcesComponents;
 	TArray<TMap<FChunkIndex, TArray<int32>>> ResourcesInstancesByChunk;
-	TArray<int32*> InstancesReferences;
+	struct FInstanceRefData
+	{
+		FChunkIndex ChunkIndex;
+		int32 InPosFlatten;
+	};
+	TArray<TArray<FInstanceRefData>> InstancesReferences;
 	
 	UPROPERTY(Transient)
 	TObjectPtr<UHierarchicalInstancedStaticMeshComponent> PlaneHISM;
