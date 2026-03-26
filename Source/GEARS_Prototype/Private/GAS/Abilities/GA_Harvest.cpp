@@ -59,6 +59,7 @@ void UGA_Harvest::RefreshMiningHit(const FHitResult& BaseHit, const double Marge
 	FTransform InstanceTr;
 	if (!HISM) HISM = Cast<UHierarchicalInstancedStaticMeshComponent>(BaseHit.Component);
 	HISM->GetInstanceTransform(BaseHit.Item, InstanceTr, true);
+	MiningResourcePos = FWorldGridPos(InstanceTr.GetLocation());
 	auto TargetBounds = HISM->GetStaticMesh()->GetBoundingBox();
 	auto MaxZ = InstanceTr.TransformPosition(TargetBounds.GetCenter()).Z + InstanceTr.GetScale3D().Z * TargetBounds.GetExtent().Z;
 	auto StartTrace = CurrentActorInfo->OwnerActor->GetActorLocation();
@@ -78,7 +79,7 @@ void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 {
 	auto* Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
 	if (!Grid) return;
-	auto ResourceIndex = Grid->RemoveResource(MiningHit.Location);
+	auto ResourceIndex = Grid->RemoveResource(MiningResourcePos);
 	if (ResourceIndex == FResourceRegistry::INVALID_INDEX) return;
 	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 0.25); // TODO Implement Harvesting : Make Inventory System and give loot of this resource
 }

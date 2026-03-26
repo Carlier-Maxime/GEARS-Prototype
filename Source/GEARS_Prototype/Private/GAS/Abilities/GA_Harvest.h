@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GA_Common.h"
+#include "Grid/Types/WorldGridPos.h"
 #include "GA_Harvest.generated.h"
 
 class UHierarchicalInstancedStaticMeshComponent;
@@ -33,4 +34,5 @@ private:
 	TObjectPtr<UAnimMontage> AnimMontage = nullptr;
 	
 	FHitResult MiningHit;
+	FWorldGridPos MiningResourcePos;
 };
