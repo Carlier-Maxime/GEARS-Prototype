@@ -24,6 +24,7 @@ public:
 	FGameplayTag GetTypeTag(const FHitResult& Hit) const;
 	FORCEINLINE FGameplayTag GetBiomeTag(const FHitResult& Hit) const;
 	FGameplayTag GetBiomeTag(const FWorldGridPos& Pos) const;
+	void RemoveResource(const FChunkIndex& Chunk, const FInChunkPos& InPos, int16 Resource);
 
 protected:
 	virtual void BeginPlay() override;
@@ -34,6 +35,7 @@ private:
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> ResourcesComponents;
 	TArray<TMap<FChunkIndex, TArray<int32>>> ResourcesInstancesByChunk;
+	TArray<int32*> InstancesReferences;
 	
 	UPROPERTY(Transient)
 	TObjectPtr<UHierarchicalInstancedStaticMeshComponent> PlaneHISM;

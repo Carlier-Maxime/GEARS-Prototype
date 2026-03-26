@@ -92,3 +92,23 @@ FGameplayTag AWorldRenderer::GetBiomeTag(const FWorldGridPos& Pos) const
 	if (!Grid) return FGameplayTag::EmptyTag;
 	return Grid->GetBiome(Pos).Tag;
 }
+
+void AWorldRenderer::RemoveResource(const FChunkIndex& Chunk, const FInChunkPos& InPos, int16 Resource)
+{
+	if (Resource == FResourceRegistry::INVALID_INDEX) return;
+	auto& Instances = FindOrAddResourceInstances(Resource, Chunk);
+	auto Instance = Instances[InPos.Flatten()];
+	if (Instance == INDEX_NONE) return;
+	auto& HISM = ResourcesComponents[Resource];
+	if (!HISM || HISM == PlaneHISM) return;
+	int32 LastIdx = HISM->GetInstanceCount() - 1;
+	HISM->RemoveInstance(Instance);
+	if (LastIdx != Instance)
+	{
+		auto* MovedInstancePtr = InstancesReferences[LastIdx];
+		*MovedInstancePtr = Instance;
+		InstancesReferences[Instance] = MovedInstancePtr;
+	}
+	Instances[InPos.Flatten()] = INDEX_NONE;
+	InstancesReferences.RemoveAtSwap(Instance);
+}
