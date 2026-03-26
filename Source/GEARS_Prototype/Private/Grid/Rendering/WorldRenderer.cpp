@@ -61,6 +61,16 @@ TObjectPtr<UHierarchicalInstancedStaticMeshComponent> AWorldRenderer::FindOrAddH
 	return ResourcesComponents[ResourceIndex] = NewHISM;
 }
 
+TArray<int32>& AWorldRenderer::FindOrAddResourceInstances(const int16 ResourceIndex, const FChunkIndex& Chunk)
+{
+	auto& InstancesByChunk = ResourcesInstancesByChunk[ResourceIndex];
+	auto Instances = InstancesByChunk.Find(Chunk);
+	if (Instances) return *Instances;
+	auto& NewInstances = InstancesByChunk.Emplace(Chunk);
+	NewInstances.Init(INDEX_NONE, GridParams::Get().GetChunkSizeSquared());
+	return NewInstances;
+}
+
 FWorldRenderBatcher AWorldRenderer::Batcher()
 {
 	return {*this};

@@ -28,6 +28,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	TObjectPtr<UHierarchicalInstancedStaticMeshComponent> FindOrAddHISM(int16 ResourceIndex);
+	TArray<int32>& FindOrAddResourceInstances(int16 ResourceIndex, const FChunkIndex& Chunk);
 	
 private:
 	UPROPERTY(Transient)

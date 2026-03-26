@@ -47,9 +47,14 @@ void FWorldRenderBatcher::ApplyResourcesInstances(const FChunkIndex& Index, cons
 	for (auto i=0; i<ResourcesInstances.Num(); ++i)
 	{
 		const auto HISM = Renderer.FindOrAddHISM(i);
-		if (ResourcesInstances[i].IsEmpty()) continue;
-		auto Indices = HISM->AddInstances(ResourcesInstances[i], true);
-		Renderer.ResourcesInstancesByChunk[i].FindOrAdd(Index).Append(Indices);
+		auto& Instances = ResourcesInstances[i];
+		if (Instances.IsEmpty()) continue;
+		auto Indices = HISM->AddInstances(Instances, true);
+		auto& IndicesLinker = Renderer.FindOrAddResourceInstances(i, Index);
+		for (auto j=0; j<Indices.Num(); ++j)
+		{
+			IndicesLinker[FWorldGridPos(Instances[j].GetLocation()).ToInChunkPos().Flatten()] = Indices[j];
+		}
 		UpdatedHISMs.Add(HISM);
 	}
 }
