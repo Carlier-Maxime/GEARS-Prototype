@@ -65,12 +65,14 @@ FVector UGridSubsystem::GridToWorld(const FWorldGridPos& GridPos)
 	return GridPos.ToWorld();
 }
 
-const int16 UGridSubsystem::RemoveResource(const FWorldGridPos& Pos)
+int16 UGridSubsystem::RemoveResource(const FWorldGridPos& Pos)
 {
-	auto& Chunk = Chunks.FindChecked(Pos.ToChunkIndex());
+	const auto ChunkIndex = Pos.ToChunkIndex();
+	auto& Chunk = Chunks.FindChecked(ChunkIndex);
 	const auto InChunkPos = Pos.ToInChunkPos();
 	const auto Index = Chunk.GetResourceIndex(InChunkPos);
 	if (Index == FResourceRegistry::INVALID_INDEX) return Index;
-	Chunk.SetResource(InChunkPos, FResourceRegistry::INVALID_INDEX); //TODO Remove Resource Rendering ! 
+	Chunk.SetResource(InChunkPos, FResourceRegistry::INVALID_INDEX);
+	Renderer->RemoveResource(ChunkIndex, InChunkPos, Index);
 	return Index;
 }

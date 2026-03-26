@@ -27,8 +27,8 @@ public:
 	
 	const FChunkData& GetChunk(const FChunkIndex& Index) const;
 	FORCEINLINE const FChunkData& GetChunk(const FWorldGridPos& GridPos) const;
-	const int16 RemoveResource(const FWorldGridPos& Pos);
-	FORCEINLINE const int16 RemoveResource(const FVector& WorldPos);
+	int16 RemoveResource(const FWorldGridPos& Pos);
+	FORCEINLINE int16 RemoveResource(const FVector& WorldPos);
 	
 	FORCEINLINE static FWorldGridPos WorldToGrid(const FVector& WorldPosition);
 	FORCEINLINE static FVector GridToWorld(const FWorldGridPos& GridPos);
@@ -52,7 +52,7 @@ inline const FBiomeDefinition& UGridSubsystem::GetBiome(const FWorldGridPos& Gri
 	return GetChunk(GridPos).GetBiome(GridPos.ToInChunkPos());
 }
 
-inline const int16 UGridSubsystem::RemoveResource(const FVector& WorldPos)
+inline int16 UGridSubsystem::RemoveResource(const FVector& WorldPos)
 {
 	return RemoveResource(FWorldGridPos(WorldPos));
 }
