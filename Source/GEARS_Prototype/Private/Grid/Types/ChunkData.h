@@ -10,6 +10,12 @@ struct FChunkData
 	FChunkData();
 	FORCEINLINE int16 GetResourceIndex(const FInChunkPos& Pos) const;
 	FORCEINLINE int16 GetResourceIndex(const FWorldGridPos& GridPos) const;
+	const FResourceState* GetResourceState(const FInChunkPos& Pos) const;
+	FORCEINLINE const FResourceState* GetResourceState(const FWorldGridPos& GridPos) const;
+	FResourceState* GetMutableResourceState(const FInChunkPos& Pos);
+	FORCEINLINE FResourceState* GetMutableResourceState(const FWorldGridPos& GridPos);
+	void ResetResourceState(const FInChunkPos& Pos);
+	FORCEINLINE void ResetResourceState(const FWorldGridPos& GridPos);
 	void SetResource(const FInChunkPos& Pos, int16 ResourceIndex);
 	FORCEINLINE void SetResource(const FWorldGridPos& GridPos, int16 ResourceIndex);
 	
@@ -24,6 +30,8 @@ struct FChunkData
 private:
 	TArray<int16> ResourceMap;
 	TArray<uint8> BiomeMap;
+	TArray<bool> IsDynamic;
+	TMap<int16, FResourceState> DynamicStates;
 };
 
 void FChunkData::SetResource(const FWorldGridPos& GridPos, const int16 ResourceIndex)
@@ -64,4 +72,19 @@ inline int16 FChunkData::GetResourceIndex(const FInChunkPos& Pos) const
 inline int16 FChunkData::GetResourceIndex(const FWorldGridPos& GridPos) const
 {
 	return GetResourceIndex(GridPos.ToInChunkPos());
+}
+
+inline const FResourceState* FChunkData::GetResourceState(const FWorldGridPos& GridPos) const
+{
+	return GetResourceState(GridPos.ToInChunkPos());
+}
+
+inline FResourceState* FChunkData::GetMutableResourceState(const FWorldGridPos& GridPos)
+{
+	return GetMutableResourceState(GridPos.ToInChunkPos());
+}
+
+inline void FChunkData::ResetResourceState(const FWorldGridPos& GridPos)
+{
+	ResetResourceState(GridPos.ToInChunkPos());
 }

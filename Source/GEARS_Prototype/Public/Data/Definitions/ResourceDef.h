@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
 #include "Data/Core/PlacementRule.h"
+#include "Data/States/ResourceState.h"
 
 #include "ResourceDef.generated.h"
 
@@ -17,4 +18,7 @@ struct GEARS_PROTOTYPE_API FResourceDefinition
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Sampling")
 	FPlacementRule PlacementRule;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "State")
+	FResourceState State;
 };
