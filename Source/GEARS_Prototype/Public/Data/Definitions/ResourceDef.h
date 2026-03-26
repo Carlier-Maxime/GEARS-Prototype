@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
-#include "Data/Definitions/PlacementRule.h"
+#include "Data/Core/PlacementRule.h"
 
 #include "ResourceDef.generated.h"
 
