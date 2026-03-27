@@ -12,6 +12,8 @@ UCharacterAttributeSet::UCharacterAttributeSet()
 	InitArrivalPrecision(CellSize * 0.25f);
 	InitHarvestRange(CellSize * 1.5f);
 	InitRemoteAccessRange(CellSize * 16.f);
+	InitHarvestRate(1);
+	InitHarvestPower(1);
 }
 
 FGameplayAttribute UCharacterAttributeSet::GetInteractionRangeAttribute(const FGameplayTag TypeTag)

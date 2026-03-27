@@ -34,5 +34,5 @@ private:
 	TObjectPtr<UAnimMontage> AnimMontage = nullptr;
 	
 	FHitResult MiningHit;
-	FWorldGridPos MiningResourcePos;
+	FTransform MiningResourceTr;
 };

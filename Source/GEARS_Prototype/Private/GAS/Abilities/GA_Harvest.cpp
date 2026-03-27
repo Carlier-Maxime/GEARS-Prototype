@@ -3,12 +3,14 @@
 
 #include "GA_Harvest.h"
 
+#include "AbilitySystemComponent.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Animations/Interfaces/AnimIKInterface.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
+#include "GAS/Attributes/CharacterAttributeSet.h"
 #include "Grid/GridSubsystem.h"
 
 UGA_Harvest::UGA_Harvest()
@@ -59,7 +61,7 @@ void UGA_Harvest::RefreshMiningHit(const FHitResult& BaseHit, const double Marge
 	FTransform InstanceTr;
 	if (!HISM) HISM = Cast<UHierarchicalInstancedStaticMeshComponent>(BaseHit.Component);
 	HISM->GetInstanceTransform(BaseHit.Item, InstanceTr, true);
-	MiningResourcePos = FWorldGridPos(InstanceTr.GetLocation());
+	MiningResourceTr = InstanceTr;
 	auto TargetBounds = HISM->GetStaticMesh()->GetBoundingBox();
 	auto MaxZ = InstanceTr.TransformPosition(TargetBounds.GetCenter()).Z + InstanceTr.GetScale3D().Z * TargetBounds.GetExtent().Z;
 	auto StartTrace = CurrentActorInfo->OwnerActor->GetActorLocation();
@@ -77,10 +79,12 @@ void UGA_Harvest::RefreshMiningHit(const FHitResult& BaseHit, const double Marge
 
 void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 {
+	auto* ASC = GetAbilitySystemComponentFromActorInfo();
 	auto* Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
-	if (!Grid) return;
-	float DamageAmount = 1; // TODO CalcDamage
-	const auto Result = Grid->ApplyDamageToResource(MiningResourcePos, DamageAmount, CurrentActorInfo->OwnerActor.Get());
+	if (!ASC || !Grid) return;
+	float DamageAmount = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestPowerAttribute());
+	DamageAmount /= MiningResourceTr.GetScale3D().Length();
+	const auto Result = Grid->ApplyDamageToResource(FWorldGridPos(MiningResourceTr.GetLocation()), DamageAmount, CurrentActorInfo->OwnerActor.Get());
 	if (Result == DamageResult::EType::None) return;
 	FGameplayCueParameters Params;
 	Params.Location = MiningHit.Location;
@@ -92,7 +96,10 @@ void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 
 void UGA_Harvest::ImpactFromMontage()
 {
-	auto* Proxy = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AnimMontage);
+	auto* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!ASC) return;
+	auto Rate = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestRateAttribute());
+	auto* Proxy = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AnimMontage, Rate);
 	Proxy->OnCompleted.AddDynamic(this, &ThisClass::EndFinish);
 	Proxy->OnInterrupted.AddDynamic(this, &ThisClass::EndFinish);
 	Proxy->OnCancelled.AddDynamic(this, &ThisClass::EndFinish);

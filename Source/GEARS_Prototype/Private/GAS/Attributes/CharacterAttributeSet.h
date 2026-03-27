@@ -35,5 +35,13 @@ public:
 	FGameplayAttributeData RemoteAccessRange;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, RemoteAccessRange);
 	
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes|Harvest")
+	FGameplayAttributeData HarvestRate;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, HarvestRate)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes|Harvest")
+	FGameplayAttributeData HarvestPower;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, HarvestPower)
+	
 	static FGameplayAttribute GetInteractionRangeAttribute(FGameplayTag TypeTag); 
 };
