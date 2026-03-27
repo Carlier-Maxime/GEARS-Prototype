@@ -79,9 +79,10 @@ void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 {
 	auto* Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
 	if (!Grid) return;
-	auto ResourceIndex = Grid->RemoveResource(MiningResourcePos);
-	if (ResourceIndex == FResourceRegistry::INVALID_INDEX) return;
-	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 0.25); // TODO Implement Harvesting : Make Inventory System and give loot of this resource
+	const auto DamageResult = Grid->ApplyDamageToResource(MiningResourcePos, 1, CurrentActorInfo->OwnerActor.Get());
+	if (DamageResult == EDamageResult::None) return;
+	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 0.25); // TODO send event for Gameplay Cue (feedback)
+	if (DamageResult == EDamageResult::Destroyed) EndFinish();
 }
 
 void UGA_Harvest::ImpactFromMontage()

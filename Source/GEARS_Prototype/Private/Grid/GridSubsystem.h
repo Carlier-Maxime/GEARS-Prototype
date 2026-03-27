@@ -6,6 +6,7 @@
 #include "Types/ChunkData.h"
 #include "Grid/Types.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "Types/DamageResult.h"
 #include "GridSubsystem.generated.h"
 
 class FWorldRenderBatcher;
@@ -27,8 +28,7 @@ public:
 	
 	const FChunkData& GetChunk(const FChunkIndex& Index) const;
 	FORCEINLINE const FChunkData& GetChunk(const FWorldGridPos& GridPos) const;
-	int16 RemoveResource(const FWorldGridPos& Pos);
-	FORCEINLINE int16 RemoveResource(const FVector& WorldPos);
+	EDamageResult ApplyDamageToResource(const FWorldGridPos& Pos, float Amount, AActor* Instigator = nullptr);
 	
 	FORCEINLINE static FWorldGridPos WorldToGrid(const FVector& WorldPosition);
 	FORCEINLINE static FVector GridToWorld(const FWorldGridPos& GridPos);
@@ -42,17 +42,14 @@ public:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<AWorldRenderer> Renderer = nullptr;
-	
+
 private:
 	void CreateChunk(const FChunkIndex& Index, FWorldRenderBatcher& RendererLock);
+	int16 RemoveResource(const FWorldGridPos& Pos);
+	int16 RemoveResource(FChunkData& Chunk, const FChunkIndex& ChunkIndex, const FInChunkPos& InPos);
 };
 
 inline const FBiomeDefinition& UGridSubsystem::GetBiome(const FWorldGridPos& GridPos) const
 {
 	return GetChunk(GridPos).GetBiome(GridPos.ToInChunkPos());
-}
-
-inline int16 UGridSubsystem::RemoveResource(const FVector& WorldPos)
-{
-	return RemoveResource(FWorldGridPos(WorldPos));
 }

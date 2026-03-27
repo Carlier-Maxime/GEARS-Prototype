@@ -70,9 +70,31 @@ int16 UGridSubsystem::RemoveResource(const FWorldGridPos& Pos)
 	const auto ChunkIndex = Pos.ToChunkIndex();
 	auto& Chunk = Chunks.FindChecked(ChunkIndex);
 	const auto InChunkPos = Pos.ToInChunkPos();
-	const auto Index = Chunk.GetResourceIndex(InChunkPos);
+	return RemoveResource(Chunk, ChunkIndex, InChunkPos);
+}
+
+int16 UGridSubsystem::RemoveResource(FChunkData& Chunk, const FChunkIndex& ChunkIndex, const FInChunkPos& InPos)
+{
+	const auto Index = Chunk.GetResourceIndex(InPos);
 	if (Index == FResourceRegistry::INVALID_INDEX) return Index;
-	Chunk.SetResource(InChunkPos, FResourceRegistry::INVALID_INDEX);
-	Renderer->RemoveResource(ChunkIndex, InChunkPos, Index);
+	Chunk.SetResource(InPos, FResourceRegistry::INVALID_INDEX);
+	Renderer->RemoveResource(ChunkIndex, InPos, Index);
 	return Index;
+}
+
+EDamageResult UGridSubsystem::ApplyDamageToResource(const FWorldGridPos& Pos, float Amount,
+                                                    AActor* Instigator)
+{
+	const auto ChunkIndex = Pos.ToChunkIndex();
+	auto& Chunk = Chunks.FindChecked(ChunkIndex);
+	const auto InChunkPos = Pos.ToInChunkPos();
+	auto* State = Chunk.GetMutableResourceState(InChunkPos);
+	if (!State) return EDamageResult::None;
+	State->Health -= Amount;
+	if (State->Health > 0) return EDamageResult::Hit;
+	auto ResourceIndex = RemoveResource(Chunk, ChunkIndex, InChunkPos);
+	if (ResourceIndex == FResourceRegistry::INVALID_INDEX) return EDamageResult::None;
+	const auto& Resource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
+	if (Instigator) {} // TODO Give Loot to Instigator
+	return EDamageResult::Destroyed;
 }
