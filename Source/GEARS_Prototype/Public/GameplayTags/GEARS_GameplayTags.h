@@ -66,6 +66,9 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_State_Harvesting)
 
 #pragma region cue
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Cue_Move_Confirm)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Cue_Damage)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Cue_Damage_Hit)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Cue_Damage_Destroyed)
 #pragma endregion
 
 #pragma region event

@@ -79,10 +79,15 @@ void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 {
 	auto* Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
 	if (!Grid) return;
-	const auto DamageResult = Grid->ApplyDamageToResource(MiningResourcePos, 1, CurrentActorInfo->OwnerActor.Get());
-	if (DamageResult == EDamageResult::None) return;
-	DrawDebugPoint(GetWorld(), MiningHit.Location, 10, FColor::Red, false, 0.25); // TODO send event for Gameplay Cue (feedback)
-	if (DamageResult == EDamageResult::Destroyed) EndFinish();
+	float DamageAmount = 1; // TODO CalcDamage
+	const auto Result = Grid->ApplyDamageToResource(MiningResourcePos, DamageAmount, CurrentActorInfo->OwnerActor.Get());
+	if (Result == DamageResult::EType::None) return;
+	FGameplayCueParameters Params;
+	Params.Location = MiningHit.Location;
+	Params.Normal = MiningHit.ImpactNormal;
+	Params.RawMagnitude = DamageAmount;
+	K2_ExecuteGameplayCueWithParams(DamageResult::GetCueTag(Result), Params);
+	if (Result == DamageResult::EType::Destroyed) EndFinish();
 }
 
 void UGA_Harvest::ImpactFromMontage()

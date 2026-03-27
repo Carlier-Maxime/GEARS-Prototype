@@ -63,6 +63,9 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_State_Harvesting, "State.Harvesting")
 
 #pragma region cue
 UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Move_Confirm, "GameplayCue.Move.Confirm")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Damage, "GameplayCue.Damage")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Damage_Hit, "GameplayCue.Damage.Hit")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Cue_Damage_Destroyed, "GameplayCue.Damage.Destroyed")
 #pragma endregion
 
 #pragma region event

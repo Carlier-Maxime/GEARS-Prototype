@@ -28,7 +28,7 @@ public:
 	
 	const FChunkData& GetChunk(const FChunkIndex& Index) const;
 	FORCEINLINE const FChunkData& GetChunk(const FWorldGridPos& GridPos) const;
-	EDamageResult ApplyDamageToResource(const FWorldGridPos& Pos, float Amount, AActor* Instigator = nullptr);
+	DamageResult::EType ApplyDamageToResource(const FWorldGridPos& Pos, float Amount, AActor* Instigator = nullptr);
 	
 	FORCEINLINE static FWorldGridPos WorldToGrid(const FVector& WorldPosition);
 	FORCEINLINE static FVector GridToWorld(const FWorldGridPos& GridPos);
@@ -45,8 +45,6 @@ public:
 
 private:
 	void CreateChunk(const FChunkIndex& Index, FWorldRenderBatcher& RendererLock);
-	int16 RemoveResource(const FWorldGridPos& Pos);
-	int16 RemoveResource(FChunkData& Chunk, const FChunkIndex& ChunkIndex, const FInChunkPos& InPos);
 };
 
 inline const FBiomeDefinition& UGridSubsystem::GetBiome(const FWorldGridPos& GridPos) const
