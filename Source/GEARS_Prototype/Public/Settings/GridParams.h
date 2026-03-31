@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Data/Registry/BiomeRegistry.h"
+#include "Data/Registry/ItemRegistry.h"
 #include "Data/Registry/ResourceRegistry.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 
@@ -27,6 +28,7 @@ public:
 	FORCEINLINE uint16 GetBiomeChunkMask() const { return BiomeChunkMask; }
 	FORCEINLINE const FResourceRegistry& GetResourceRegistry() const {return ResourceRegistry.GetValue();}
 	FORCEINLINE const FBiomeRegistry& GetBiomeRegistry() const {return BiomeRegistry.GetValue();}
+	FORCEINLINE const FItemRegistry& GetItemRegistry() const {return ItemRegistry.GetValue();}
 	FORCEINLINE const FNoiseContext& GetTemperature() const { return Temperature; }
 	FORCEINLINE const FNoiseContext& GetHumidity() const { return Humidity; }
 	FORCEINLINE const TObjectPtr<UStaticMesh>& GetGridMesh() const { return GridMesh; }
@@ -49,6 +51,7 @@ private:
 	int32 DebugSeed;
 	TOptional<FResourceRegistry> ResourceRegistry;
 	TOptional<FBiomeRegistry> BiomeRegistry;
+	TOptional<FItemRegistry> ItemRegistry;
 	FNoiseContext Temperature;
 	FNoiseContext Humidity;
 	TObjectPtr<UStaticMesh> GridMesh;

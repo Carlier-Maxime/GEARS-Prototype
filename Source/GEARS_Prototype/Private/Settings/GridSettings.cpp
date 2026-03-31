@@ -79,6 +79,7 @@ void UGridSettings::RefreshFastAccessVariables()
 	GridParams::Get().ChunkMask = ChunkSize - 1;
 	GridParams::Get().ResourceRegistry.Emplace(ResourcesPath);
 	GridParams::Get().BiomeRegistry.Emplace(BiomesPath);
+	GridParams::Get().ItemRegistry.Emplace(ItemsPath);
 	GridParams::Get().Temperature = Temperature;
 	GridParams::Get().Humidity = Humidity;
 	GridParams::Get().GridMesh = GridMesh;

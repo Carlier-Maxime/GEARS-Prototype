@@ -96,5 +96,8 @@ private:
 	FNoiseContext Temperature;
 	UPROPERTY(EditAnywhere, config, Category = "Biomes", meta = (AllowPrivateAccess = true))
 	FNoiseContext Humidity;
+	
+	UPROPERTY(EditAnywhere, config, Category = "Items", meta=(AllowPrivateAccess = true))
+	FName ItemsPath;
 };
 
