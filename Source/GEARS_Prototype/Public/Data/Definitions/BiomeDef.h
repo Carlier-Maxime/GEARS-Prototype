@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "Data/Core/ClimatePoint.h"
+#include "Data/Generation/ClimatePoint.h"
 #include "GameplayTagContainer.h"
-#include "Data/Core/ResourceRule.h"
+#include "Data/Generation/ResourceRule.h"
 
 #include "BiomeDef.generated.h"
 
