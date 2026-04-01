@@ -50,6 +50,11 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Mineral_Copper)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Resource_Mineral_Gold)
 #pragma endregion
 
+#pragma region items
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_None)
+#pragma endregion 
+
 #pragma region ability
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Move_Pathfinding)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Ability_Interact)
