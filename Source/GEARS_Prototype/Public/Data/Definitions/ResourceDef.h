@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
 #include "Data/Generation/PlacementRule.h"
+#include "Data/Generation/Loot/LootTable.h"
 #include "Data/States/ResourceState.h"
 
 #include "ResourceDef.generated.h"
@@ -19,6 +20,18 @@ struct GEARS_PROTOTYPE_API FResourceDefinition
 	UPROPERTY(EditDefaultsOnly, Category = "Sampling")
 	FPlacementRule PlacementRule;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Loot")
+	FLootTable LootTable;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "State")
 	FResourceState State;
+	
+#if WITH_EDITOR
+	void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent, FEditPropertyChain::TDoubleLinkedListNode* CurrentNode)
+	{
+		if (!CurrentNode) return;
+		if (CurrentNode->GetValue()->GetFName() == GET_MEMBER_NAME_CHECKED(FResourceDefinition, LootTable))
+			LootTable.PostEditChangeChainProperty(PropertyChangedEvent, CurrentNode->GetNextNode());
+	}
+#endif
 };

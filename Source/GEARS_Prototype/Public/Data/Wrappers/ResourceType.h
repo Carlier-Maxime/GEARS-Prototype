@@ -17,4 +17,14 @@ class GEARS_PROTOTYPE_API UResourceType : public UPrimaryDataAsset
 public:
 	UPROPERTY(EditAnywhere, meta = (ShowOnlyInnerProperties))
 	FResourceDefinition Data;
+
+#if WITH_EDITOR
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override
+	{
+		auto* CurrentNode = PropertyChangedEvent.PropertyChain.GetHead();
+		if (CurrentNode->GetValue()->GetFName() == GET_MEMBER_NAME_CHECKED(ThisClass, Data))
+			Data.PostEditChangeChainProperty(PropertyChangedEvent, CurrentNode->GetNextNode());
+		Super::PostEditChangeChainProperty(PropertyChangedEvent);
+	}
+#endif
 };
