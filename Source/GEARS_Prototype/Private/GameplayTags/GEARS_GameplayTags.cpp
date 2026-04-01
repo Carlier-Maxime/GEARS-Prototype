@@ -50,6 +50,9 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Resource_Mineral_Gold, "Resource.Mineral.Gold")
 #pragma region items
 UE_DEFINE_GAMEPLAY_TAG(TAG_Item, "Item")
 UE_DEFINE_GAMEPLAY_TAG(TAG_Item_None, "Item.None")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Item_Organic, "Item.Organic")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Item_Mineral, "Item.Mineral")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Item_Ore, "Item.Ore")
 #pragma endregion
 
 #pragma region ability
