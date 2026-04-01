@@ -15,6 +15,18 @@ This project uses assets from the community to focus on C++ gameplay systems. Hu
 - **Mark Steelman** ([poly.pizza](https://poly.pizza/u/Mark%20Steelman)):
   - Coal Vein mesh: [Coal](https://poly.pizza/m/cOPSP0iKuju).
 
+## 🔊 Sound Effects
+- **jdpstar** ([Freesound](https://freesound.org/people/jdpstar/)):
+  - Robot Footstep: [Mech Steps – 1](https://freesound.org/people/jdpstar/sounds/538402/)
+- **Artem_Zaitsev** ([Freesound](https://freesound.org/people/Artem_Zaitsev/)):
+  - Robot Footstep: [Heavy Robot Footsteps](https://freesound.org/people/Artem_Zaitsev/sounds/837389/)
+- **SecureSubset** ([Freesound](https://freesound.org/people/SecureSubset/)):
+  - Robot Footstep: [Footsteps - Metal, Car, Plane, Sheet, Boat](https://freesound.org/people/SecureSubset/sounds/813620/) 
+- **Artninja** ([Freesound](https://freesound.org/people/Artninja/)):
+  - Robot Harvest: [Metal_impact_banging_sounds_06222024](https://freesound.org/people/Artninja/sounds/742827/)
+- **Johnnyfarmer** ([Freesound](https://freesound.org/people/Johnnyfarmer/)):
+  - Robot Harvest: [Metal Boom](https://freesound.org/people/Johnnyfarmer/sounds/209772/)
+
 ## 🛠️ Tools & Libraries
 - **Unreal Engine 5:** Game Engine.
 - **Rider:** IDE.
