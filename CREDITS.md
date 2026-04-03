@@ -14,6 +14,8 @@ This project uses assets from the community to focus on C++ gameplay systems. Hu
   - Gold Vein mesh: [Rock Formation](https://poly.pizza/m/pRY9BCFbmQ).
 - **Mark Steelman** ([poly.pizza](https://poly.pizza/u/Mark%20Steelman)):
   - Coal Vein mesh: [Coal](https://poly.pizza/m/cOPSP0iKuju).
+- **Kay Lousberg** ([itch.io](https://kaylousberg.itch.io)):
+  - Many Items (Ore, Stone, Wood, Ingot, Barrel, Textile, etc.): [Resource Bits](https://kaylousberg.itch.io/resource-bits)
 
 ## 🔊 Sound Effects
 - **jdpstar** ([Freesound](https://freesound.org/people/jdpstar/)):
