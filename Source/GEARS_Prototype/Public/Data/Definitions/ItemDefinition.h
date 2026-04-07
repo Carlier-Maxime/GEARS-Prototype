@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
+#include "Data/Inventory/ItemVisualThreshold.h"
 
 #include "ItemDefinition.generated.h"
 
@@ -21,8 +22,8 @@ struct FItemDefinition
 	FText Description;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Visuals")
-	TSoftObjectPtr<UTexture2D> Icon;
+	FItemVisual DefaultVisual;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Visuals")
-	TSoftObjectPtr<UStaticMesh> WorldMesh;
+	UPROPERTY(EditDefaultsOnly, Category= "Visuals")
+	TArray<FItemVisualThreshold> VisualThresholds;
 };
