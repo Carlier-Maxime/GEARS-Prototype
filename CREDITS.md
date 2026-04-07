@@ -16,6 +16,8 @@ This project uses assets from the community to focus on C++ gameplay systems. Hu
   - Coal Vein mesh: [Coal](https://poly.pizza/m/cOPSP0iKuju).
 - **Kay Lousberg** ([itch.io](https://kaylousberg.itch.io)):
   - Many Items (Ore, Stone, Wood, Ingot, Barrel, Textile, etc.): [Resource Bits](https://kaylousberg.itch.io/resource-bits)
+- **Quixel Megascan** ([website](https://quixel.com))
+  - Fibers Items [Wild Grass](https://www.fab.com/listings/5848d16a-f6ab-45a7-b69f-fe21dcbe4669)
 
 ## 🔊 Sound Effects
 - **jdpstar** ([Freesound](https://freesound.org/people/jdpstar/)):
