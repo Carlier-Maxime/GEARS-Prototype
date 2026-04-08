@@ -16,6 +16,9 @@ public:
 	static void UnregisterExtender(TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders);
 	static TSharedRef<FExtender> OnExtendContentBrowserAssetSelectionMenu(const TArray<FAssetData>& SelectedAssets);
 	static void ExecuteForAssets(const TArray<FAssetData>& Assets);
+	static bool ExecuteForAsset(const FAssetData& AssetData);
+	static bool CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height, const FImageView& ImageView);
+	static bool CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height, const FImage& Image);
 private:
 	inline static int32 ExtenderIndex = -1;
 	inline static FDelegateHandle ExtenderHandle;

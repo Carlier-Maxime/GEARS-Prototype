@@ -20,7 +20,9 @@ public class GEARS_Editor : ModuleRules
 			"PropertyEditor",
 			"EditorStyle",
 			"UnrealEd",
-			"ContentBrowser"
+			"ContentBrowser",
+			"DeveloperSettings",
+			"ImageCore"
 		});
     }
 }
