@@ -1,5 +1,6 @@
 ﻿#include "GEARS_Editor.h"
 
+#include "ContentBrowserModule.h"
 #include "GEARS_EditorUtils.h"
 #include "Customization/BiomeTypeCustomization.h"
 #include "Customization/GridSettingsCustomization.h"
@@ -7,13 +8,14 @@
 #include "Customization/DistributionRuleCustomization.h"
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/DistributionRule.h"
+#include "ContentBrowserExtensions/ThumbnailToTexture.h"
 
 #define LOCTEXT_NAMESPACE "FGEARS_EditorModule"
 
 void FGEARS_EditorModule::StartupModule()
 {
 	GeneratedAsset::OnRequestCreateAssetSync.BindStatic(&GEARSEditorUtils::HandleCreateAssetRequest);
-	FCoreDelegates::OnPostEngineInit.AddLambda([]{RegisterCustomLayout();});
+	FCoreDelegates::OnPostEngineInit.AddLambda([this]{PostEngineInit();});
 }
 
 void FGEARS_EditorModule::ShutdownModule()
@@ -25,6 +27,13 @@ void FGEARS_EditorModule::ShutdownModule()
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FDistributionRule::StaticStruct()->GetFName());
 		PropertyModule.UnregisterCustomClassLayout(UBiomeType::StaticClass()->GetFName());
 		PropertyModule.UnregisterCustomClassLayout(UGridSettings::StaticClass()->GetFName());
+	}
+	
+	if (FModuleManager::Get().IsModuleLoaded("ContentBrowser"))
+	{
+		FContentBrowserModule& ContentBrowserModule = FModuleManager::GetModuleChecked<FContentBrowserModule>("ContentBrowser");
+		TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders = ContentBrowserModule.GetAllAssetViewContextMenuExtenders();
+		FThumbnailContentBrowserExtensions_Impl::UnregisterExtender(Extenders);
 	}
 }
 
@@ -50,6 +59,15 @@ void FGEARS_EditorModule::RegisterCustomLayout()
 	);
 
 	PropertyModule.NotifyCustomizationModuleChanged();
+}
+
+void FGEARS_EditorModule::PostEngineInit()
+{
+	RegisterCustomLayout();
+
+	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+	TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders = ContentBrowserModule.GetAllAssetViewContextMenuExtenders();
+	FThumbnailContentBrowserExtensions_Impl::RegisterExtender(Extenders);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -19,7 +19,8 @@ public class GEARS_Editor : ModuleRules
 			"SlateCore",
 			"PropertyEditor",
 			"EditorStyle",
-			"UnrealEd"
+			"UnrealEd",
+			"ContentBrowser"
 		});
     }
 }

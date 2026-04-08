@@ -10,5 +10,6 @@ public:
     virtual void ShutdownModule() override;
     
 private:
+    void PostEngineInit();
     static void RegisterCustomLayout();
 };
