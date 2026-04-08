@@ -85,32 +85,46 @@ bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& 
 		Asset->GetName().Split("_", &SourcePrefix, &SourceName);
 		if (SourcePrefix.ToUpper() != SourcePrefix) SourceName = Asset->GetName();
 	} else SourceName = Asset->GetName();
-	auto TextureName = Settings.SavePrefix + SourceName;
+	auto TextureName = Settings.OutputPrefix + SourceName;
 	FString PackageName = AssetData.PackageName.ToString(); 
 	FString DirectoryPath = FPaths::GetPath(PackageName); 
 	const auto SavePath = FPaths::Combine(DirectoryPath, TextureName);
 	
-	return CreateAndSaveTexture(SavePath, Width, Height, Thumbnail.GetImage());
+	return CreateAndSaveTexture(SavePath, Width, Height, Thumbnail.GetImage(), Settings.bAutoSaveOnDisk);
 }
 
 bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height,
-	const FImageView& ImageView)
+	const FImageView& ImageView, const bool bSave)
 {
 	static FImage Image;
 	ImageView.CopyTo(Image, ImageView.Format, ImageView.GammaSpace);
-	return CreateAndSaveTexture(SavePath, Width, Height, Image);
+	return CreateAndSaveTexture(SavePath, Width, Height, Image, bSave);
 }
 
 bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height,
+	const FImage& Image, const bool bSave)
+{
+	auto* Texture = CreateTexture(SavePath, Width, Height, Image);
+	if (bSave) SaveTexture(SavePath, Texture);
+	return Texture != nullptr;
+}
+
+UTexture2D* FThumbnailContentBrowserExtensions_Impl::CreateTexture(const FString& PackagePath, int32 Width, int32 Height,
 	const FImage& Image)
 {
 	static FImage DestImage(Width, Height, ERawImageFormat::BGRA8);
 	Image.ResizeTo(DestImage, Width, Height, DestImage.Format, Image.GammaSpace);
-	auto* Package = CreatePackage(*SavePath);
+	auto* Package = CreatePackage(*PackagePath);
 	Package->FullyLoad();
-	const auto AssetName = FPackageName::GetShortName(SavePath);
+	const auto AssetName = FPackageName::GetShortName(PackagePath);
 	
 	auto* Texture = NewObject<UTexture2D>(Package, *AssetName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
+	if (!Texture)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to create texture for %s."), *PackagePath);
+		return nullptr;
+	}
+	
 	Texture->Source.Init(Width, Height, 1, 1, TSF_BGRA8, DestImage.RawData.GetData());
 	Texture->CompressionSettings = TC_BC7;
 	Texture->MipGenSettings      = TMGS_NoMipmaps;
@@ -121,14 +135,19 @@ bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString
 	FAssetRegistryModule::AssetCreated(Texture);
 	if (!Package->MarkPackageDirty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ThumbnailToTexture: Texture cannot be marked package dirty ! (%s)"), *SavePath)
+		UE_LOG(LogTemp, Warning, TEXT("ThumbnailToTexture: cannot be marked package dirty ! (%s)"), *PackagePath)
 	}
 	
+	return Texture;
+}
+
+void FThumbnailContentBrowserExtensions_Impl::SaveTexture(const FString& SavePath, UTexture2D* Texture)
+{
 	const FString PackageFilename =
-		FPackageName::LongPackageNameToFilename(
-			SavePath,
-			FPackageName::GetAssetPackageExtension()
-		);
+	FPackageName::LongPackageNameToFilename(
+		SavePath,
+		FPackageName::GetAssetPackageExtension()
+	);
 
 	FSavePackageArgs SaveArgs;
 	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
@@ -137,6 +156,5 @@ bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString
 	SaveArgs.bWarnOfLongFilename = true;
 	SaveArgs.SaveFlags = SAVE_NoError;
 
-	UPackage::SavePackage(Package, Texture, *PackageFilename, SaveArgs);
-	return true;
+	UPackage::SavePackage(Texture->GetPackage(), Texture, *PackageFilename, SaveArgs);
 }

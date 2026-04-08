@@ -20,10 +20,13 @@ public:
 	int32 MaxThumbnailSize = 128;
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Output")
-	FString SavePrefix = "T_";
+	FString OutputPrefix = "T_";
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Output")
 	bool bAutoRemoveUpperPrefixInSource = true;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Output")
+	bool bAutoSaveOnDisk = false;
 
 	FORCEINLINE static const UThumbnailSaverSettings* Get()
 	{
