@@ -169,10 +169,10 @@ void FThumbnailContentBrowserExtensions_Impl::SaveTexture(const FString& SavePat
 
 void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSaverSettings* Settings)
 {
-	TArray<FAssetData> AssetList;
-	auto& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-	auto& AssetRegistry = AssetRegistryModule.Get();
+	auto& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+	
 	FPaths::NormalizeDirectoryName(Settings->BasePath.Path);
+	
 	TArray<FString> PathsToScan;
 	PathsToScan.Reserve(Settings->Rules.Num());
 	for (auto& Rule : Settings->Rules)
@@ -181,28 +181,31 @@ void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSa
 		PathsToScan.Emplace(Rule.SourcePath.Path);
 	}
 	AssetRegistry.ScanPathsSynchronous(PathsToScan);
+
 	AutoGenFromAssets.Reset();
-	for (auto& Rule : Settings->Rules)
+	TArray<FAssetData> AssetList;
+	for (const auto& Rule : Settings->Rules)
 	{
 		FARFilter Filter;
 		Filter.ClassPaths.Add(UObject::StaticClass()->GetClassPathName());
 		Filter.bRecursiveClasses = true;
 		Filter.PackagePaths.Add(*Rule.SourcePath.Path);
 		Filter.bRecursivePaths = Rule.bRecursive;
-		
-		AssetList.Reset();
+
 		AssetRegistry.GetAssets(Filter, AssetList);
 		AutoGenFromAssets.Reserve(AutoGenFromAssets.Num() + AssetList.Num());
-		for (auto& AssetData : AssetList)
+
+		for (const auto& AssetData : AssetList)
 		{
-			auto FullPath = GenSavePathFrom(AssetData.GetAsset());
-			auto Directory = FPaths::GetPath(FullPath); 
+			const auto FullPath = GenSavePathFrom(AssetData.GetAsset());
+			auto Directory = FPaths::GetPath(FullPath);
 			Directory.RightChopInline(Rule.SourcePath.Path.Len(), EAllowShrinking::No);
 			Directory.InsertAt(0, *Settings->BasePath.Path);
-			auto FileName = FPaths::GetBaseFilename(FullPath);
-			AutoGenFromAssets.Emplace(AssetData, FPaths::Combine(Directory, FileName));
+			AutoGenFromAssets.Emplace(AssetData, FPaths::Combine(Directory, FPaths::GetBaseFilename(FullPath)));
 		}
+		AssetList.Reset();
 	}
+
 	InitializePlaceholderTextures();
 }
 
