@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Assets/GeneratedAsset.h"
-#include "Assets/GeneratedAssetData.h"
 #include "Engine/DeveloperSettings.h"
 #include "ThumbnailSaverSettings.generated.h"
 
