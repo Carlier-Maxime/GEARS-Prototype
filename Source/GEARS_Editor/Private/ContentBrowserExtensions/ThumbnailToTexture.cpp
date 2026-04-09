@@ -200,7 +200,7 @@ void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSa
 			const auto FullPath = GenSavePathFrom(AssetData.GetAsset());
 			auto Directory = FPaths::GetPath(FullPath);
 			Directory.RightChopInline(Rule.SourcePath.Path.Len(), EAllowShrinking::No);
-			Directory.InsertAt(0, *Settings->BasePath.Path);
+			Directory.InsertAt(0, FPaths::Combine(*Settings->BasePath.Path, Rule.SubFolderDest));
 			AutoGenFromAssets.Emplace(AssetData, FPaths::Combine(Directory, FPaths::GetBaseFilename(FullPath)));
 		}
 		AssetList.Reset();
