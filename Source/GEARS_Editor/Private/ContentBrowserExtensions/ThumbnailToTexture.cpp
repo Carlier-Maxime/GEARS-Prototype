@@ -206,7 +206,39 @@ void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSa
 	AutoGenerateThumbnails();
 }
 
-void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails()
+void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool ForceGen)
 {
-	for (const auto& [AssetData, SavePath] : AutoGenFromAssets) MakeTextureFrom(AssetData, SavePath);
+	int32 TotalGenerated = 0;
+	int32 TotalNeedGen = 0;
+	for (const auto& [AssetData, SavePath] : AutoGenFromAssets)
+	{
+		const bool bNeedGen = ForceGen || NeedGenerate(AssetData, SavePath);
+		TotalNeedGen += bNeedGen;
+		if (bNeedGen) TotalGenerated += MakeTextureFrom(AssetData, SavePath);
+	}
+	
+	if (TotalNeedGen == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("ThumbnailToTexture: All textures are up to date."));
+		return;
+	}
+	if (const int32 TotalFailGen = TotalNeedGen - TotalGenerated; TotalFailGen == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("ThumbnailToTexture: Successfully updated all %d required texture(s)."), TotalGenerated);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ThumbnailToTexture: Update completed with errors. (Success: %d, Fail: %d / Total needed: %d)"), 
+			   TotalGenerated, TotalFailGen, TotalNeedGen);
+	}
+}
+
+bool FThumbnailContentBrowserExtensions_Impl::NeedGenerate(const FAssetData& AssetData, const FString& SavePath)
+{
+	FString FilePath;
+	if (!FPackageName::DoesPackageExist(SavePath, &FilePath)) return true;
+	const auto TextureTime = IFileManager::Get().GetTimeStamp(*FilePath);
+	if (!FPackageName::DoesPackageExist(AssetData.PackageName.ToString(), &FilePath)) return false;
+	const auto AssetTime = IFileManager::Get().GetTimeStamp(*FilePath);
+	return AssetTime > TextureTime;
 }

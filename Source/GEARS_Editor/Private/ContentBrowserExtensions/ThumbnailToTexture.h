@@ -25,8 +25,11 @@ public:
 	static UTexture2D* CreateTexture(const FString& PackagePath, int32 Width, int32 Height, const FImage& Image);
 	static void SaveTexture(const FString& SavePath, UTexture2D* Texture);
 	static void PrepareAutoThumbnails(UThumbnailSaverSettings* Settings);
-	static void AutoGenerateThumbnails();
+	static void AutoGenerateThumbnails(bool ForceGen = false);
+
 private:
+	static bool NeedGenerate(const FAssetData& AssetData, const FString& SavePath);
+	
 	inline static int32 ExtenderIndex = -1;
 	inline static FDelegateHandle ExtenderHandle;
 	
