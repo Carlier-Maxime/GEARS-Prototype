@@ -66,7 +66,11 @@ bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& 
 		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Asset %s is not valid."), *AssetData.GetFullName());
 		return false;
 	}
+	return MakeTextureFrom(AssetData, GenSavePathFrom(Asset));
+}
 
+bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FAssetData& AssetData, const FString& SavePath)
+{
 	FObjectThumbnail Thumbnail;
 	ThumbnailTools::LoadThumbnailFromPackage(AssetData, Thumbnail);
 
@@ -75,11 +79,10 @@ bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& 
 	const auto Height = FMath::Min(Thumbnail.GetImageHeight(), Settings.MaxThumbnailSize);
 	if (Width == 0 || Height == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get thumbnail for %s."), *Asset->GetFullName());
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get thumbnail for %s."), *AssetData.GetFullName());
 		return false;
 	}
 	
-	const auto SavePath = GenSavePathFrom(Asset);
 	return CreateAndSaveTexture(SavePath, Width, Height, Thumbnail.GetImage(), Settings.bAutoSaveOnDisk);
 }
 
