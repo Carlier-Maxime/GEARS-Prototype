@@ -166,3 +166,47 @@ void FThumbnailContentBrowserExtensions_Impl::SaveTexture(const FString& SavePat
 
 	UPackage::SavePackage(Texture->GetPackage(), Texture, *PackageFilename, SaveArgs);
 }
+
+void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSaverSettings* Settings)
+{
+	TArray<FAssetData> AssetList;
+	auto& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	auto& AssetRegistry = AssetRegistryModule.Get();
+	FPaths::NormalizeDirectoryName(Settings->BasePath.Path);
+	TArray<FString> PathsToScan;
+	PathsToScan.Reserve(Settings->Rules.Num());
+	for (auto& Rule : Settings->Rules)
+	{
+		FPaths::NormalizeDirectoryName(Rule.SourcePath.Path);
+		PathsToScan.Emplace(Rule.SourcePath.Path);
+	}
+	AssetRegistry.ScanPathsSynchronous(PathsToScan);
+	AutoGenFromAssets.Reset();
+	for (auto& Rule : Settings->Rules)
+	{
+		FARFilter Filter;
+		Filter.ClassPaths.Add(UObject::StaticClass()->GetClassPathName());
+		Filter.bRecursiveClasses = true;
+		Filter.PackagePaths.Add(*Rule.SourcePath.Path);
+		Filter.bRecursivePaths = Rule.bRecursive;
+		
+		AssetList.Reset();
+		AssetRegistry.GetAssets(Filter, AssetList);
+		AutoGenFromAssets.Reserve(AutoGenFromAssets.Num() + AssetList.Num());
+		for (auto& AssetData : AssetList)
+		{
+			auto FullPath = GenSavePathFrom(AssetData.GetAsset());
+			auto Directory = FPaths::GetPath(FullPath); 
+			Directory.RightChopInline(Rule.SourcePath.Path.Len(), EAllowShrinking::No);
+			Directory.InsertAt(0, *Settings->BasePath.Path);
+			auto FileName = FPaths::GetBaseFilename(FullPath);
+			AutoGenFromAssets.Emplace(AssetData, FPaths::Combine(Directory, FileName));
+		}
+	}
+	AutoGenerateThumbnails();
+}
+
+void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails()
+{
+	for (const auto& [AssetData, SavePath] : AutoGenFromAssets) MakeTextureFrom(AssetData, SavePath);
+}

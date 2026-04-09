@@ -1,9 +1,26 @@
 ﻿#pragma once
 
+#include "Assets/GeneratedAsset.h"
+#include "Assets/GeneratedAssetData.h"
 #include "Engine/DeveloperSettings.h"
 #include "ThumbnailSaverSettings.generated.h"
 
-UCLASS(Config = EditorPerProjectUserSettings, meta = (DisplayName = "Thumbnail Saver"))
+USTRUCT(BlueprintType)
+struct FThumbnailGenerationRule
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, meta=(ContentDir))
+	FDirectoryPath SourcePath;
+
+	UPROPERTY(EditAnywhere)
+	FString SubFolderDest;
+
+	UPROPERTY(EditAnywhere)
+	bool bRecursive = true;
+};
+
+UCLASS(Config = Editor, DefaultConfig, meta = (DisplayName = "Thumbnail Saver"))
 class GEARS_EDITOR_API UThumbnailSaverSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
@@ -27,6 +44,13 @@ public:
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Output")
 	bool bAutoSaveOnDisk = false;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Automation",
+	meta = (DisplayName = "AutoGen Path", ContentDir, ToolTip="This is the base path for automation generation"))
+	FDirectoryPath BasePath = { "/Game/_Generated/Icons/Thumbnails/" };
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Automation")
+	TArray<FThumbnailGenerationRule> Rules;
 
 	FORCEINLINE static const UThumbnailSaverSettings* Get()
 	{
@@ -39,4 +63,6 @@ public:
 		check(Settings);
 		return *Settings;
 	}
+
+	virtual void PostInitProperties() override;
 };

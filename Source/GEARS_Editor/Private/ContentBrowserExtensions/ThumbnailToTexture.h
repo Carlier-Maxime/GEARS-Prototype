@@ -6,6 +6,7 @@
 #include "ContentBrowserDelegates.h"
 #include "AssetRegistry/AssetData.h"
 
+class UThumbnailSaverSettings;
 /**
  * 
  */
@@ -23,7 +24,17 @@ public:
 	static bool CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height, const FImage& Image, bool bSave = true);
 	static UTexture2D* CreateTexture(const FString& PackagePath, int32 Width, int32 Height, const FImage& Image);
 	static void SaveTexture(const FString& SavePath, UTexture2D* Texture);
+	static void PrepareAutoThumbnails(UThumbnailSaverSettings* Settings);
+	static void AutoGenerateThumbnails();
 private:
 	inline static int32 ExtenderIndex = -1;
 	inline static FDelegateHandle ExtenderHandle;
+	
+	struct FAutoGenData
+	{
+		FAssetData AssetData;
+		FString SavePath;
+	};
+	
+	inline static TArray<FAutoGenData> AutoGenFromAssets;
 };

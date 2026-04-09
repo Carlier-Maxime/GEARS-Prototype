@@ -68,6 +68,7 @@ void FGEARS_EditorModule::PostEngineInit()
 	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
 	TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders = ContentBrowserModule.GetAllAssetViewContextMenuExtenders();
 	FThumbnailContentBrowserExtensions_Impl::RegisterExtender(Extenders);
+	FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails();
 }
 
 #undef LOCTEXT_NAMESPACE
