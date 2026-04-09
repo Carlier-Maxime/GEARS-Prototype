@@ -198,10 +198,18 @@ void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSa
 		for (const auto& AssetData : AssetList)
 		{
 			const auto FullPath = GenSavePathFrom(AssetData.GetAsset());
-			auto Directory = FPaths::GetPath(FullPath);
-			Directory.RightChopInline(Rule.SourcePath.Path.Len(), EAllowShrinking::No);
-			Directory.InsertAt(0, FPaths::Combine(*Settings->BasePath.Path, Rule.SubFolderDest));
-			AutoGenFromAssets.Emplace(AssetData, FPaths::Combine(Directory, FPaths::GetBaseFilename(FullPath)));
+			auto BaseDirectory = FPaths::GetPath(FullPath);
+			BaseDirectory.RightChopInline(Rule.SourcePath.Path.Len(), EAllowShrinking::No);
+			BaseDirectory.InsertAt(0, FPaths::Combine(*Settings->BasePath.Path, Rule.SubFolderDest));
+			const auto FileName = FPaths::GetBaseFilename(FullPath);
+			auto SavePath = FPaths::Combine(BaseDirectory, FileName);
+			AutoGenFromAssets.Emplace(AssetData, SavePath);
+			for (const auto& ThemeTag : Rule.AdditionalThemes)
+			{
+				const auto* Theme = Settings->FindTheme(ThemeTag);
+				if (!Theme) continue;
+				AutoGenFromAssets.Emplace(AssetData, SavePath+"_"+Theme->GetName(), &Theme->MaterialsOverrides);
+			}
 		}
 		AssetList.Reset();
 	}

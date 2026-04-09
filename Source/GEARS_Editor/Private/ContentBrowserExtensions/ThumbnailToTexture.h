@@ -33,6 +33,7 @@ private:
 	{
 		FAssetData AssetData;
 		FString SavePath;
+		const TArray<TSoftObjectPtr<UMaterialInstance>>* MaterialsOverrides = nullptr;
 		FDateTime LastGenTime = FDateTime::MinValue();
 	};
 	

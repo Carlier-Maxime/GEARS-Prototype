@@ -22,7 +22,8 @@ public class GEARS_Editor : ModuleRules
 			"UnrealEd",
 			"ContentBrowser",
 			"DeveloperSettings",
-			"ImageCore"
+			"ImageCore",
+			"GameplayTags"
 		});
     }
 }

@@ -1,7 +1,29 @@
 ﻿#pragma once
 
+#include "GameplayTagContainer.h"
 #include "Engine/DeveloperSettings.h"
 #include "ThumbnailSaverSettings.generated.h"
+
+USTRUCT(BlueprintType)
+struct FThumbnailMaterialTheme
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, Category="Identity")
+	FGameplayTag Tag;
+	
+	UPROPERTY(EditAnywhere, Category="Name")
+	bool bUseCustomName = false;
+	
+	UPROPERTY(EditAnywhere, Category="Materials")
+	TArray<TSoftObjectPtr<UMaterialInstance>> MaterialsOverrides;
+	
+	FString GetName() const;
+	
+protected:
+	UPROPERTY(EditAnywhere, Category="Name", meta=(EditCondition = bUseCustomName))
+	FName Name;
+};
 
 USTRUCT(BlueprintType)
 struct FThumbnailGenerationRule
@@ -16,6 +38,9 @@ struct FThumbnailGenerationRule
 
 	UPROPERTY(EditAnywhere)
 	bool bRecursive = true;
+	
+	UPROPERTY(EditAnywhere)
+	FGameplayTagContainer AdditionalThemes;
 };
 
 UCLASS(Config = Editor, DefaultConfig, meta = (DisplayName = "Thumbnail Saver"))
@@ -63,4 +88,17 @@ public:
 	}
 
 	virtual void PostInitProperties() override;
+	
+	FORCEINLINE const FThumbnailMaterialTheme* FindTheme(const FGameplayTag& Tag) const
+	{
+		const auto* Index = ThemesMap.Find(Tag);
+		return Index ? &MaterialThemes[*Index] : nullptr;
+	}
+
+protected:
+	UPROPERTY(EditAnywhere, Config, Category = "Automation")
+	TArray<FThumbnailMaterialTheme> MaterialThemes;
+	
+private:
+	TMap<FGameplayTag, int32> ThemesMap;
 };
