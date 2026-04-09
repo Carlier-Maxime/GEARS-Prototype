@@ -210,11 +210,14 @@ void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool 
 {
 	int32 TotalGenerated = 0;
 	int32 TotalNeedGen = 0;
-	for (const auto& [AssetData, SavePath] : AutoGenFromAssets)
+	for (auto& AutoGenData : AutoGenFromAssets)
 	{
-		const bool bNeedGen = ForceGen || NeedGenerate(AssetData, SavePath);
+		const bool bNeedGen = ForceGen || NeedGenerate(AutoGenData);
 		TotalNeedGen += bNeedGen;
-		if (bNeedGen) TotalGenerated += MakeTextureFrom(AssetData, SavePath);
+		if (!bNeedGen) continue; 
+		if (!MakeTextureFrom(AutoGenData.AssetData, AutoGenData.SavePath)) continue;
+		++TotalGenerated;
+		AutoGenData.LastGenTime = FDateTime::UtcNow();
 	}
 	
 	if (TotalNeedGen == 0)
@@ -233,12 +236,12 @@ void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool 
 	}
 }
 
-bool FThumbnailContentBrowserExtensions_Impl::NeedGenerate(const FAssetData& AssetData, const FString& SavePath)
+bool FThumbnailContentBrowserExtensions_Impl::NeedGenerate(const FAutoGenData& AutoGenData)
 {
 	FString FilePath;
-	if (!FPackageName::DoesPackageExist(SavePath, &FilePath)) return true;
+	if (!FPackageName::DoesPackageExist(AutoGenData.SavePath, &FilePath)) return true;
 	const auto TextureTime = IFileManager::Get().GetTimeStamp(*FilePath);
-	if (!FPackageName::DoesPackageExist(AssetData.PackageName.ToString(), &FilePath)) return false;
+	if (!FPackageName::DoesPackageExist(AutoGenData.AssetData.PackageName.ToString(), &FilePath)) return false;
 	const auto AssetTime = IFileManager::Get().GetTimeStamp(*FilePath);
-	return AssetTime > TextureTime;
+	return AssetTime > (TextureTime > AutoGenData.LastGenTime ? TextureTime : AutoGenData.LastGenTime);
 }

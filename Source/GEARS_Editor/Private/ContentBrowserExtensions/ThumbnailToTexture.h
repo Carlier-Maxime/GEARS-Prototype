@@ -28,16 +28,17 @@ public:
 	static void AutoGenerateThumbnails(bool ForceGen = false);
 
 private:
-	static bool NeedGenerate(const FAssetData& AssetData, const FString& SavePath);
-	
-	inline static int32 ExtenderIndex = -1;
-	inline static FDelegateHandle ExtenderHandle;
-	
 	struct FAutoGenData
 	{
 		FAssetData AssetData;
 		FString SavePath;
+		FDateTime LastGenTime = FDateTime::MinValue();
 	};
+	
+	static bool NeedGenerate(const FAutoGenData& AutoGenData);
+	
+	inline static int32 ExtenderIndex = -1;
+	inline static FDelegateHandle ExtenderHandle;
 	
 	inline static TArray<FAutoGenData> AutoGenFromAssets;
 };
