@@ -60,7 +60,6 @@ void FThumbnailContentBrowserExtensions_Impl::ExecuteForAssets(const TArray<FAss
 
 bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& AssetData)
 {
-	auto& Settings = UThumbnailSaverSettings::GetRef();
 	auto* Asset = AssetData.GetAsset();
 	if (!Asset)
 	{
@@ -71,6 +70,7 @@ bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& 
 	FObjectThumbnail Thumbnail;
 	ThumbnailTools::LoadThumbnailFromPackage(AssetData, Thumbnail);
 
+	auto& Settings = UThumbnailSaverSettings::GetRef();
 	const auto Width  = FMath::Min(Thumbnail.GetImageWidth(), Settings.MaxThumbnailSize);
 	const auto Height = FMath::Min(Thumbnail.GetImageHeight(), Settings.MaxThumbnailSize);
 	if (Width == 0 || Height == 0)
@@ -79,22 +79,27 @@ bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& 
 		return false;
 	}
 	
-	FString SourcePrefix, SourceName; 
+	const auto SavePath = GenSavePathFrom(Asset);
+	return CreateAndSaveTexture(SavePath, Width, Height, Thumbnail.GetImage(), Settings.bAutoSaveOnDisk);
+}
+
+FString FThumbnailContentBrowserExtensions_Impl::GenSavePathFrom(const UObject* Asset)
+{
+	FString SourcePrefix, SourceName;
+	auto& Settings = UThumbnailSaverSettings::GetRef();
 	if (Settings.bAutoRemoveUpperPrefixInSource)
 	{
 		Asset->GetName().Split("_", &SourcePrefix, &SourceName);
 		if (SourcePrefix.ToUpper() != SourcePrefix) SourceName = Asset->GetName();
 	} else SourceName = Asset->GetName();
 	auto TextureName = Settings.OutputPrefix + SourceName;
-	FString PackageName = AssetData.PackageName.ToString(); 
+	FString PackageName = Asset->GetPackage()->GetName(); 
 	FString DirectoryPath = FPaths::GetPath(PackageName); 
-	const auto SavePath = FPaths::Combine(DirectoryPath, TextureName);
-	
-	return CreateAndSaveTexture(SavePath, Width, Height, Thumbnail.GetImage(), Settings.bAutoSaveOnDisk);
+	return FPaths::Combine(DirectoryPath, TextureName);
 }
 
 bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height,
-	const FImageView& ImageView, const bool bSave)
+                                                                   const FImageView& ImageView, const bool bSave)
 {
 	static FImage Image;
 	ImageView.CopyTo(Image, ImageView.Format, ImageView.GammaSpace);
