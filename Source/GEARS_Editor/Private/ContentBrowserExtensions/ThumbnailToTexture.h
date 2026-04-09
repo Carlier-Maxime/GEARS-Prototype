@@ -25,6 +25,7 @@ public:
 	static UTexture2D* CreateTexture(const FString& PackagePath, int32 Width, int32 Height, const FImage& Image);
 	static void SaveTexture(const FString& SavePath, UTexture2D* Texture);
 	static void PrepareAutoThumbnails(UThumbnailSaverSettings* Settings);
+	static void InitializePlaceholderTextures();
 	static void AutoGenerateThumbnails(bool ForceGen = false);
 
 private:

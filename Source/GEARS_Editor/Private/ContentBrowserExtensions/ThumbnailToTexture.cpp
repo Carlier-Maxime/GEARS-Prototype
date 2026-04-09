@@ -203,7 +203,35 @@ void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSa
 			AutoGenFromAssets.Emplace(AssetData, FPaths::Combine(Directory, FileName));
 		}
 	}
-	AutoGenerateThumbnails();
+	InitializePlaceholderTextures();
+}
+
+void FThumbnailContentBrowserExtensions_Impl::InitializePlaceholderTextures()
+{
+	const auto& Settings = UThumbnailSaverSettings::GetRef();
+	const auto Res = Settings.MaxThumbnailSize;
+	static const FImage PlaceHolder(Res, Res, ERawImageFormat::BGRA8);
+	
+	int32 TotalGenerated = 0;
+	int32 TotalNeed = 0;
+	for (auto& AutoGenData : AutoGenFromAssets)
+	{
+		if (FPackageName::DoesPackageExist(AutoGenData.SavePath, nullptr)) continue;
+		++TotalNeed;
+		if (!CreateTexture(AutoGenData.SavePath, Res, Res, PlaceHolder)) continue;
+		++TotalGenerated;
+	}
+	
+	if (TotalNeed == 0) return;
+	if (const int32 TotalFail = TotalNeed - TotalGenerated; TotalFail == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("ThumbnailToTexture: Successfully created PlaceHolder %d required."), TotalGenerated);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ThumbnailToTexture: PlaceHolder creation completed with errors. (Success: %d, Fail: %d / Total needed: %d)"), 
+			   TotalGenerated, TotalFail, TotalNeed);
+	}
 }
 
 void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool ForceGen)
