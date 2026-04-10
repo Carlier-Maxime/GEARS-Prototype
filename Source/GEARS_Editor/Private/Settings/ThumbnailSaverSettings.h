@@ -2,46 +2,9 @@
 
 #include "GameplayTagContainer.h"
 #include "Engine/DeveloperSettings.h"
+#include "Thumbnails/ThumbnailMaterialTheme.h"
+#include "Thumbnails/ThumbnailGenerationRule.h"
 #include "ThumbnailSaverSettings.generated.h"
-
-USTRUCT(BlueprintType)
-struct FThumbnailMaterialTheme
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere, Category="Identity")
-	FGameplayTag Tag;
-	
-	UPROPERTY(EditAnywhere, Category="Name")
-	bool bUseCustomName = false;
-	
-	UPROPERTY(EditAnywhere, Category="Materials")
-	TArray<TSoftObjectPtr<UMaterialInstance>> MaterialsOverrides;
-	
-	FString GetName() const;
-	
-protected:
-	UPROPERTY(EditAnywhere, Category="Name", meta=(EditCondition = bUseCustomName))
-	FName Name;
-};
-
-USTRUCT(BlueprintType)
-struct FThumbnailGenerationRule
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, meta=(ContentDir))
-	FDirectoryPath SourcePath;
-
-	UPROPERTY(EditAnywhere)
-	FString SubFolderDest;
-
-	UPROPERTY(EditAnywhere)
-	bool bRecursive = true;
-	
-	UPROPERTY(EditAnywhere)
-	FGameplayTagContainer AdditionalThemes;
-};
 
 UCLASS(Config = Editor, DefaultConfig, meta = (DisplayName = "Thumbnail Saver"))
 class GEARS_EDITOR_API UThumbnailSaverSettings : public UDeveloperSettings

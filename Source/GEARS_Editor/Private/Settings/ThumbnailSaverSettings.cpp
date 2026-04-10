@@ -11,8 +11,3 @@ void UThumbnailSaverSettings::PostInitProperties()
 	FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(this);
 	Super::PostInitProperties();
 }
-
-FString FThumbnailMaterialTheme::GetName() const
-{
-	return (bUseCustomName && Name.GetStringLength()>0) ? Name.ToString() :  Tag.ToString().Replace(TEXT("."), TEXT("_"));
-}
