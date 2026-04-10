@@ -72,6 +72,9 @@ public:
 	meta = (DisplayName = "AutoGen Path", ContentDir, ToolTip="This is the base path for automation generation"))
 	FDirectoryPath BasePath = { "/Game/_Generated/Icons/Thumbnails/" };
 	
+	UPROPERTY(EditAnywhere, Config, Category = "Automation", meta=(ToolTip = "This is the root tag for the theme, used for filter tag in Editor, during choose a MaterialTheme Tag. If Tag None, no filtering applyed"))
+	FGameplayTag ThemeRootTag;
+	
 	UPROPERTY(EditAnywhere, Config, Category = "Automation")
 	TArray<FThumbnailGenerationRule> Rules;
 

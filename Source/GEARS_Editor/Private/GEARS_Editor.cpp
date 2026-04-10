@@ -9,6 +9,9 @@
 #include "Grid/Generator/Context/NoiseContext.h"
 #include "Grid/Generator/Context/DistributionRule.h"
 #include "ContentBrowserExtensions/ThumbnailToTexture.h"
+#include "Customization/ThumbnailGenerationRuleCustomization.h"
+#include "Customization/ThumbnailMaterialThemeCustomization.h"
+#include "Settings/ThumbnailSaverSettings.h"
 
 #define LOCTEXT_NAMESPACE "FGEARS_EditorModule"
 
@@ -25,6 +28,8 @@ void FGEARS_EditorModule::ShutdownModule()
 		auto& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FNoiseContext::StaticStruct()->GetFName());
 		PropertyModule.UnregisterCustomPropertyTypeLayout(FDistributionRule::StaticStruct()->GetFName());
+		PropertyModule.UnregisterCustomPropertyTypeLayout(FThumbnailMaterialTheme::StaticStruct()->GetFName());
+		PropertyModule.UnregisterCustomPropertyTypeLayout(FThumbnailGenerationRule::StaticStruct()->GetFName());
 		PropertyModule.UnregisterCustomClassLayout(UBiomeType::StaticClass()->GetFName());
 		PropertyModule.UnregisterCustomClassLayout(UGridSettings::StaticClass()->GetFName());
 	}
@@ -47,6 +52,14 @@ void FGEARS_EditorModule::RegisterCustomLayout()
 	PropertyModule.RegisterCustomPropertyTypeLayout(
 		FDistributionRule::StaticStruct()->GetFName(),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FDistributionRuleCustomization::MakeInstance)
+	);
+	PropertyModule.RegisterCustomPropertyTypeLayout(
+		FThumbnailMaterialTheme::StaticStruct()->GetFName(),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FThumbnailMaterialThemeCustomization::MakeInstance)
+	);
+	PropertyModule.RegisterCustomPropertyTypeLayout(
+		FThumbnailGenerationRule::StaticStruct()->GetFName(),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FThumbnailGenerationRuleCustomization::MakeInstance)
 	);
 	
 	PropertyModule.RegisterCustomClassLayout(

@@ -23,7 +23,8 @@ public class GEARS_Editor : ModuleRules
 			"ContentBrowser",
 			"DeveloperSettings",
 			"ImageCore",
-			"GameplayTags"
+			"GameplayTags",
+			"GameplayTagsEditor"
 		});
     }
 }
