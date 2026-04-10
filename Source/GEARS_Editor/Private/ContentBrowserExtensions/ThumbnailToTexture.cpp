@@ -328,7 +328,7 @@ void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool 
 	int32 TotalNeedGen = 0;
 	for (auto& AutoGenData : AutoGenFromAssets)
 	{
-		const bool bNeedGen = ForceGen || NeedGenerate(AutoGenData);
+		const bool bNeedGen = ForceGen || AutoGenData.NeedGenerate();
 		TotalNeedGen += bNeedGen;
 		if (!bNeedGen) continue; 
 		if (!MakeTextureFrom(AutoGenData)) continue;
@@ -350,14 +350,4 @@ void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool 
 		UE_LOG(LogTemp, Warning, TEXT("ThumbnailToTexture: Update completed with errors. (Success: %d, Fail: %d / Total needed: %d)"), 
 			   TotalGenerated, TotalFailGen, TotalNeedGen);
 	}
-}
-
-bool FThumbnailContentBrowserExtensions_Impl::NeedGenerate(const FAutoGenData& AutoGenData)
-{
-	FString FilePath;
-	if (!FPackageName::DoesPackageExist(AutoGenData.SavePath, &FilePath)) return true;
-	const auto TextureTime = IFileManager::Get().GetTimeStamp(*FilePath);
-	if (!FPackageName::DoesPackageExist(AutoGenData.AssetData.PackageName.ToString(), &FilePath)) return false;
-	const auto AssetTime = IFileManager::Get().GetTimeStamp(*FilePath);
-	return AssetTime > (TextureTime > AutoGenData.LastGenTime ? TextureTime : AutoGenData.LastGenTime);
 }

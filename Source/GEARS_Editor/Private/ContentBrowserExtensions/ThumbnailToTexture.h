@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "ContentBrowserDelegates.h"
 #include "AssetRegistry/AssetData.h"
+#include "Thumbnails/AutoGenData.h"
+
+using namespace ThumbnailToTexture;
 
 class UThumbnailSaverSettings;
 /**
@@ -12,14 +15,6 @@ class UThumbnailSaverSettings;
  */
 class GEARS_EDITOR_API FThumbnailContentBrowserExtensions_Impl
 {
-private:
-	struct FAutoGenData
-	{
-		FAssetData AssetData;
-		FString SavePath;
-		const TArray<TSoftObjectPtr<UMaterialInstance>>* MaterialsOverrides = nullptr;
-		FDateTime LastGenTime = FDateTime::MinValue();
-	};
 
 public:
 	static void RegisterExtender(TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders);
@@ -40,8 +35,6 @@ public:
 	static void AutoGenerateThumbnails(bool ForceGen = false);
 
 private:
-	static bool NeedGenerate(const FAutoGenData& AutoGenData);
-	
 	inline static int32 ExtenderIndex = -1;
 	inline static FDelegateHandle ExtenderHandle;
 	
