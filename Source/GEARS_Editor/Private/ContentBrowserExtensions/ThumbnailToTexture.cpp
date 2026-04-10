@@ -6,6 +6,7 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Settings/ThumbnailSaverSettings.h"
+#include "Thumbnails/PathUtils.h"
 #include "UObject/SavePackage.h"
 
 
@@ -67,7 +68,7 @@ bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& 
 		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Asset %s is not valid."), *AssetData.GetFullName());
 		return false;
 	}
-	return MakeTextureFrom(AssetData, GenSavePathFrom(Asset));
+	return MakeTextureFrom(AssetData, PathUtils::GetTextureSavePathFor(Asset));
 }
 
 bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FAssetData& AssetData, const FString& SavePath)
@@ -161,21 +162,6 @@ bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FObjectThumb
 	}
 	
 	return CreateAndSaveTexture(SavePath, Width, Height, Thumbnail.GetImage(), Settings.bAutoSaveOnDisk);
-}
-
-FString FThumbnailContentBrowserExtensions_Impl::GenSavePathFrom(const UObject* Asset)
-{
-	FString SourcePrefix, SourceName;
-	auto& Settings = UThumbnailSaverSettings::GetRef();
-	if (Settings.bAutoRemoveUpperPrefixInSource)
-	{
-		Asset->GetName().Split("_", &SourcePrefix, &SourceName);
-		if (SourcePrefix.ToUpper() != SourcePrefix) SourceName = Asset->GetName();
-	} else SourceName = Asset->GetName();
-	auto TextureName = Settings.OutputPrefix + SourceName;
-	FString PackageName = Asset->GetPackage()->GetName(); 
-	FString DirectoryPath = FPaths::GetPath(PackageName); 
-	return FPaths::Combine(DirectoryPath, TextureName);
 }
 
 bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height,
@@ -274,12 +260,7 @@ void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSa
 
 		for (const auto& AssetData : AssetList)
 		{
-			const auto FullPath = GenSavePathFrom(AssetData.GetAsset());
-			auto BaseDirectory = FPaths::GetPath(FullPath);
-			BaseDirectory.RightChopInline(Rule.SourcePath.Path.Len(), EAllowShrinking::No);
-			BaseDirectory.InsertAt(0, FPaths::Combine(*Settings->BasePath.Path, Rule.SubFolderDest));
-			const auto FileName = FPaths::GetBaseFilename(FullPath);
-			auto SavePath = FPaths::Combine(BaseDirectory, FileName);
+			const auto SavePath = PathUtils::GetTextureSavePathFor(AssetData.GetAsset(), Rule);
 			AutoGenFromAssets.Emplace(AssetData, SavePath);
 			for (const auto& ThemeTag : Rule.AdditionalThemes)
 			{

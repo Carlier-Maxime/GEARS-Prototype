@@ -22,7 +22,6 @@ public:
 	static TSharedRef<FExtender> OnExtendContentBrowserAssetSelectionMenu(const TArray<FAssetData>& SelectedAssets);
 	static void ExecuteForAssets(const TArray<FAssetData>& Assets);
 	static bool ExecuteForAsset(const FAssetData& AssetData);
-	static FString GenSavePathFrom(const UObject* Asset);
 	static bool MakeTextureFrom(const FAssetData& AssetData, const FString& SavePath);
 	static bool MakeTextureFrom(const FAutoGenData& AutoGenData);
 	static bool MakeTextureFrom(const FObjectThumbnail& Thumbnail, const FAssetData& AssetData, const FString& SavePath);
