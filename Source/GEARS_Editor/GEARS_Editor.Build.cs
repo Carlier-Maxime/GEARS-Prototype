@@ -24,7 +24,8 @@ public class GEARS_Editor : ModuleRules
 			"DeveloperSettings",
 			"ImageCore",
 			"GameplayTags",
-			"GameplayTagsEditor"
+			"GameplayTagsEditor",
+			"RenderCore"
 		});
     }
 }

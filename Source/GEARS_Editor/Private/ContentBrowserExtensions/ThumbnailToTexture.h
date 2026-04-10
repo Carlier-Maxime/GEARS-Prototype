@@ -12,6 +12,15 @@ class UThumbnailSaverSettings;
  */
 class GEARS_EDITOR_API FThumbnailContentBrowserExtensions_Impl
 {
+private:
+	struct FAutoGenData
+	{
+		FAssetData AssetData;
+		FString SavePath;
+		const TArray<TSoftObjectPtr<UMaterialInstance>>* MaterialsOverrides = nullptr;
+		FDateTime LastGenTime = FDateTime::MinValue();
+	};
+
 public:
 	static void RegisterExtender(TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders);
 	static void UnregisterExtender(TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders);
@@ -20,6 +29,8 @@ public:
 	static bool ExecuteForAsset(const FAssetData& AssetData);
 	static FString GenSavePathFrom(const UObject* Asset);
 	static bool MakeTextureFrom(const FAssetData& AssetData, const FString& SavePath);
+	static bool MakeTextureFrom(const FAutoGenData& AutoGenData);
+	static bool MakeTextureFrom(const FObjectThumbnail& Thumbnail, const FAssetData& AssetData, const FString& SavePath);
 	static bool CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height, const FImageView& ImageView, bool bSave = true);
 	static bool CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height, const FImage& Image, bool bSave = true);
 	static UTexture2D* CreateTexture(const FString& PackagePath, int32 Width, int32 Height, const FImage& Image);
@@ -29,14 +40,6 @@ public:
 	static void AutoGenerateThumbnails(bool ForceGen = false);
 
 private:
-	struct FAutoGenData
-	{
-		FAssetData AssetData;
-		FString SavePath;
-		const TArray<TSoftObjectPtr<UMaterialInstance>>* MaterialsOverrides = nullptr;
-		FDateTime LastGenTime = FDateTime::MinValue();
-	};
-	
 	static bool NeedGenerate(const FAutoGenData& AutoGenData);
 	
 	inline static int32 ExtenderIndex = -1;

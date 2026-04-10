@@ -4,6 +4,7 @@
 
 #include "ObjectTools.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Settings/ThumbnailSaverSettings.h"
 #include "UObject/SavePackage.h"
 
@@ -73,7 +74,83 @@ bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FAssetData& 
 {
 	FObjectThumbnail Thumbnail;
 	ThumbnailTools::LoadThumbnailFromPackage(AssetData, Thumbnail);
+	return MakeTextureFrom(Thumbnail, AssetData, SavePath);
+}
 
+bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FAutoGenData& AutoGenData)
+{
+	if (!AutoGenData.MaterialsOverrides || AutoGenData.MaterialsOverrides->IsEmpty()) return MakeTextureFrom(AutoGenData.AssetData, AutoGenData.SavePath);
+	const auto Res = UThumbnailSaverSettings::GetRef().MaxThumbnailSize;
+	auto* Mesh = Cast<UStaticMesh>(AutoGenData.AssetData.GetAsset());
+	if (!Mesh)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Asset %s is not a static mesh or is invalid."), *AutoGenData.AssetData.GetFullName());
+		return false;
+	}
+	
+	static TArray<UMaterialInterface*> MaterialInterfaces;
+	MaterialInterfaces.Reset();
+	MaterialInterfaces.Reserve(AutoGenData.MaterialsOverrides->Num());
+	for (const auto& MaterialOverride : *AutoGenData.MaterialsOverrides)
+	{
+		MaterialInterfaces.Emplace(MaterialOverride.LoadSynchronous());
+	}
+	
+	static TArray<UMaterialInterface*> OriginalMaterials;
+	const int32 MaterialCount = Mesh->GetStaticMaterials().Num();
+	OriginalMaterials.Reset();
+	OriginalMaterials.Reserve(MaterialCount);
+	
+	for (int32 i = 0; i < MaterialCount; i++)
+	{
+		OriginalMaterials.Add(Mesh->GetMaterial(i));
+		if (!MaterialInterfaces.IsValidIndex(i) || !MaterialInterfaces[i]) continue;
+		Mesh->SetMaterial(i, MaterialInterfaces[i]);
+		Mesh->GetMaterial(i)->EnsureIsComplete();
+	}
+	
+	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(
+		GetTransientPackage(),
+		MakeUniqueObjectName(GetTransientPackage(), UTextureRenderTarget2D::StaticClass())
+	);
+	RenderTarget->ClearColor = FLinearColor(0.f, 0.f, 0.f, 0.f);
+	RenderTarget->TargetGamma = 2.2f;
+	RenderTarget->InitCustomFormat(Res, Res, PF_B8G8R8A8, true);
+	RenderTarget->UpdateResourceImmediate(true);
+	auto* RenderResource = RenderTarget->GameThread_GetRenderTargetResource();
+	if (!RenderResource) UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get render target resource for %s."), *AutoGenData.AssetData.GetFullName());
+	FlushRenderingCommands();
+	
+	FObjectThumbnail DummyThumbnail;
+	ThumbnailTools::RenderThumbnail(
+		Mesh, Res, Res,
+		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
+		RenderResource,
+		&DummyThumbnail
+	);
+	FlushRenderingCommands();
+	
+	FObjectThumbnail Thumbnail;
+	ThumbnailTools::RenderThumbnail(
+		Mesh,
+		Res,
+		Res,
+		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
+		RenderResource,
+		&Thumbnail
+	);
+	
+	for (int32 i = 0; i < MaterialCount; i++)
+	{
+		Mesh->SetMaterial(i, OriginalMaterials[i]);
+	}
+	FlushRenderingCommands();
+	
+	return MakeTextureFrom(Thumbnail, AutoGenData.AssetData, AutoGenData.SavePath);
+}
+
+bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FObjectThumbnail& Thumbnail, const FAssetData& AssetData, const FString& SavePath)
+{
 	auto& Settings = UThumbnailSaverSettings::GetRef();
 	const auto Width  = FMath::Min(Thumbnail.GetImageWidth(), Settings.MaxThumbnailSize);
 	const auto Height = FMath::Min(Thumbnail.GetImageHeight(), Settings.MaxThumbnailSize);
@@ -254,7 +331,7 @@ void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool 
 		const bool bNeedGen = ForceGen || NeedGenerate(AutoGenData);
 		TotalNeedGen += bNeedGen;
 		if (!bNeedGen) continue; 
-		if (!MakeTextureFrom(AutoGenData.AssetData, AutoGenData.SavePath)) continue;
+		if (!MakeTextureFrom(AutoGenData)) continue;
 		++TotalGenerated;
 		AutoGenData.LastGenTime = FDateTime::UtcNow();
 	}
