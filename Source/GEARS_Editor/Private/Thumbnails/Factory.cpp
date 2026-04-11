@@ -2,6 +2,7 @@
 
 #include "AutoGenData.h"
 #include "ObjectTools.h"
+#include "ScopedMaterialOverride.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Settings/ThumbnailSaverSettings.h"
@@ -35,7 +36,7 @@ UTexture2D* ThumbnailToTexture::Factory::MakeTextureByRenderThumbnail(const FAut
 		return nullptr;
 	}
 	
-	TArray<UMaterialInterface*, TInlineAllocator<5>> MaterialInterfaces;
+	TArray<UMaterialInterface*, TInlineAllocator<8>> MaterialInterfaces;
 	MaterialInterfaces.Reset();
 	MaterialInterfaces.Reserve(AutoGenData.MaterialsOverrides->Num());
 	for (const auto& MaterialOverride : *AutoGenData.MaterialsOverrides)
@@ -43,18 +44,7 @@ UTexture2D* ThumbnailToTexture::Factory::MakeTextureByRenderThumbnail(const FAut
 		MaterialInterfaces.Emplace(MaterialOverride.LoadSynchronous());
 	}
 	
-	TArray<UMaterialInterface*, TInlineAllocator<5>> OriginalMaterials;
-	const int32 MaterialCount = Mesh->GetStaticMaterials().Num();
-	OriginalMaterials.Reset();
-	OriginalMaterials.Reserve(MaterialCount);
-	
-	for (int32 i = 0; i < MaterialCount; i++)
-	{
-		OriginalMaterials.Add(Mesh->GetMaterial(i));
-		if (!MaterialInterfaces.IsValidIndex(i) || !MaterialInterfaces[i]) continue;
-		Mesh->SetMaterial(i, MaterialInterfaces[i]);
-		Mesh->GetMaterial(i)->EnsureIsComplete();
-	}
+	FScopedMaterialOverride MatOverride(*Mesh, MaterialInterfaces);
 	
 	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(
 		GetTransientPackage(),
@@ -86,12 +76,6 @@ UTexture2D* ThumbnailToTexture::Factory::MakeTextureByRenderThumbnail(const FAut
 		RenderResource,
 		&Thumbnail
 	);
-	
-	for (int32 i = 0; i < MaterialCount; i++)
-	{
-		Mesh->SetMaterial(i, OriginalMaterials[i]);
-	}
-	FlushRenderingCommands();
 	
 	if (!Thumbnail.HasValidImageData())
 	{
