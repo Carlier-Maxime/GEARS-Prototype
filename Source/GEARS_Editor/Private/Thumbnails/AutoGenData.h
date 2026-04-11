@@ -10,5 +10,16 @@ namespace ThumbnailToTexture
 		FDateTime LastGenTime = FDateTime::MinValue();
 		
 		[[nodiscard]] bool NeedGenerate() const;
+		
+		template <typename AllocatorType>
+		void GetLoadedMaterials(TArray<UMaterialInterface*, AllocatorType>& OutMaterials) const
+		{
+			OutMaterials.Reset();
+			OutMaterials.Reserve(MaterialsOverrides->Num());
+			for (const auto& MaterialOverride : *MaterialsOverrides)
+			{
+				OutMaterials.Emplace(MaterialOverride.LoadSynchronous());
+			}
+		}
 	};
 }

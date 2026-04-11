@@ -37,13 +37,7 @@ UTexture2D* ThumbnailToTexture::Factory::MakeTextureByRenderThumbnail(const FAut
 	}
 	
 	TArray<UMaterialInterface*, TInlineAllocator<8>> MaterialInterfaces;
-	MaterialInterfaces.Reset();
-	MaterialInterfaces.Reserve(AutoGenData.MaterialsOverrides->Num());
-	for (const auto& MaterialOverride : *AutoGenData.MaterialsOverrides)
-	{
-		MaterialInterfaces.Emplace(MaterialOverride.LoadSynchronous());
-	}
-	
+	AutoGenData.GetLoadedMaterials(MaterialInterfaces);
 	FScopedMaterialOverride MatOverride(*Mesh, MaterialInterfaces);
 	
 	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(
