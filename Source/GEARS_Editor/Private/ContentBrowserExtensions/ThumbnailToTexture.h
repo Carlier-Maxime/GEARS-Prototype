@@ -22,13 +22,6 @@ public:
 	static TSharedRef<FExtender> OnExtendContentBrowserAssetSelectionMenu(const TArray<FAssetData>& SelectedAssets);
 	static void ExecuteForAssets(const TArray<FAssetData>& Assets);
 	static bool ExecuteForAsset(const FAssetData& AssetData);
-	static bool MakeTextureFrom(const FAssetData& AssetData, const FString& SavePath);
-	static bool MakeTextureFrom(const FAutoGenData& AutoGenData);
-	static bool MakeTextureFrom(const FObjectThumbnail& Thumbnail, const FAssetData& AssetData, const FString& SavePath);
-	static bool CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height, const FImageView& ImageView, bool bSave = true);
-	static bool CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height, const FImage& Image, bool bSave = true);
-	static UTexture2D* CreateTexture(const FString& PackagePath, int32 Width, int32 Height, const FImage& Image);
-	static void SaveTexture(const FString& SavePath, UTexture2D* Texture);
 	static void PrepareAutoThumbnails(UThumbnailSaverSettings* Settings);
 	static void InitializePlaceholderTextures();
 	static void AutoGenerateThumbnails(bool ForceGen = false);

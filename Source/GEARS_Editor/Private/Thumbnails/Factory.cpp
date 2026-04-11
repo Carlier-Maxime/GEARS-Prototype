@@ -1,0 +1,178 @@
+﻿#include "Factory.h"
+
+#include "AutoGenData.h"
+#include "ObjectTools.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "Settings/ThumbnailSaverSettings.h"
+#include "UObject/SavePackage.h"
+
+UTexture2D* ThumbnailToTexture::Factory::MakeTextureFromExistingThumbnail(const FAssetData& AssetData,
+	UPackage* Package)
+{
+	FObjectThumbnail Thumbnail;
+	if (!ThumbnailTools::LoadThumbnailFromPackage(AssetData, Thumbnail))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to load thumbnail for %s."), *AssetData.GetFullName());
+		return nullptr;
+	}
+	return MakeTextureFrom(Thumbnail, Package);
+}
+
+UTexture2D* ThumbnailToTexture::Factory::MakeTextureByRenderThumbnail(const FAutoGenData& AutoGenData)
+{
+	auto* Package = CreatePackage(*AutoGenData.SavePath);
+	if (!AutoGenData.MaterialsOverrides || AutoGenData.MaterialsOverrides->IsEmpty())
+	{
+		return MakeTextureFromExistingThumbnail(AutoGenData.AssetData, Package);
+	}
+	
+	const auto Res = UThumbnailSaverSettings::GetRef().MaxThumbnailSize;
+	auto* Mesh = Cast<UStaticMesh>(AutoGenData.AssetData.GetAsset());
+	if (!Mesh)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Asset %s is not a static mesh or is invalid."), *AutoGenData.AssetData.GetFullName());
+		return nullptr;
+	}
+	
+	TArray<UMaterialInterface*, TInlineAllocator<5>> MaterialInterfaces;
+	MaterialInterfaces.Reset();
+	MaterialInterfaces.Reserve(AutoGenData.MaterialsOverrides->Num());
+	for (const auto& MaterialOverride : *AutoGenData.MaterialsOverrides)
+	{
+		MaterialInterfaces.Emplace(MaterialOverride.LoadSynchronous());
+	}
+	
+	TArray<UMaterialInterface*, TInlineAllocator<5>> OriginalMaterials;
+	const int32 MaterialCount = Mesh->GetStaticMaterials().Num();
+	OriginalMaterials.Reset();
+	OriginalMaterials.Reserve(MaterialCount);
+	
+	for (int32 i = 0; i < MaterialCount; i++)
+	{
+		OriginalMaterials.Add(Mesh->GetMaterial(i));
+		if (!MaterialInterfaces.IsValidIndex(i) || !MaterialInterfaces[i]) continue;
+		Mesh->SetMaterial(i, MaterialInterfaces[i]);
+		Mesh->GetMaterial(i)->EnsureIsComplete();
+	}
+	
+	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(
+		GetTransientPackage(),
+		MakeUniqueObjectName(GetTransientPackage(), UTextureRenderTarget2D::StaticClass())
+	);
+	RenderTarget->ClearColor = FLinearColor(0.f, 0.f, 0.f, 0.f);
+	RenderTarget->TargetGamma = 2.2f;
+	RenderTarget->InitCustomFormat(Res, Res, PF_B8G8R8A8, true);
+	RenderTarget->UpdateResourceImmediate(true);
+	auto* RenderResource = RenderTarget->GameThread_GetRenderTargetResource();
+	if (!RenderResource) UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get render target resource for %s."), *AutoGenData.AssetData.GetFullName());
+	FlushRenderingCommands();
+	
+	FObjectThumbnail DummyThumbnail;
+	ThumbnailTools::RenderThumbnail(
+		Mesh, Res, Res,
+		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
+		RenderResource,
+		&DummyThumbnail
+	);
+	FlushRenderingCommands();
+	
+	FObjectThumbnail Thumbnail;
+	ThumbnailTools::RenderThumbnail(
+		Mesh,
+		Res,
+		Res,
+		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
+		RenderResource,
+		&Thumbnail
+	);
+	
+	for (int32 i = 0; i < MaterialCount; i++)
+	{
+		Mesh->SetMaterial(i, OriginalMaterials[i]);
+	}
+	FlushRenderingCommands();
+	
+	if (!Thumbnail.HasValidImageData())
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get thumbnail for %s."), *AutoGenData.AssetData.GetFullName());
+		return nullptr;
+	}
+	
+	return MakeTextureFrom(Thumbnail, CreatePackage(*AutoGenData.SavePath));
+}
+
+UTexture2D* ThumbnailToTexture::Factory::MakeTextureFrom(const FObjectThumbnail& Thumbnail, UPackage* Package)
+{
+	auto& Settings = UThumbnailSaverSettings::GetRef();
+	const auto Width  = FMath::Min(Thumbnail.GetImageWidth(), Settings.MaxThumbnailSize);
+	const auto Height = FMath::Min(Thumbnail.GetImageHeight(), Settings.MaxThumbnailSize);
+	FImage Image;
+	Thumbnail.GetImage().CopyTo(Image);
+	return MakeTextureFrom(Image, Width, Height, Package);
+}
+
+UTexture2D* ThumbnailToTexture::Factory::MakeTextureFrom(const FImage& Image, UPackage* Package, const FName& AssetName)
+{
+	if (!Package)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Make Texture Failed due to Package is null."));
+		return nullptr;
+	}
+	Package->FullyLoad();
+	
+	if (Image.Format != ERawImageFormat::BGRA8)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Make Texture Failed due to Image format is not BGRA8."));
+		return nullptr;
+	}
+	
+	auto* Texture = NewObject<UTexture2D>(Package, AssetName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
+	if (!Texture)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to create texture for %s."), *Package->GetName());
+		return nullptr;
+	}
+
+	Texture->Source.Init(Image.GetWidth(), Image.GetHeight(), 1, 1, TSF_BGRA8, Image.RawData.GetData());
+	Texture->CompressionSettings = TC_BC7;
+	Texture->MipGenSettings      = TMGS_NoMipmaps;
+	Texture->LODGroup            = TEXTUREGROUP_UI;
+	Texture->SRGB                = true;
+	Texture->UpdateResource();
+
+	FAssetRegistryModule::AssetCreated(Texture);
+	if (!Package->MarkPackageDirty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ThumbnailToTexture: cannot be marked package dirty ! (%s)"), *Package->GetName())
+	}
+
+	return Texture;
+}
+
+UTexture2D* ThumbnailToTexture::Factory::MakeTextureFrom(const FImage& Image, const int32 Width, const int32 Height,
+	UPackage* Package, const FName& AssetName)
+{
+	if (Image.SizeX == Width && Image.SizeY == Height) return MakeTextureFrom(Image, Package, AssetName);
+	FImage DestImage(Width, Height, ERawImageFormat::BGRA8);
+	Image.ResizeTo(DestImage, Width, Height, DestImage.Format, Image.GammaSpace);
+	return MakeTextureFrom(DestImage, Package, AssetName);
+}
+
+void ThumbnailToTexture::Factory::SaveTexture(UTexture2D* Texture)
+{
+	const FString PackageFilename =
+		FPackageName::LongPackageNameToFilename(
+			Texture->GetPackage()->GetName(),
+			FPackageName::GetAssetPackageExtension()
+		);
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+	SaveArgs.Error         = GError;
+	SaveArgs.bForceByteSwapping = false;
+	SaveArgs.bWarnOfLongFilename = true;
+	SaveArgs.SaveFlags = SAVE_NoError;
+
+	UPackage::SavePackage(Texture->GetPackage(), Texture, *PackageFilename, SaveArgs);
+}

@@ -2,12 +2,10 @@
 
 #include "ThumbnailToTexture.h"
 
-#include "ObjectTools.h"
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "Engine/TextureRenderTarget2D.h"
 #include "Settings/ThumbnailSaverSettings.h"
+#include "Thumbnails/Factory.h"
 #include "Thumbnails/PathUtils.h"
-#include "UObject/SavePackage.h"
 
 
 void FThumbnailContentBrowserExtensions_Impl::RegisterExtender(TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders)
@@ -62,172 +60,10 @@ void FThumbnailContentBrowserExtensions_Impl::ExecuteForAssets(const TArray<FAss
 
 bool FThumbnailContentBrowserExtensions_Impl::ExecuteForAsset(const FAssetData& AssetData)
 {
-	auto* Asset = AssetData.GetAsset();
-	if (!Asset)
-	{
-		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Asset %s is not valid."), *AssetData.GetFullName());
-		return false;
-	}
-	return MakeTextureFrom(AssetData, PathUtils::GetTextureSavePathFor(Asset));
-}
-
-bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FAssetData& AssetData, const FString& SavePath)
-{
-	FObjectThumbnail Thumbnail;
-	ThumbnailTools::LoadThumbnailFromPackage(AssetData, Thumbnail);
-	return MakeTextureFrom(Thumbnail, AssetData, SavePath);
-}
-
-bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FAutoGenData& AutoGenData)
-{
-	if (!AutoGenData.MaterialsOverrides || AutoGenData.MaterialsOverrides->IsEmpty()) return MakeTextureFrom(AutoGenData.AssetData, AutoGenData.SavePath);
-	const auto Res = UThumbnailSaverSettings::GetRef().MaxThumbnailSize;
-	auto* Mesh = Cast<UStaticMesh>(AutoGenData.AssetData.GetAsset());
-	if (!Mesh)
-	{
-		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Asset %s is not a static mesh or is invalid."), *AutoGenData.AssetData.GetFullName());
-		return false;
-	}
-	
-	static TArray<UMaterialInterface*> MaterialInterfaces;
-	MaterialInterfaces.Reset();
-	MaterialInterfaces.Reserve(AutoGenData.MaterialsOverrides->Num());
-	for (const auto& MaterialOverride : *AutoGenData.MaterialsOverrides)
-	{
-		MaterialInterfaces.Emplace(MaterialOverride.LoadSynchronous());
-	}
-	
-	static TArray<UMaterialInterface*> OriginalMaterials;
-	const int32 MaterialCount = Mesh->GetStaticMaterials().Num();
-	OriginalMaterials.Reset();
-	OriginalMaterials.Reserve(MaterialCount);
-	
-	for (int32 i = 0; i < MaterialCount; i++)
-	{
-		OriginalMaterials.Add(Mesh->GetMaterial(i));
-		if (!MaterialInterfaces.IsValidIndex(i) || !MaterialInterfaces[i]) continue;
-		Mesh->SetMaterial(i, MaterialInterfaces[i]);
-		Mesh->GetMaterial(i)->EnsureIsComplete();
-	}
-	
-	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(
-		GetTransientPackage(),
-		MakeUniqueObjectName(GetTransientPackage(), UTextureRenderTarget2D::StaticClass())
-	);
-	RenderTarget->ClearColor = FLinearColor(0.f, 0.f, 0.f, 0.f);
-	RenderTarget->TargetGamma = 2.2f;
-	RenderTarget->InitCustomFormat(Res, Res, PF_B8G8R8A8, true);
-	RenderTarget->UpdateResourceImmediate(true);
-	auto* RenderResource = RenderTarget->GameThread_GetRenderTargetResource();
-	if (!RenderResource) UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get render target resource for %s."), *AutoGenData.AssetData.GetFullName());
-	FlushRenderingCommands();
-	
-	FObjectThumbnail DummyThumbnail;
-	ThumbnailTools::RenderThumbnail(
-		Mesh, Res, Res,
-		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
-		RenderResource,
-		&DummyThumbnail
-	);
-	FlushRenderingCommands();
-	
-	FObjectThumbnail Thumbnail;
-	ThumbnailTools::RenderThumbnail(
-		Mesh,
-		Res,
-		Res,
-		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
-		RenderResource,
-		&Thumbnail
-	);
-	
-	for (int32 i = 0; i < MaterialCount; i++)
-	{
-		Mesh->SetMaterial(i, OriginalMaterials[i]);
-	}
-	FlushRenderingCommands();
-	
-	return MakeTextureFrom(Thumbnail, AutoGenData.AssetData, AutoGenData.SavePath);
-}
-
-bool FThumbnailContentBrowserExtensions_Impl::MakeTextureFrom(const FObjectThumbnail& Thumbnail, const FAssetData& AssetData, const FString& SavePath)
-{
-	auto& Settings = UThumbnailSaverSettings::GetRef();
-	const auto Width  = FMath::Min(Thumbnail.GetImageWidth(), Settings.MaxThumbnailSize);
-	const auto Height = FMath::Min(Thumbnail.GetImageHeight(), Settings.MaxThumbnailSize);
-	if (Width == 0 || Height == 0)
-	{
-		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get thumbnail for %s."), *AssetData.GetFullName());
-		return false;
-	}
-	
-	return CreateAndSaveTexture(SavePath, Width, Height, Thumbnail.GetImage(), Settings.bAutoSaveOnDisk);
-}
-
-bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height,
-                                                                   const FImageView& ImageView, const bool bSave)
-{
-	static FImage Image;
-	ImageView.CopyTo(Image, ImageView.Format, ImageView.GammaSpace);
-	return CreateAndSaveTexture(SavePath, Width, Height, Image, bSave);
-}
-
-bool FThumbnailContentBrowserExtensions_Impl::CreateAndSaveTexture(const FString& SavePath, int32 Width, int32 Height,
-	const FImage& Image, const bool bSave)
-{
-	auto* Texture = CreateTexture(SavePath, Width, Height, Image);
-	if (bSave) SaveTexture(SavePath, Texture);
+	const auto SavePath = PathUtils::GetTextureSavePathFor(AssetData.GetAsset());
+	auto* Texture = Factory::MakeTextureFromExistingThumbnail(AssetData, CreatePackage(*SavePath));
+	if (UThumbnailSaverSettings::GetRef().bAutoSaveOnDisk) Factory::SaveTexture(Texture);
 	return Texture != nullptr;
-}
-
-UTexture2D* FThumbnailContentBrowserExtensions_Impl::CreateTexture(const FString& PackagePath, int32 Width, int32 Height,
-	const FImage& Image)
-{
-	static FImage DestImage(Width, Height, ERawImageFormat::BGRA8);
-	Image.ResizeTo(DestImage, Width, Height, DestImage.Format, Image.GammaSpace);
-	auto* Package = CreatePackage(*PackagePath);
-	Package->FullyLoad();
-	const auto AssetName = FPackageName::GetShortName(PackagePath);
-	
-	auto* Texture = NewObject<UTexture2D>(Package, *AssetName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
-	if (!Texture)
-	{
-		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to create texture for %s."), *PackagePath);
-		return nullptr;
-	}
-	
-	Texture->Source.Init(Width, Height, 1, 1, TSF_BGRA8, DestImage.RawData.GetData());
-	Texture->CompressionSettings = TC_BC7;
-	Texture->MipGenSettings      = TMGS_NoMipmaps;
-	Texture->LODGroup            = TEXTUREGROUP_UI;
-	Texture->SRGB                = true;
-	Texture->UpdateResource();
-	
-	FAssetRegistryModule::AssetCreated(Texture);
-	if (!Package->MarkPackageDirty())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ThumbnailToTexture: cannot be marked package dirty ! (%s)"), *PackagePath)
-	}
-	
-	return Texture;
-}
-
-void FThumbnailContentBrowserExtensions_Impl::SaveTexture(const FString& SavePath, UTexture2D* Texture)
-{
-	const FString PackageFilename =
-	FPackageName::LongPackageNameToFilename(
-		SavePath,
-		FPackageName::GetAssetPackageExtension()
-	);
-
-	FSavePackageArgs SaveArgs;
-	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-	SaveArgs.Error         = GError;
-	SaveArgs.bForceByteSwapping = false;
-	SaveArgs.bWarnOfLongFilename = true;
-	SaveArgs.SaveFlags = SAVE_NoError;
-
-	UPackage::SavePackage(Texture->GetPackage(), Texture, *PackageFilename, SaveArgs);
 }
 
 void FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(UThumbnailSaverSettings* Settings)
@@ -287,7 +123,7 @@ void FThumbnailContentBrowserExtensions_Impl::InitializePlaceholderTextures()
 	{
 		if (FPackageName::DoesPackageExist(AutoGenData.SavePath, nullptr)) continue;
 		++TotalNeed;
-		if (!CreateTexture(AutoGenData.SavePath, Res, Res, PlaceHolder)) continue;
+		if (!Factory::MakeTextureFrom(PlaceHolder, Res, Res, CreatePackage(*AutoGenData.SavePath))) continue;
 		++TotalGenerated;
 	}
 	
@@ -311,10 +147,12 @@ void FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails(const bool 
 	{
 		const bool bNeedGen = ForceGen || AutoGenData.NeedGenerate();
 		TotalNeedGen += bNeedGen;
-		if (!bNeedGen) continue; 
-		if (!MakeTextureFrom(AutoGenData)) continue;
-		++TotalGenerated;
+		if (!bNeedGen) continue;
+		auto* Texture = Factory::MakeTextureByRenderThumbnail(AutoGenData);
+		if (!Texture) continue;
+		if (UThumbnailSaverSettings::GetRef().bAutoSaveOnDisk) Factory::SaveTexture(Texture);
 		AutoGenData.LastGenTime = FDateTime::UtcNow();
+		++TotalGenerated;
 	}
 	
 	if (TotalNeedGen == 0)
