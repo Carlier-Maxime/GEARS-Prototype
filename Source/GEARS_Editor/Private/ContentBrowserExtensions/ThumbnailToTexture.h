@@ -7,8 +7,6 @@
 #include "AssetRegistry/AssetData.h"
 #include "Thumbnails/AutoGenData.h"
 
-using namespace ThumbnailToTexture;
-
 class UThumbnailSaverSettings;
 /**
  * 
@@ -30,5 +28,5 @@ private:
 	inline static int32 ExtenderIndex = -1;
 	inline static FDelegateHandle ExtenderHandle;
 	
-	inline static TArray<FAutoGenData> AutoGenFromAssets;
+	inline static TArray<ThumbnailToTexture::FAutoGenData> AutoGenFromAssets;
 };

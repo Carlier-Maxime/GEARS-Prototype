@@ -7,6 +7,7 @@
 #include "Thumbnails/Factory.h"
 #include "Thumbnails/PathUtils.h"
 
+using namespace ThumbnailToTexture;
 
 void FThumbnailContentBrowserExtensions_Impl::RegisterExtender(TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders)
 {
