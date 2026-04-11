@@ -4,6 +4,7 @@
 
 FString ThumbnailToTexture::PathUtils::GetTextureSavePathFor(const UObject* Asset)
 {
+	if (!Asset) return TEXT("");
 	auto TextureName = FormatTextureName(Asset->GetName());
 	FString PackageName = Asset->GetPackage()->GetName(); 
 	FString DirectoryPath = FPaths::GetPath(PackageName); 
