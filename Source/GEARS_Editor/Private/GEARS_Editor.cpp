@@ -12,6 +12,7 @@
 #include "Customization/ThumbnailGenerationRuleCustomization.h"
 #include "Customization/ThumbnailMaterialThemeCustomization.h"
 #include "Settings/ThumbnailSaverSettings.h"
+#include "Thumbnails/Manager.h"
 
 #define LOCTEXT_NAMESPACE "FGEARS_EditorModule"
 
@@ -81,7 +82,7 @@ void FGEARS_EditorModule::PostEngineInit()
 	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
 	TArray<FContentBrowserMenuExtender_SelectedAssets>& Extenders = ContentBrowserModule.GetAllAssetViewContextMenuExtenders();
 	FThumbnailContentBrowserExtensions_Impl::RegisterExtender(Extenders);
-	FThumbnailContentBrowserExtensions_Impl::AutoGenerateThumbnails();
+	ThumbnailToTexture::FManager::Get().AutoGenerateThumbnails();
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "ContentBrowserDelegates.h"
 #include "AssetRegistry/AssetData.h"
-#include "Thumbnails/AutoGenData.h"
 
 class UThumbnailSaverSettings;
 /**
@@ -20,13 +19,8 @@ public:
 	static TSharedRef<FExtender> OnExtendContentBrowserAssetSelectionMenu(const TArray<FAssetData>& SelectedAssets);
 	static void ExecuteForAssets(const TArray<FAssetData>& Assets);
 	static bool ExecuteForAsset(const FAssetData& AssetData);
-	static void PrepareAutoThumbnails(UThumbnailSaverSettings* Settings);
-	static void InitializePlaceholderTextures();
-	static void AutoGenerateThumbnails(bool ForceGen = false);
 
 private:
 	inline static int32 ExtenderIndex = -1;
 	inline static FDelegateHandle ExtenderHandle;
-	
-	inline static TArray<ThumbnailToTexture::FAutoGenData> AutoGenFromAssets;
 };

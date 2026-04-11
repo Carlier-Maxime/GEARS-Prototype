@@ -1,6 +1,7 @@
 ﻿#include "Settings/ThumbnailSaverSettings.h"
 
-#include "ContentBrowserExtensions/ThumbnailToTexture.h"
+#include "Thumbnails/Manager.h"
+
 
 void UThumbnailSaverSettings::PostInitProperties()
 {
@@ -8,6 +9,6 @@ void UThumbnailSaverSettings::PostInitProperties()
 	{
 		ThemesMap.Emplace(MaterialThemes[i].Tag, i);
 	}
-	FThumbnailContentBrowserExtensions_Impl::PrepareAutoThumbnails(this);
+	ThumbnailToTexture::FManager::Get().PrepareAutoThumbnails(this);
 	Super::PostInitProperties();
 }
