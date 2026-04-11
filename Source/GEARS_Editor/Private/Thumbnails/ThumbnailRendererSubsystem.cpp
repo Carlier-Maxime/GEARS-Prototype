@@ -40,7 +40,6 @@ void UThumbnailRendererSubsystem::DummyRender(UObject& InObject)
 		SharedRT->GameThread_GetRenderTargetResource(),
 		&DummyThumbnail
 	);
-	FlushRenderingCommands();
 	NeedDummy = false;
 }
 
@@ -57,7 +56,6 @@ void UThumbnailRendererSubsystem::RenderThumbnail(FObjectThumbnail& OutThumbnail
 	
 	auto* RenderResource = SharedRT->GameThread_GetRenderTargetResource();
 	if (!RenderResource) UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get render target resource."));
-	FlushRenderingCommands();
 	
 	ThumbnailTools::RenderThumbnail(
 		Mesh,
