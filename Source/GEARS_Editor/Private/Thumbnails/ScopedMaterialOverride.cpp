@@ -7,6 +7,7 @@ FScopedMaterialOverride::FScopedMaterialOverride(UStaticMesh& InMesh, const TArr
 	const int32 Num = Mesh.GetStaticMaterials().Num();
 	OriginalMaterials.Reserve(Num);
 
+	bMeshHasDirty = Mesh.GetOutermost()->IsDirty();
 	for (int32 i = 0; i < Num; ++i)
 	{
 		OriginalMaterials.Add(Mesh.GetMaterial(i));
@@ -22,4 +23,5 @@ FScopedMaterialOverride::~FScopedMaterialOverride()
 	{
 		Mesh.SetMaterial(i, OriginalMaterials[i]);
 	}
+	Mesh.GetOutermost()->SetDirtyFlag(bMeshHasDirty);
 }

@@ -11,5 +11,6 @@ namespace ThumbnailToTexture
 	private:
 		UStaticMesh& Mesh;
 		TArray<UMaterialInterface*, TInlineAllocator<8>> OriginalMaterials;
+		bool bMeshHasDirty = false;
 	};
 }
