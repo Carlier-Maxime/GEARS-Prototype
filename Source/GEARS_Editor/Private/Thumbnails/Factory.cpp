@@ -2,9 +2,8 @@
 
 #include "AutoGenData.h"
 #include "ObjectTools.h"
-#include "ScopedMaterialOverride.h"
+#include "ThumbnailRendererSubsystem.h"
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "Engine/TextureRenderTarget2D.h"
 #include "Settings/ThumbnailSaverSettings.h"
 #include "UObject/SavePackage.h"
 
@@ -28,49 +27,12 @@ UTexture2D* ThumbnailToTexture::Factory::MakeTextureByRenderThumbnail(const FAut
 		return MakeTextureFromExistingThumbnail(AutoGenData.AssetData, Package);
 	}
 	
-	const auto Res = UThumbnailSaverSettings::GetRef().MaxThumbnailSize;
 	auto* Mesh = Cast<UStaticMesh>(AutoGenData.AssetData.GetAsset());
-	if (!Mesh)
-	{
-		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Asset %s is not a static mesh or is invalid."), *AutoGenData.AssetData.GetFullName());
-		return nullptr;
-	}
-	
 	TArray<UMaterialInterface*, TInlineAllocator<8>> MaterialInterfaces;
 	AutoGenData.GetLoadedMaterials(MaterialInterfaces);
-	FScopedMaterialOverride MatOverride(*Mesh, MaterialInterfaces);
-	
-	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(
-		GetTransientPackage(),
-		MakeUniqueObjectName(GetTransientPackage(), UTextureRenderTarget2D::StaticClass())
-	);
-	RenderTarget->ClearColor = FLinearColor(0.f, 0.f, 0.f, 0.f);
-	RenderTarget->TargetGamma = 2.2f;
-	RenderTarget->InitCustomFormat(Res, Res, PF_B8G8R8A8, true);
-	RenderTarget->UpdateResourceImmediate(true);
-	auto* RenderResource = RenderTarget->GameThread_GetRenderTargetResource();
-	if (!RenderResource) UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get render target resource for %s."), *AutoGenData.AssetData.GetFullName());
-	FlushRenderingCommands();
-	
-	FObjectThumbnail DummyThumbnail;
-	ThumbnailTools::RenderThumbnail(
-		Mesh, Res, Res,
-		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
-		RenderResource,
-		&DummyThumbnail
-	);
-	FlushRenderingCommands();
 	
 	FObjectThumbnail Thumbnail;
-	ThumbnailTools::RenderThumbnail(
-		Mesh,
-		Res,
-		Res,
-		ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush,
-		RenderResource,
-		&Thumbnail
-	);
-	
+	UThumbnailRendererSubsystem::GetRef().RenderThumbnail(Thumbnail, Mesh, MaterialInterfaces);
 	if (!Thumbnail.HasValidImageData())
 	{
 		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to get thumbnail for %s."), *AutoGenData.AssetData.GetFullName());
