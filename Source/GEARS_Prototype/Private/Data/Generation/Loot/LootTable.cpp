@@ -1,6 +1,6 @@
 ﻿#include "Data/Generation/Loot/LootTable.h"
 
-void FLootTable::GenerateLoot(FInventoryContainer& OutLoot, const FRandomStream& InStream)
+void FLootTable::GenerateLoot(FInventoryContainer& OutLoot, const FRandomStream& InStream) const
 {
 	for (auto& Pool : Pools) Pool.Rolls(OutLoot, InStream);
 }

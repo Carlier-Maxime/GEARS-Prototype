@@ -11,7 +11,7 @@ struct FLootTable
 	UPROPERTY(EditAnywhere, Category = "Loot")
 	TArray<FLootPool> Pools;
 	
-	void GenerateLoot(FInventoryContainer& OutLoot, const FRandomStream& InStream);
+	void GenerateLoot(FInventoryContainer& OutLoot, const FRandomStream& InStream) const;
 	
 #if WITH_EDITOR
 	void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent, FEditPropertyChain::TDoubleLinkedListNode* CurrentNode);

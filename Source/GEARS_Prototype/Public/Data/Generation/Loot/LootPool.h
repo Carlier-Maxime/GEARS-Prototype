@@ -27,18 +27,18 @@ struct FLootPool
 	UPROPERTY(EditAnywhere, Category = "Loot", meta = (ToolTip = "If, true, Ignore RollCount and roll each entry"))
 	bool bRollEachEntry = false;
 	
-	FORCEINLINE void MarkDirty() {IsDirty = true;}
-	void Rolls(FInventoryContainer& OutLoot, const FRandomStream& InStream);
+	FORCEINLINE void MarkDirty() const {IsDirty = true;}
+	void Rolls(FInventoryContainer& OutLoot, const FRandomStream& InStream) const;
 	
 #if WITH_EDITOR
 	void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent, FEditPropertyChain::TDoubleLinkedListNode* CurrentNode);
 #endif
 	
 private:
-	void CleanDirtyFlag();
-	void CalculateWeights();
+	void CleanDirtyFlag() const;
+	void CalculateWeights() const;
 	
 	TSharedPtr<FCriticalSection> PoolLock;
-	bool IsDirty = true;
-	float TotalWeights = 0;
+	mutable bool IsDirty = true;
+	mutable float TotalWeights = 0;
 };

@@ -1,6 +1,6 @@
 ﻿#include "Data/Generation/Loot/LootPool.h"
 
-void FLootPool::Rolls(FInventoryContainer& OutLoot, const FRandomStream& InStream)
+void FLootPool::Rolls(FInventoryContainer& OutLoot, const FRandomStream& InStream) const
 {
 	if (IsDirty) CleanDirtyFlag();
 	if (bRollEachEntry)
@@ -32,7 +32,7 @@ void FLootPool::Rolls(FInventoryContainer& OutLoot, const FRandomStream& InStrea
 	}
 }
 
-void FLootPool::CleanDirtyFlag()
+void FLootPool::CleanDirtyFlag() const
 {
 	FScopeLock Lock(PoolLock.Get());
 	if (!IsDirty) return;
@@ -40,7 +40,7 @@ void FLootPool::CleanDirtyFlag()
 	IsDirty = false;
 }
 
-void FLootPool::CalculateWeights()
+void FLootPool::CalculateWeights() const
 {
 	TotalWeights = 0;
 	for (const auto& Entry : Entries) TotalWeights += Entry.Weight;
