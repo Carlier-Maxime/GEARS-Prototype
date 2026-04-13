@@ -58,7 +58,12 @@ public:
 	FORCEINLINE const FThumbnailMaterialTheme* FindTheme(const FGameplayTag& Tag) const
 	{
 		const auto* Index = ThemesMap.Find(Tag);
-		return Index ? &MaterialThemes[*Index] : nullptr;
+		if (!Index)
+		{
+			UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Invalid Theme Tag : %s"), *Tag.ToString());
+			return nullptr;
+		}
+		return &MaterialThemes[*Index];
 	}
 
 protected:
