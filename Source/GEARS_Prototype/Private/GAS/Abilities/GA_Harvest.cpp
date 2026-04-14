@@ -12,6 +12,7 @@
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "GAS/Attributes/CharacterAttributeSet.h"
 #include "Grid/GridSubsystem.h"
+#include "Player/Components/InventoryComponent.h"
 
 UGA_Harvest::UGA_Harvest()
 {
@@ -84,7 +85,11 @@ void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 	if (!ASC || !Grid) return;
 	float DamageAmount = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestPowerAttribute());
 	DamageAmount /= MiningResourceTr.GetScale3D().Length();
-	const auto Result = Grid->ApplyDamageToResource(FWorldGridPos(MiningResourceTr.GetLocation()), DamageAmount, CurrentActorInfo->OwnerActor.Get());
+	auto* Actor = CurrentActorInfo->OwnerActor.Get();
+	auto* InvComp = Actor ? Actor->FindComponentByClass<UInventoryComponent>() : nullptr;
+	auto* Inventory = InvComp ? &InvComp->GetInventory() : nullptr;
+	const FWorldGridPos MiningPos(MiningResourceTr.GetLocation());
+	const auto Result = Grid->ApplyDamageToResource(MiningPos, DamageAmount, Inventory);
 	if (Result == DamageResult::EType::None) return;
 	FGameplayCueParameters Params;
 	Params.Location = MiningHit.Location;
