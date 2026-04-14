@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
 #include "Data/Generation/PlacementRule.h"
-#include "Data/Generation/Loot/LootTable.h"
+#include "Data/Generation/Loot/LootRule.h"
 #include "Data/States/ResourceState.h"
 
 #include "ResourceDef.generated.h"
@@ -21,7 +21,7 @@ struct GEARS_PROTOTYPE_API FResourceDefinition
 	FPlacementRule PlacementRule;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Loot")
-	FLootTable LootTable;
+	FLootRule Loot;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "State")
 	FResourceState State;
@@ -30,8 +30,8 @@ struct GEARS_PROTOTYPE_API FResourceDefinition
 	void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent, FEditPropertyChain::TDoubleLinkedListNode* CurrentNode)
 	{
 		if (!CurrentNode) return;
-		if (CurrentNode->GetValue()->GetFName() == GET_MEMBER_NAME_CHECKED(FResourceDefinition, LootTable))
-			LootTable.PostEditChangeChainProperty(PropertyChangedEvent, CurrentNode->GetNextNode());
+		if (CurrentNode->GetValue()->GetFName() == GET_MEMBER_NAME_CHECKED(FResourceDefinition, Loot))
+			Loot.PostEditChangeChainProperty(PropertyChangedEvent, CurrentNode->GetNextNode());
 	}
 #endif
 };

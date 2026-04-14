@@ -9,4 +9,7 @@ struct GEARS_PROTOTYPE_API FResourceState
 	
 	UPROPERTY(EditAnywhere, Category = "Health", meta = (ClampMin = 0.01, UIMin=1, UIMax=1000))
 	float Health = 10.0f;
+	
+	UPROPERTY()
+	float AccumulatedLootDamage = 0;
 };
