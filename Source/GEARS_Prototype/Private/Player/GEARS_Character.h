@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Components/InventoryComponent.h"
 #include "GAS/Attributes/CharacterAttributeSet.h"
 #include "GEARS_Character.generated.h"
 
@@ -40,6 +41,9 @@ private:
 	USpringArmComponent *SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess = true))
 	UCameraComponent *Camera;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory", meta=(AllowPrivateAccess = true))
+	UInventoryComponent *Inventory;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action", meta=(AllowPrivateAccess = true))
 	TSoftObjectPtr<UInputAction> MoveAction;
