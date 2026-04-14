@@ -26,4 +26,15 @@ struct FItemDefinition
 	
 	UPROPERTY(EditDefaultsOnly, Category= "Visuals")
 	TArray<FItemVisualThreshold> VisualThresholds;
+	
+	const FItemVisual& GetVisual(int32 Quantity) const
+	{
+		for (int32 i=VisualThresholds.Num()-1; i>=0; --i)
+		{
+			const auto& Threshold = VisualThresholds[i];
+			if (Quantity >= Threshold.MinQuantity)
+				return Threshold.Visual;
+		}
+		return DefaultVisual;
+	}
 };
