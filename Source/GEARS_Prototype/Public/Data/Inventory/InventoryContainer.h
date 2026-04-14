@@ -15,6 +15,7 @@ public:
 	FORCEINLINE void SetCapacity(const int32 NewCapacity) { Capacity=NewCapacity; Stacks.Reserve(NewCapacity); }
 	bool AddStack(FItemStack& Stack);
 	FItemStack RemoveStack(int32 SlotIndex);
+	FString ToString() const;
 	
 private:
 	TArray<FItemStack> Stacks;

@@ -31,4 +31,8 @@ struct FItemStack
 		Quantity -= ToRemove;
 		return Amount - ToRemove;
 	}
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("%s x%d"), IsValidID() ? *GetCheckedItem().DisplayName.ToString() : TEXT("Invalid"), Quantity);
+	}
 };

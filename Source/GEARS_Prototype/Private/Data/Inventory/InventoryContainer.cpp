@@ -36,3 +36,17 @@ FItemStack FInventoryContainer::RemoveStack(const int32 SlotIndex)
 	StackCount--;
 	return RemovedStack;
 }
+
+FString FInventoryContainer::ToString() const
+{
+	TStringBuilder<1024> Builder;
+	Builder.Appendf(TEXT("InventoryContainer: %d/%d : {"), StackCount, GetCapacity());
+	if (!Stacks.IsEmpty()) Builder.Append(Stacks[0].ToString());
+	for (auto& Stack : TArrayView(Stacks.GetData() + 1, Stacks.Num() - 1))
+	{
+		Builder.Append(TEXT(", "));
+		Builder.Append(Stack.ToString());
+	}
+	Builder.Append(TEXT("}"));
+	return Builder.ToString();
+}
