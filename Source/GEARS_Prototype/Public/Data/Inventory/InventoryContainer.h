@@ -17,6 +17,13 @@ public:
 	FItemStack RemoveStack(int32 SlotIndex);
 	FString ToString() const;
 	
+	FOnItemStackChanged OnItemGained;
+	FOnItemStackChanged OnItemLost;
+	
+protected:
+	bool PerformAddStack(FItemStack& Stack);
+	FItemStack PerformRemoveStack(int32 SlotIndex);
+	
 private:
 	TArray<FItemStack> Stacks;
 	int32 StackCount = 0;

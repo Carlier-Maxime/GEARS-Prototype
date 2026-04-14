@@ -2,6 +2,22 @@
 
 bool FInventoryContainer::AddStack(FItemStack& Stack)
 {
+	const auto BaseQuantity = Stack.Quantity;
+	const auto Ret = PerformAddStack(Stack);
+	if (const auto AddedQuantity = BaseQuantity - Stack.Quantity; AddedQuantity > 0)
+		OnItemGained.Broadcast({ Stack.ItemID, AddedQuantity});
+	return Ret;
+}
+
+FItemStack FInventoryContainer::RemoveStack(int32 SlotIndex)
+{
+	const auto Ret = PerformRemoveStack(SlotIndex);
+	if (Ret.IsValid()) OnItemLost.Broadcast(Ret);
+	return Ret;
+}
+
+bool FInventoryContainer::PerformAddStack(FItemStack& Stack)
+{
 	if (!Stack.IsValid()) return false;
 	FItemStack* FreeSlot = nullptr;
 	for (auto& CurrentStack : Stacks)
@@ -28,7 +44,7 @@ bool FInventoryContainer::AddStack(FItemStack& Stack)
 	return true;
 }
 
-FItemStack FInventoryContainer::RemoveStack(const int32 SlotIndex)
+FItemStack FInventoryContainer::PerformRemoveStack(const int32 SlotIndex)
 {
 	if (SlotIndex < 0 || SlotIndex >= Stacks.Num() ) return {};
 	const auto RemovedStack = Stacks[SlotIndex];

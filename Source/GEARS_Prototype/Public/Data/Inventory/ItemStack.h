@@ -36,3 +36,5 @@ struct FItemStack
 		return FString::Printf(TEXT("%s x%d"), IsValidID() ? *GetCheckedItem().DisplayName.ToString() : TEXT("Invalid"), Quantity);
 	}
 };
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnItemStackChanged, const FItemStack&)
