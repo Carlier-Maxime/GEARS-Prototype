@@ -16,7 +16,16 @@ UTexture2D* ThumbnailToTexture::Factory::MakeTextureFromExistingThumbnail(const 
 		UE_LOG(LogTemp, Error, TEXT("ThumbnailToTexture: Failed to load thumbnail for %s."), *AssetData.GetFullName());
 		return nullptr;
 	}
-	return MakeTextureFrom(Thumbnail, Package);
+	auto& Renderer = UThumbnailRendererSubsystem::GetRef();
+	TArray64<uint8> Mask;
+	Renderer.RenderMask(AssetData.GetAsset(), Mask);
+	FImage Image;
+	Thumbnail.GetImage().CopyTo(Image);
+	FImage ImageResized;
+	const auto Res = Renderer.GetRes();
+	Image.ResizeTo(ImageResized, Res, Res, ERawImageFormat::BGRA8, Image.GammaSpace);
+	Renderer.ApplyMask(ImageResized.RawData, Mask);
+	return MakeTextureFrom(ImageResized, Package);
 }
 
 UTexture2D* ThumbnailToTexture::Factory::MakeTextureByRenderThumbnail(const FAutoGenData& AutoGenData)

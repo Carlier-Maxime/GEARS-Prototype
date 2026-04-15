@@ -31,6 +31,9 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = "Output")
 	bool bAutoSaveOnDisk = false;
 	
+	UPROPERTY(EditAnywhere, Config, Category = "Automation", meta = (DisplayName = "White Material", ToolTip="This material is necessary for masking thumbnail & ensure real transparence"))
+	TSoftObjectPtr<UMaterialInterface> WhiteMat;
+	
 	UPROPERTY(EditAnywhere, Config, Category = "Automation",
 	meta = (DisplayName = "AutoGen Path", ContentDir, ToolTip="This is the base path for automation generation"))
 	FDirectoryPath BasePath = { "/Game/_Generated/Icons/Thumbnails/" };
