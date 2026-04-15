@@ -25,7 +25,6 @@ private:
 	struct FLogEntry
 	{
 		TObjectPtr<UItemEntryWidget> Widget;
-		int32 Amount;
 		FTimerHandle Timer;
 	};
 	

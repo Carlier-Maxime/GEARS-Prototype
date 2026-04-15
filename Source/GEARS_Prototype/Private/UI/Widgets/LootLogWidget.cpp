@@ -39,9 +39,7 @@ void ULootLogWidget::OnItemGained(const FItemStack& ItemStack)
 	const int32 Key = ItemStack.ItemID;
 	if (auto* EntryPtr = LogsMap.Find(ItemStack.ItemID); EntryPtr)
 	{
-		auto& Item = ItemStack.GetCheckedItem();
-		EntryPtr->Amount += ItemStack.Quantity;
-		EntryPtr->Widget->SetItem(Item, EntryPtr->Amount);
+		EntryPtr->Widget->AddAmount(ItemStack.Quantity);
 		GetWorld()->GetTimerManager().ClearTimer(EntryPtr->Timer);
 		GetWorld()->GetTimerManager().SetTimer(EntryPtr->Timer, [this, Key]
 		{
@@ -56,7 +54,7 @@ void ULootLogWidget::OnItemGained(const FItemStack& ItemStack)
 		UE_LOG(LogTemp, Error, TEXT("Failed to create entry for item %s"), *ItemStack.ToString());
 		return;
 	}
-	auto& LogEntry = LogsMap.Add(ItemStack.ItemID, {Entry, ItemStack.Quantity});
+	auto& LogEntry = LogsMap.Add(ItemStack.ItemID, {Entry});
 	LogsPanel->AddChild(Entry);
 	GetWorld()->GetTimerManager().SetTimer(LogEntry.Timer, [this, Key]
 	{
@@ -70,8 +68,7 @@ TObjectPtr<UItemEntryWidget> ULootLogWidget::CreateEntryWidget(const FItemStack&
 	if (EntryCached.IsEmpty()) Entry = CreateWidget<UItemEntryWidget>(this, EntryClass);
 	else Entry = EntryCached.Pop(EAllowShrinking::No);
 	if (!ItemStack.IsValid()) return Entry;
-	auto& Item = ItemStack.GetCheckedItem();
-	Entry->SetItem(Item, ItemStack.Quantity);
+	Entry->SetItem(ItemStack);
 	return Entry;
 }
 
