@@ -17,6 +17,20 @@ FScopedMaterialOverride::FScopedMaterialOverride(UStaticMesh& InMesh, const TArr
 	}
 }
 
+FScopedMaterialOverride::FScopedMaterialOverride(UStaticMesh& InMesh, UMaterialInterface* Override) : Mesh(InMesh)
+{
+	const int32 Num = Mesh.GetStaticMaterials().Num();
+	OriginalMaterials.Reserve(Num);
+
+	bMeshHasDirty = Mesh.GetOutermost()->IsDirty();
+	for (int32 i = 0; i < Num; ++i)
+	{
+		OriginalMaterials.Add(Mesh.GetMaterial(i));
+		if (Override) Mesh.SetMaterial(i, Override);
+		Mesh.GetMaterial(i)->EnsureIsComplete();
+	}
+}
+
 FScopedMaterialOverride::~FScopedMaterialOverride()
 {
 	for (int32 i = 0; i < OriginalMaterials.Num(); ++i)

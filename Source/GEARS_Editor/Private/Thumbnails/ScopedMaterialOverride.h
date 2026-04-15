@@ -6,6 +6,7 @@ namespace ThumbnailToTexture
 	{
 	public:
 		FScopedMaterialOverride(UStaticMesh& InMesh, const TArrayView<UMaterialInterface*>& Overrides);
+		FScopedMaterialOverride(UStaticMesh& InMesh, UMaterialInterface* Override);
 		~FScopedMaterialOverride();
 	
 	private:
