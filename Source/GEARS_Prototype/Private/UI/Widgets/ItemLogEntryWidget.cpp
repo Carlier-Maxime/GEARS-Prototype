@@ -17,7 +17,10 @@ void UItemLogEntryWidget::NativeOnInitialized()
 
 void UItemLogEntryWidget::NativeDestruct()
 {
+	ClearTimer();
+	SetVisibility(ESlateVisibility::Visible);
 	OnRefresh.Remove(RefreshHandle);
+	StopAllAnimations();
 	Super::NativeDestruct();
 }
 
