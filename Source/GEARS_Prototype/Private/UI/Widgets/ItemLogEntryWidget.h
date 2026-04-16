@@ -23,7 +23,7 @@ public:
 		TimeLeft = Time;
 		ResetTimer();
 	}
-	
+
 	FOnItemLogEntryChanged OnLogExpired;
 	
 protected:
@@ -35,8 +35,20 @@ protected:
 	{
 		GetWorld()->GetTimerManager().ClearTimer(Timer);
 	}
+	
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> FadeAnim;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> UpdateAmountAnim;
 
 private:
+	UFUNCTION()
+	void OnFadeOutFinished();
+	
 	FTimerHandle Timer;
 	float TimeLeft = 1;
+	FDelegateHandle RefreshHandle;
+	FWidgetAnimationDynamicEvent OnFadeOutFinish;
+	bool InFadeOut = false;
 };
