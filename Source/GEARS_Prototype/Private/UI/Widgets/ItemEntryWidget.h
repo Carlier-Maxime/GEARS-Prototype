@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Definitions/GEARS_Delegates.h"
 #include "ItemEntryWidget.generated.h"
 
 struct FItemStack;
@@ -21,11 +22,22 @@ public:
 	void SetItem(const FItemStack& ItemStack);
 	void AddAmount(int32 Value);
 	FORCEINLINE void RemoveAmount(const int32 Value) { AddAmount(-Value); }
+	FORCEINLINE int32 GetItemID() const { return ItemID; }
+	
+	FOnVoidChanged OnRefresh;
 	
 protected:
-	void RefreshAmount() const;
-	void RefreshIcon() const;
-	void RefreshAll() const;
+	virtual void RefreshAmount()
+	{
+		RefreshAmount_Internal();
+		OnRefresh.Broadcast();
+	}
+	virtual void RefreshIcon()
+	{
+		RefreshIcon_Internal();
+		OnRefresh.Broadcast();
+	}
+	virtual void RefreshAll();
 	
 private:
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
@@ -34,5 +46,8 @@ private:
 	TObjectPtr<UTextBlock> Amount_TextBlock;
 	
 	const FItemDefinition* Item;
-	int32 Amount;
+	int32 Amount, ItemID;
+	
+	void RefreshAmount_Internal() const;
+	void RefreshIcon_Internal() const;
 };

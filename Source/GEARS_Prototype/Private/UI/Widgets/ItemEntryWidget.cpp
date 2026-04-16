@@ -13,6 +13,7 @@ void UItemEntryWidget::SetItem(const FItemStack& ItemStack)
 	if (!ItemStack.IsValid()) return;
 	Amount = ItemStack.Quantity;
 	Item = &ItemStack.GetCheckedItem();
+	ItemID = ItemStack.ItemID;
 	RefreshAll();
 }
 
@@ -24,20 +25,22 @@ void UItemEntryWidget::AddAmount(const int32 Value)
 	RefreshIcon();
 }
 
-void UItemEntryWidget::RefreshAmount() const
+void UItemEntryWidget::RefreshAmount_Internal() const
 {
 	check(Amount_TextBlock);
 	Amount_TextBlock->SetText(FText::AsNumber(Amount));
+	OnRefresh.Broadcast();
 }
 
-void UItemEntryWidget::RefreshIcon() const
+void UItemEntryWidget::RefreshIcon_Internal() const
 {
 	check(Icon_Image && Item)
 	const auto& Visual = Item->GetVisual(Amount);
 	Icon_Image->SetBrushFromSoftTexture(Visual.Icon, false);
+	OnRefresh.Broadcast();
 }
 
-void UItemEntryWidget::RefreshAll() const
+void UItemEntryWidget::RefreshAll()
 {
 	RefreshIcon();
 	RefreshAmount();
