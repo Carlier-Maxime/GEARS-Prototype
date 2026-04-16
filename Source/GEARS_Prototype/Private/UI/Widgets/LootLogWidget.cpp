@@ -3,6 +3,7 @@
 
 #include "LootLogWidget.h"
 
+#include "HUDWidget.h"
 #include "ItemLogEntryWidget.h"
 #include "Components/PanelWidget.h"
 #include "Data/Inventory/ItemStack.h"
@@ -12,10 +13,7 @@
 void ULootLogWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	const auto Pawn = GetOwningPlayerPawn();
-	if (!ensure(Pawn)) return;
-	auto* InvComp = Pawn->FindComponentByClass<UInventoryComponent>();
-	Inventory = InvComp ? &InvComp->GetInventory() : nullptr;
+	Inventory = UHUDWidget::GetInventory(GetOwningPlayerPawn());
 	if (!Inventory) return;
 	Inventory->OnItemGained.AddUObject(this, &ThisClass::OnItemGained);
 	EntryCached.Reserve(MaxLog);
