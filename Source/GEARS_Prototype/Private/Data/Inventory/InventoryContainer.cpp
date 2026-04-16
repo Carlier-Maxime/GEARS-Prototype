@@ -19,28 +19,33 @@ FItemStack FInventoryContainer::RemoveStack(int32 SlotIndex)
 bool FInventoryContainer::PerformAddStack(FItemStack& Stack)
 {
 	if (!Stack.IsValid()) return false;
-	FItemStack* FreeSlot = nullptr;
-	for (auto& CurrentStack : Stacks)
+	int32 FreeSlotIndex = -1;
+	for (auto i=0; i<Stacks.Num(); ++i)
 	{
-		if (!FreeSlot && CurrentStack.IsEmpty()) FreeSlot = &CurrentStack;
+		auto& CurrentStack = Stacks[i];
+		if (FreeSlotIndex==-1 && CurrentStack.IsEmpty()) FreeSlotIndex = i;
 		if (CurrentStack.ItemID == Stack.ItemID)
 		{
 			Stack.Quantity = CurrentStack.AddQuantity(Stack.Quantity);
+			OnSlotChanged.Broadcast(i);
 			if (Stack.Quantity == 0) return true;
 		}
 	}
-	if (FreeSlot)
+	if (Stacks.IsValidIndex(FreeSlotIndex))
 	{
-		FreeSlot->ItemID = Stack.ItemID;
-		FreeSlot->Quantity = Stack.Quantity;
+		auto& FreeSlot = Stacks[FreeSlotIndex];
+		FreeSlot.ItemID = Stack.ItemID;
+		FreeSlot.Quantity = Stack.Quantity;
 		Stack.Quantity = 0;
 		StackCount++;
+		OnSlotChanged.Broadcast(FreeSlotIndex);
 		return true;
 	}
 	if (Stacks.Num() >= GetCapacity()) return false;
-	Stacks.Emplace(Stack);
+	const auto NewIndex = Stacks.Emplace(Stack);
 	Stack.Quantity = 0;
 	StackCount++;
+	OnSlotChanged.Broadcast(NewIndex);
 	return true;
 }
 
@@ -50,6 +55,7 @@ FItemStack FInventoryContainer::PerformRemoveStack(const int32 SlotIndex)
 	const auto RemovedStack = Stacks[SlotIndex];
 	Stacks[SlotIndex].Quantity = 0;
 	StackCount--;
+	OnSlotChanged.Broadcast(SlotIndex);
 	return RemovedStack;
 }
 

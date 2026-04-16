@@ -1,11 +1,14 @@
 ﻿#pragma once
 #include "ItemStack.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventorySlotChanged, int32 Slot)
+
 class GEARS_PROTOTYPE_API FInventoryContainer
 {
 	
 public:
 	virtual ~FInventoryContainer() = default;
+	FORCEINLINE const FItemStack& GetStack(const int32 SlotIndex) const { return Stacks[SlotIndex]; }
 	FORCEINLINE const TArray<FItemStack>& GetStacks() const { return Stacks; }
 	FORCEINLINE void Clear() { Stacks.Empty(); }
 	FORCEINLINE bool IsEmpty() const { return StackCount == 0; }
@@ -19,6 +22,7 @@ public:
 	
 	FOnItemStackChanged OnItemGained;
 	FOnItemStackChanged OnItemLost;
+	FOnInventorySlotChanged OnSlotChanged;
 	
 protected:
 	bool PerformAddStack(FItemStack& Stack);
