@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "ItemStack.h"
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventorySlotChanged, int32 Slot)
+#include "Definitions/GEARS_Delegates.h"
 
 class GEARS_PROTOTYPE_API FInventoryContainer
 {
@@ -15,14 +14,15 @@ public:
 	FORCEINLINE bool IsFull() const { return StackCount >= GetCapacity(); }
 	FORCEINLINE int32 GetStackCount() const { return StackCount; }
 	FORCEINLINE int32 GetCapacity() const { return Capacity; }
-	FORCEINLINE void SetCapacity(const int32 NewCapacity) { Capacity=NewCapacity; Stacks.Reserve(NewCapacity); }
+	void SetCapacity(const int32 NewCapacity);
 	bool AddStack(FItemStack& Stack);
 	FItemStack RemoveStack(int32 SlotIndex);
 	FString ToString() const;
 	
 	FOnItemStackChanged OnItemGained;
 	FOnItemStackChanged OnItemLost;
-	FOnInventorySlotChanged OnSlotChanged;
+	FOnInt32Changed OnSlotChanged;
+	FOnInt32Changed OnCapacityChanged;
 	
 protected:
 	bool PerformAddStack(FItemStack& Stack);

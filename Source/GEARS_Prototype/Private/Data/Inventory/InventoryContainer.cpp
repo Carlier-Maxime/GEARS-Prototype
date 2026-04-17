@@ -72,3 +72,10 @@ FString FInventoryContainer::ToString() const
 	Builder.Append(TEXT("}"));
 	return Builder.ToString();
 }
+
+void FInventoryContainer::SetCapacity(const int32 NewCapacity)
+{
+	Capacity=NewCapacity;
+	Stacks.Reserve(NewCapacity);
+	OnCapacityChanged.Broadcast(NewCapacity);
+}
