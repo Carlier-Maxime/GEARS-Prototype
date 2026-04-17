@@ -9,9 +9,22 @@
 #include "Data/Definitions/ItemDefinition.h"
 #include "Data/Inventory/ItemStack.h"
 
+void UItemEntryWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	HiddenData();
+}
+
+void UItemEntryWidget::SetDataVisibility(const ESlateVisibility InVisibility)
+{
+	Amount_TextBlock->SetVisibility(InVisibility);
+	Icon_Image->SetVisibility(InVisibility);
+}
+
 void UItemEntryWidget::SetItem(const FItemStack& ItemStack)
 {
-	if (!ItemStack.IsValid()) return;
+	if (!ItemStack.IsValid()) return HiddenData();
+	if (!Item) ShowData();
 	Amount = ItemStack.Quantity;
 	Item = &ItemStack.GetCheckedItem();
 	ItemID = ItemStack.ItemID;

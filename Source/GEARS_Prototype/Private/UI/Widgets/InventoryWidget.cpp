@@ -40,7 +40,9 @@ void UInventoryWidget::OnSlotChanged(int SlotIndex)
 	auto* Payload = Cast<UItemEntryPayload>(Grid->GetItemAt(SlotIndex));
 	if (!Payload) return;
 	Payload->Stack = &Stack;
-	Grid->GetEntryWidgetFromItem<UItemEntryWidget>(Payload)->SetItem(Stack);
+	auto* Entry = Grid->GetEntryWidgetFromItem<UItemEntryWidget>(Payload);
+	if (!Entry) return;
+	Entry->SetItem(Stack);
 }
 
 void UInventoryWidget::CompleteMissingSlots()

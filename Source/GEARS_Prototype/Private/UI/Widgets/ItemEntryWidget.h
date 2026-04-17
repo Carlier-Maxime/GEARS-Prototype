@@ -28,6 +28,12 @@ public:
 	FOnVoidChanged OnRefresh;
 	
 protected:
+	virtual void NativeOnInitialized() override;
+	
+	FORCEINLINE void HiddenData() {SetDataVisibility(ESlateVisibility::Hidden);}
+	FORCEINLINE void ShowData() {SetDataVisibility(ESlateVisibility::Visible);}
+	void SetDataVisibility(ESlateVisibility InVisibility);
+
 	virtual void RefreshAmount()
 	{
 		RefreshAmount_Internal();
