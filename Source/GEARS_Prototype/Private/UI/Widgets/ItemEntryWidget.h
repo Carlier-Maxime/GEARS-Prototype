@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Blueprint/IUserObjectListEntry.h"
 #include "Blueprint/UserWidget.h"
 #include "Definitions/GEARS_Delegates.h"
 #include "ItemEntryWidget.generated.h"
@@ -15,7 +16,7 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class GEARS_PROTOTYPE_API UItemEntryWidget : public UUserWidget
+class GEARS_PROTOTYPE_API UItemEntryWidget : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 public:
@@ -38,7 +39,9 @@ protected:
 		OnRefresh.Broadcast();
 	}
 	virtual void RefreshAll();
-	
+
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+
 private:
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<UImage> Icon_Image;

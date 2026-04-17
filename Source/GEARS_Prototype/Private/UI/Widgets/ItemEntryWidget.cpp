@@ -3,6 +3,7 @@
 
 #include "ItemEntryWidget.h"
 
+#include "ItemEntryPayload.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Data/Definitions/ItemDefinition.h"
@@ -44,4 +45,12 @@ void UItemEntryWidget::RefreshAll()
 {
 	RefreshIcon();
 	RefreshAmount();
+}
+
+void UItemEntryWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
+{
+	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
+	const auto* Payload = Cast<UItemEntryPayload>(ListItemObject);
+	if (!Payload || !Payload->Stack) return;
+	SetItem(*Payload->Stack);
 }
