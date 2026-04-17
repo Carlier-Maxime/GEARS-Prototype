@@ -12,6 +12,7 @@ struct FLootTable
 	TArray<FLootPool> Pools;
 	
 	void GenerateLoot(FInventoryContainer& OutLoot, const FRandomStream& InStream) const;
+	void GenerateLoot(FInventoryContainer& OutLoot, const FRandomStream& InStream, float Ratio) const;
 	
 #if WITH_EDITOR
 	void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent, FEditPropertyChain::TDoubleLinkedListNode* CurrentNode);
