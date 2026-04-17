@@ -43,6 +43,8 @@ protected:
 	TSoftObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	TSoftObjectPtr<UInputAction> OrbitModifier;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
+	TSoftObjectPtr<UInputAction> InventoryAction;
 	
 private:
 	UPROPERTY()
@@ -59,4 +61,5 @@ private:
 	void ShowCursor();
 	void DisableOrbitModif();
 	void Look(const FInputActionValue& Value);
+	void OpenCloseInv();
 };

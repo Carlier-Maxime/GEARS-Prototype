@@ -7,6 +7,7 @@
 #include "HUDWidget.generated.h"
 
 class FInventoryContainer;
+class UInventoryWidget;
 class ULootLogWidget;
 class UCameraTweakWidget;
 /**
@@ -18,10 +19,13 @@ class GEARS_PROTOTYPE_API UHUDWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	static FInventoryContainer* GetInventory(APawn* Pawn);
+	void ToggleInvWidget() const;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<UCameraTweakWidget> CameraTweak;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<ULootLogWidget> LootLog;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
+	TObjectPtr<UInventoryWidget> Inventory;
 };

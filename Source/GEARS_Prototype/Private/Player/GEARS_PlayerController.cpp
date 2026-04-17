@@ -13,9 +13,11 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameplayTags/GEARS_GameplayTags.h"
+#include "Modes/GEARS_HUD.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Settings/CameraParams.h"
 #include "Settings/CameraSettings.h"
+#include "UI/Widgets/HUDWidget.h"
 
 AGEARS_PlayerController::AGEARS_PlayerController()
 {
@@ -55,6 +57,7 @@ void AGEARS_PlayerController::SetupInputComponent()
 		Input->BindAction(OrbitModifier.LoadSynchronous(), ETriggerEvent::Completed, this, &ThisClass::DisableOrbitModif);
 	}
 	if (ensureSoftPtr(LookAction)) Input->BindAction(LookAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ThisClass::Look);
+	if (ensureSoftPtr(InventoryAction)) Input->BindAction(InventoryAction.LoadSynchronous(), ETriggerEvent::Started, this, &ThisClass::OpenCloseInv);
 }
 
 void AGEARS_PlayerController::OnPossess(APawn* aPawn)
@@ -169,4 +172,13 @@ void AGEARS_PlayerController::StopMovement()
 	}
 	
 	Super::StopMovement();
+}
+
+void AGEARS_PlayerController::OpenCloseInv()
+{
+	auto* HUD = GetHUD<AGEARS_HUD>();
+	if (!HUD) return;
+	auto Widget = HUD->GetHUDWidget();
+	if (!Widget) return;
+	Widget->ToggleInvWidget();
 }
