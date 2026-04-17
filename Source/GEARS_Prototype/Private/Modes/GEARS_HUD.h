@@ -14,10 +14,10 @@ UCLASS()
 class GEARS_PROTOTYPE_API AGEARS_HUD : public AHUD
 {
 	GENERATED_BODY()
-
+public:
+	const TObjectPtr<UHUDWidget>& GetHUDWidget() const;
 protected:
 	virtual void BeginPlay() override;
-	const TObjectPtr<UHUDWidget>& GetHUDWidget() const;
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = true))
