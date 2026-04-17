@@ -73,9 +73,10 @@ FString FInventoryContainer::ToString() const
 	return Builder.ToString();
 }
 
-void FInventoryContainer::SetCapacity(const int32 NewCapacity)
+void FInventoryContainer::SetCapacity(const int32 NewCapacity, bool bReserve)
 {
 	Capacity=NewCapacity;
-	Stacks.Reserve(NewCapacity);
+	static constexpr int32 MaxReserve = 1 << 16;
+	if (bReserve) Stacks.Reserve(FMath::Min(NewCapacity, Stacks.Max()+MaxReserve));
 	OnCapacityChanged.Broadcast(NewCapacity);
 }

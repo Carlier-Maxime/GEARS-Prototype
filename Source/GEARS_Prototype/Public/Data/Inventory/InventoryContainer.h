@@ -14,7 +14,7 @@ public:
 	FORCEINLINE bool IsFull() const { return StackCount >= GetCapacity(); }
 	FORCEINLINE int32 GetStackCount() const { return StackCount; }
 	FORCEINLINE int32 GetCapacity() const { return Capacity; }
-	void SetCapacity(const int32 NewCapacity);
+	void SetCapacity(const int32 NewCapacity, bool bReserve = true);
 	bool AddStack(FItemStack& Stack);
 	FItemStack RemoveStack(int32 SlotIndex);
 	FString ToString() const;
