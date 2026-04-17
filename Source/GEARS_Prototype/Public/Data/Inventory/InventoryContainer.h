@@ -8,7 +8,7 @@ class GEARS_PROTOTYPE_API FInventoryContainer
 public:
 	virtual ~FInventoryContainer() = default;
 	FORCEINLINE const FItemStack& GetStack(const int32 SlotIndex) const { return Stacks[SlotIndex]; }
-	FORCEINLINE const TArray<FItemStack>& GetStacks() const { return Stacks; }
+	FORCEINLINE TArrayView<const FItemStack> GetStacks() const {return TArrayView(Stacks.GetData(), Stacks.Num());}
 	FORCEINLINE void Clear() { Stacks.Empty(); }
 	FORCEINLINE bool IsEmpty() const { return StackCount == 0; }
 	FORCEINLINE bool IsFull() const { return StackCount >= GetCapacity(); }
@@ -29,7 +29,7 @@ protected:
 	FItemStack PerformRemoveStack(int32 SlotIndex);
 	
 private:
-	TArray<FItemStack> Stacks;
+	TArray<FItemStack, TInlineAllocator<16>> Stacks;
 	int32 StackCount = 0;
 	int32 Capacity = 0;
 };
