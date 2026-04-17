@@ -66,7 +66,7 @@ FVector UGridSubsystem::GridToWorld(const FWorldGridPos& GridPos)
 	return GridPos.ToWorld();
 }
 
-DamageResult::EType UGridSubsystem::ApplyDamageToResource(const FWorldGridPos& Pos, float Amount,
+DamageResult::EType UGridSubsystem::ApplyDamageToResource(const FWorldGridPos& Pos, float ResourceScale, float Damage,
                                                     FInventoryContainer* OutGatheredItems)
 {
 	auto Result = DamageResult::EType::None;
@@ -77,6 +77,7 @@ DamageResult::EType UGridSubsystem::ApplyDamageToResource(const FWorldGridPos& P
 	auto ResourceIndex = Chunk.GetResourceIndex(InChunkPos);
 	if (!State || ResourceIndex == FResourceRegistry::INVALID_INDEX) return Result;
 	
+	const auto Amount = Damage / ResourceScale;
 	State->Health -= Amount;
 	State->AccumulatedLootDamage += Amount;
 	const auto& Resource = GridParams::Get().GetResourceRegistry()[ResourceIndex];
@@ -90,11 +91,11 @@ DamageResult::EType UGridSubsystem::ApplyDamageToResource(const FWorldGridPos& P
 		Result = DamageResult::EType::Destroyed;
 		Chunk.SetResource(InChunkPos, FResourceRegistry::INVALID_INDEX);
 		Renderer->RemoveResource(ChunkIndex, InChunkPos, ResourceIndex);
-		if (OutGatheredItems) Resource.Loot.TryRollOnDestroy(*OutGatheredItems, Rng);
+		if (OutGatheredItems) Resource.Loot.TryRollOnDestroy(*OutGatheredItems, Rng, ResourceScale);
 	} else Result = DamageResult::EType::Hit;
 	if (OutGatheredItems)
 	{
-		Resource.Loot.RollsFromDamage(State->AccumulatedLootDamage, *OutGatheredItems, Rng);
+		Resource.Loot.RollsFromDamage(State->AccumulatedLootDamage, *OutGatheredItems, Rng, ResourceScale);
 	}
 	return Result;
 }

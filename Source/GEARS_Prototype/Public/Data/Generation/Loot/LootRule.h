@@ -19,11 +19,11 @@ struct FLootRule
 	UPROPERTY(EditDefaultsOnly, Category = "Loot", meta = (EditCondition = bRollPerDamage, ClampMin=1, UIMax=100))
 	float DamageRequiredPerRoll = 1;
 	
-	void RollsFromDamage(float& AccDamage, FInventoryContainer& OutLoot, const FRandomStream& InStream) const;
+	void RollsFromDamage(float& AccDamage, FInventoryContainer& OutLoot, const FRandomStream& InStream, float Ratio) const;
 	
-	FORCEINLINE void TryRollOnDestroy(FInventoryContainer& OutLoot, const FRandomStream& InStream) const
+	FORCEINLINE void TryRollOnDestroy(FInventoryContainer& OutLoot, const FRandomStream& InStream, float Ratio) const
 	{
-		if (bRollOnDestroy) Table.GenerateLoot(OutLoot, InStream);
+		if (bRollOnDestroy) Table.GenerateLoot(OutLoot, InStream, Ratio);
 	}
 	
 #if WITH_EDITOR

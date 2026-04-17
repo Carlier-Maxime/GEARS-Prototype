@@ -83,13 +83,13 @@ void UGA_Harvest::OnImpact(FGameplayEventData Payload)
 	auto* ASC = GetAbilitySystemComponentFromActorInfo();
 	auto* Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
 	if (!ASC || !Grid) return;
-	float DamageAmount = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestPowerAttribute());
-	DamageAmount /= MiningResourceTr.GetScale3D().Length();
-	auto* Actor = CurrentActorInfo->OwnerActor.Get();
+	const float DamageAmount = ASC->GetNumericAttribute(UCharacterAttributeSet::GetHarvestPowerAttribute());
+	const float Scale = MiningResourceTr.GetScale3D().Length();
+	const auto* Actor = CurrentActorInfo->OwnerActor.Get();
 	auto* InvComp = Actor ? Actor->FindComponentByClass<UInventoryComponent>() : nullptr;
 	auto* Inventory = InvComp ? &InvComp->GetInventory() : nullptr;
 	const FWorldGridPos MiningPos(MiningResourceTr.GetLocation());
-	const auto Result = Grid->ApplyDamageToResource(MiningPos, DamageAmount, Inventory);
+	const auto Result = Grid->ApplyDamageToResource(MiningPos, Scale, DamageAmount, Inventory);
 	if (Result == DamageResult::EType::None) return;
 	FGameplayCueParameters Params;
 	Params.Location = MiningHit.Location;

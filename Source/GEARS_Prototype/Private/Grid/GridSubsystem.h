@@ -28,7 +28,7 @@ public:
 	
 	const FChunkData& GetChunk(const FChunkIndex& Index) const;
 	FORCEINLINE const FChunkData& GetChunk(const FWorldGridPos& GridPos) const;
-	DamageResult::EType ApplyDamageToResource(const FWorldGridPos& Pos, float Amount, FInventoryContainer* OutGatheredItems = nullptr);
+	DamageResult::EType ApplyDamageToResource(const FWorldGridPos& Pos, float ResourceScale, float Damage, FInventoryContainer* OutGatheredItems = nullptr);
 	
 	FORCEINLINE static FWorldGridPos WorldToGrid(const FVector& WorldPosition);
 	FORCEINLINE static FVector GridToWorld(const FWorldGridPos& GridPos);
