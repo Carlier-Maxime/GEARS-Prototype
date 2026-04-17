@@ -7,6 +7,7 @@
 #include "HUDWidget.generated.h"
 
 class FInventoryContainer;
+class ULootLogWidget;
 class UCameraTweakWidget;
 /**
  * 
@@ -21,4 +22,6 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
 	TObjectPtr<UCameraTweakWidget> CameraTweak;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
+	TObjectPtr<ULootLogWidget> LootLog;
 };
