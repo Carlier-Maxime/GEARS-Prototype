@@ -5,7 +5,7 @@ void FLootRule::RollsFromDamage(float& AccDamage, FInventoryContainer& OutLoot, 
 	if (!bRollPerDamage) return;
 	while (AccDamage >= DamageRequiredPerRoll)
 	{
-		Table.GenerateLoot(OutLoot, InStream, Ratio);
+		Table.GenerateLoot(OutLoot, InStream, IntermediateRatio * Ratio);
 		AccDamage -= DamageRequiredPerRoll;
 	}
 }
